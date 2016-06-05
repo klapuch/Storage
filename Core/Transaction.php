@@ -19,8 +19,8 @@ final class Transaction {
             $this->database->exec('ROLLBACK');
             if($ex instanceof \PDOException) {
                 throw new \RuntimeException(
-                    'Error on the database side. Rolling back.',
-                    0,
+                    'Error on the database side. Rolled back.',
+                    (int)$ex->getCode(),
                     $ex
                 );
             }

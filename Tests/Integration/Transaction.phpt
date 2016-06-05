@@ -47,7 +47,7 @@ final class Transaction extends TestCase\Database {
 				$this->database->query('INSERT INTO test (name) VALUES ("foo2")');
 				$this->database->query('SOMETHING STRANGE TO DATABASE!');
 			});
-		}, '\RuntimeException', 'Error on the database side. Rolling back.');
+		}, '\RuntimeException', 'Error on the database side. Rolled back.');
 		Assert::type('\PDOException', $exception->getPrevious());
 		Assert::equal(
 			[],
