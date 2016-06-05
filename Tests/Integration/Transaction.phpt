@@ -40,14 +40,14 @@ final class Transaction extends TestCase\Database {
 		);
 	}
 
-	public function testForcedPdoExceptionWIthRollback() {
+	public function testForcedPdoExceptionWithRollback() {
 		$exception = Assert::exception(function() {
 			$this->transaction->start(function() {
 				$this->database->query('INSERT INTO test (name) VALUES ("foo")');
 				$this->database->query('INSERT INTO test (name) VALUES ("foo2")');
 				$this->database->query('SOMETHING STRANGE TO DATABASE!');
 			});
-		}, 'Bulletpoint\Exception\StorageException', 'Nastala chyba na straně úložiště.', null);
+		}, \RuntimeException::class, 'Error on the database side. Rolling back.');
 		Assert::type('\PDOException', $exception->getPrevious());
 		Assert::equal(
 			[],

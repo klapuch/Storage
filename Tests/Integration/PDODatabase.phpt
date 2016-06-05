@@ -49,20 +49,24 @@ final class PDODatabase extends TestCase\Database {
 
 	public function testFormatOfFetchingAll() {
 		$this->database->query(
-			'INSERT INTO test (ID, name) VALUES (?, ?)',
-			[5, 'foo']
+			'INSERT INTO test (ID, name) VALUES (?, ?), (?, ?)',
+			[5, 'foo', 6, 'bar']
 		);
 		$rows = $this->database->fetchAll('SELECT * FROM test');
+		Assert::same(2, count($rows));
 		Assert::same(5, $rows[0]['ID']);
 		Assert::same('foo', $rows[0]['name']);
+		Assert::same(6, $rows[1]['ID']);
+		Assert::same('bar', $rows[1]['name']);
 	}
 
 	public function testFormatOfFetching() {
 		$this->database->query(
-			'INSERT INTO test (ID, name) VALUES (?, ?)',
-			[5, 'foo']
+			'INSERT INTO test (ID, name) VALUES (?, ?), (?, ?)',
+			[5, 'foo', 6, 'bar']
 		);
-		$rows = $this->database->fetchAll('SELECT * FROM test');
+		$rows = $this->database->fetch('SELECT * FROM test');
+		Assert::same(1, count($rows));
 		Assert::same(5, $rows['ID']);
 		Assert::same('foo', $rows['name']);
 	}
@@ -84,6 +88,7 @@ final class PDODatabase extends TestCase\Database {
 			'INSERT INTO test (ID, name) VALUES (?, ?)',
 			['ONE' => 5, 'two' => 'foo']
 		);
+		Assert::true(true);
 	}
 }
 
