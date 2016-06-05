@@ -63,7 +63,7 @@ final class PDODatabase extends TestCase\Database {
 	public function testFormatOfFetching() {
 		$this->database->query(
 			'INSERT INTO test (ID, name) VALUES (?, ?), (?, ?)',
-			[5, 'foo', 6, 'bar']
+			[5, 'foo']
 		);
 		$rows = $this->database->fetch('SELECT * FROM test');
 		Assert::same(1, count($rows));
