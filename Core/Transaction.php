@@ -20,7 +20,7 @@ final class Transaction {
             if($ex instanceof \PDOException) {
                 throw new \RuntimeException(
                     'Error on the database side. Rolling back.',
-                    $ex->getCode(),
+                    0,
                     $ex
                 );
             }
