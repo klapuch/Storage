@@ -11,7 +11,7 @@ abstract class Database extends Tester\TestCase {
 
     protected function setUp() {
         parent::setUp();
-        Tester\Environment::lock('database', __DIR__ . '/../temp');
+        Tester\Environment::lock('database', __DIR__ . '/../temporary');
         $this->database = $this->connection();
     }
 
