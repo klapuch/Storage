@@ -1,0 +1,20 @@
+language: php
+
+php:
+  - 7.0
+
+env:
+  - TESTER_PHP_BIN="php-cgi"
+
+before_install:
+  - composer self-update
+
+install:
+  - composer install --no-interaction --prefer-source
+
+before_script:
+  - mysql -u root -e 'CREATE DATABASE pdo_test;'
+  - mysql -u root pdo_test < ./Tests/pdo_test.sql
+
+script:
+  - ./vendor/bin/tester -p $TESTER_PHP_BIN -o console -s ./Tests/

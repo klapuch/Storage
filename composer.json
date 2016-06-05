@@ -1,0 +1,26 @@
+{
+  "name": "klapuch/storage",
+  "type": "library",
+  "description": "Easy way how to work with storages",
+  "keywords": [
+    "pdo",
+    "database",
+    "storage"
+  ],
+  "homepage": "https://github.com/klapuch/PDO",
+  "authors": [
+    {
+      "name": "Dominik Klapuch",
+      "homepage": "http://www.facedown.cz",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "nette/tester": "^1.7"
+  },
+  "autoload": {
+    "psr-4": {
+      "Klapuch\\Storage\\": "Core/"
+    }
+  }
+}
