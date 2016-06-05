@@ -3,4 +3,3 @@ vendor/*
 *.expected
 *.actual
 .idea
-Tests/temp
