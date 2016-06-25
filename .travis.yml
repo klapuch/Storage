@@ -19,7 +19,7 @@ install:
 
 before_script:
   - mysql -u root -e 'CREATE DATABASE pdo_test;'
-  - mysql -u root remembrall_test < ./Tests/pdo_test.sql
+  - mysql -u root pdo_test < ./Tests/pdo_test.sql
 
 after_script:
     - >
