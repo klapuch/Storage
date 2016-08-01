@@ -10,20 +10,9 @@ final class PDODatabase implements Database {
         \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
     ];
 
-    public function __construct(
-        string $host,
-        string $user,
-        string $password,
-        string $database,
-        string $driver = 'mysql'
-    ) {
+    public function __construct(string $dsn, string $user, string $password) {
         try {
-            $this->connection = new \PDO(
-                "$driver:host=$host;dbname=$database;charset=utf8",
-                $user,
-                $password,
-                self::OPTIONS
-            );
+            $this->connection = new \PDO($dsn, $user, $password, self::OPTIONS);
         } catch(\PDOException $ex) {
             throw new \RuntimeException(
                 'Connection to database was not successful',
@@ -54,7 +43,6 @@ final class PDODatabase implements Database {
     }
 
     public function exec(string $query) {
-        $statement = $this->connection->exec($query);
-        return $statement;
+        return $this->connection->exec($query);
     }
 }

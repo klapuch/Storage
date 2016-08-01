@@ -28,8 +28,7 @@ final class PDODatabase extends TestCase\Database {
 		new Storage\PDODatabase(
 			'???????',
 			'!!!!!!!',
-			',,,,,,,',
-			'¨¨¨¨¨¨¨¨'
+			',,,,,,,'
 		);
 	}
 

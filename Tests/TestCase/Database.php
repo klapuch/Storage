@@ -18,10 +18,9 @@ abstract class Database extends Tester\TestCase {
     private function connection(): Storage\Database {
         $credentials = parse_ini_file(__DIR__ . '/.database.ini');
         $this->database = new Storage\PDODatabase(
-            $credentials['host'],
+            $credentials['dsn'],
             $credentials['user'],
-            $credentials['pass'],
-            $credentials['name']
+            $credentials['password']
         );
         return $this->database;
     }
