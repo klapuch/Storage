@@ -1,13 +1,13 @@
 {
   "name": "klapuch/storage",
   "type": "library",
-  "description": "Easy way how to work with storages",
+  "description": "Easy way how to work with PDO",
   "keywords": [
     "pdo",
     "database",
     "storage"
   ],
-  "homepage": "https://github.com/klapuch/PDO",
+  "homepage": "https://github.com/klapuch/Storage",
   "authors": [
     {
       "name": "Dominik Klapuch",
@@ -16,6 +16,9 @@
     }
   ],
   "require": {
+    "ext-pdo": "*"
+  },
+  "require-dev": {
     "nette/tester": "^1.7"
   },
   "autoload": {
