@@ -39,7 +39,8 @@ SET default_with_oids = false;
 
 CREATE TABLE test (
     id integer NOT NULL,
-    name character varying(50) NOT NULL
+    name character varying(50) NOT NULL,
+    type character(1)
 );
 
 
@@ -79,6 +80,14 @@ ALTER TABLE ONLY test ALTER COLUMN id SET DEFAULT nextval('test_id_seq'::regclas
 
 ALTER TABLE ONLY test
     ADD CONSTRAINT test_id PRIMARY KEY (id);
+
+
+--
+-- Name: test_type; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY test
+    ADD CONSTRAINT test_type UNIQUE (type);
 
 
 --

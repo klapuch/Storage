@@ -36,7 +36,7 @@ final class PDODatabase extends TestCase\PostgresDatabase {
 		Assert::equal(
 			['id' => 5, 'name' => 'foo'],
 			$this->database->fetch(
-				'SELECT * FROM test WHERE id = ? LIMIT ? OFFSET ?',
+				'SELECT id, name FROM test WHERE id = ? LIMIT ? OFFSET ?',
 				[5, 10, 0]
 			)
 		);
@@ -47,7 +47,7 @@ final class PDODatabase extends TestCase\PostgresDatabase {
 			'INSERT INTO test (id, name) VALUES (?, ?), (?, ?)',
 			[5, 'foo', 6, 'bar']
 		);
-		$rows = $this->database->fetchAll('SELECT * FROM test');
+		$rows = $this->database->fetchAll('SELECT id, name FROM test');
 		Assert::same(2, count($rows));
 		Assert::same(5, $rows[0]['id']);
 		Assert::same('foo', $rows[0]['name']);
@@ -60,7 +60,7 @@ final class PDODatabase extends TestCase\PostgresDatabase {
 			'INSERT INTO test (id, name) VALUES (?, ?), (?, ?)',
 			[5, 'foo', 6, 'bar']
 		);
-		$rows = $this->database->fetch('SELECT * FROM test');
+		$rows = $this->database->fetch('SELECT id, name FROM test');
 		Assert::same(2, count($rows));
 		Assert::same(5, $rows['id']);
 		Assert::same('foo', $rows['name']);
@@ -71,7 +71,7 @@ final class PDODatabase extends TestCase\PostgresDatabase {
 			'INSERT INTO test (id, name) VALUES (:id, :fooName)',
 			[':id' => 5, ':fooName' => 'foo']
 		);
-		$rows = $this->database->fetch('SELECT * FROM test');
+		$rows = $this->database->fetch('SELECT id, name FROM test');
 		Assert::same(2, count($rows));
 		Assert::same(5, $rows['id']);
 		Assert::same('foo', $rows['name']);
@@ -108,6 +108,29 @@ final class PDODatabase extends TestCase\PostgresDatabase {
 			['ONE' => 5, 'two' => 'foo']
 		);
 		Assert::true(true);
+	}
+
+	public function testRaisingIntegrityConstraintOnUnique() {
+		$ex = Assert::exception(function() {
+			$this->database->query(
+				'INSERT INTO test (id, name, type) VALUES
+				(?, ?, ?), (?, ?, ?)',
+				[1, 'A', 'X', 2, 'B', 'X']
+			);
+		}, Storage\UniqueConstraint::class);
+		Assert::type(\PDOException::class, $ex->getPrevious());
+		Assert::same(23505, $ex->getCode());
+	}
+
+	/**
+	 * @throws \PDOException
+	 */
+	public function testRethrowingExceptionOnRegularError() {
+		$this->database->query(
+			'INSERT INTO test (id, name, type) VALUES
+			(?, ?, ?)',
+			[1, 'A', 22]
+		);
 	}
 }
 

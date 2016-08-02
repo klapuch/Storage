@@ -40,7 +40,7 @@ final class PostgresTransaction extends TestCase\PostgresDatabase {
 		Assert::same('foo2', $lastName);
 		Assert::equal(
 			[['id' => 1, 'name' => 'foo']],
-			$this->database->fetchAll('SELECT * FROM test')
+			$this->database->fetchAll('SELECT id, name FROM test')
 		);
 	}
 

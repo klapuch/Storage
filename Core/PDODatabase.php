@@ -22,11 +22,11 @@ final class PDODatabase implements Database {
 		}
 	}
 
-	public function fetch(string $query, array $parameters = []) {
+	public function fetch(string $query, array $parameters = []): array {
 		return $this->query($query, $parameters)->fetch();
 	}
 
-	public function fetchAll(string $query, array $parameters = []) {
+	public function fetchAll(string $query, array $parameters = []): array {
 		return $this->query($query, $parameters)->fetchAll();
 	}
 
@@ -34,18 +34,29 @@ final class PDODatabase implements Database {
 		return $this->query($query, $parameters)->fetchColumn();
 	}
 
-	public function query(string $query, array $parameters = []) {
-		$statement = $this->connection->prepare($query);
-		if($this->onlyPlaceholders($parameters)) {
-			$statement->execute(array_values($parameters));
-		} elseif($this->onlyNamedParameters($parameters)) {
-			$statement->execute($parameters);
-		} else {
-			throw new \PDOException(
-				'Parameters must be either named or placeholders'
-			);
+	public function query(string $query, array $parameters = []): \PDOStatement {
+		try {
+			$statement = $this->connection->prepare($query);
+			if($this->onlyPlaceholders($parameters)) {
+				$statement->execute(array_values($parameters));
+			} elseif($this->onlyNamedParameters($parameters)) {
+				$statement->execute($parameters);
+			} else {
+				throw new \PDOException(
+					'Parameters must be either named or placeholders'
+				);
+			}
+			return $statement;
+		} catch(\PDOException $ex) {
+			if($ex->getCode() === self::UNIQUE_CONSTRAINT) {
+				throw new UniqueConstraint(
+					$ex->getMessage(),
+					(int)$ex->getCode(),
+					$ex
+				);
+			}
+			throw $ex;
 		}
-		return $statement;
 	}
 
 	public function exec(string $query) {
@@ -53,7 +64,7 @@ final class PDODatabase implements Database {
 	}
 
 	/**
-	 * Are the parameters consist only from named parameters?
+	 * Do the parameters consist only from named parameters?
 	 * @param array $parameters
 	 * @return bool
 	 */
@@ -69,7 +80,7 @@ final class PDODatabase implements Database {
 	}
 
 	/**
-	 * Are the parameters consist only from placeholders?
+	 * Do the parameters consist only from placeholders?
 	 * @param array $parameters
 	 * @return bool
 	 */
