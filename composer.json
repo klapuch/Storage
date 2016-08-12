@@ -17,7 +17,6 @@
   ],
   "require": {
     "ext-pdo": "*",
-    "ext-mysqlnd": "*",
     "ext-pdo_pgsql": "*",
     "ext-pdo_mysql": "*"
   },
