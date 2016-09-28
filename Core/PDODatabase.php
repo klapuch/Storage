@@ -23,11 +23,11 @@ final class PDODatabase implements Database {
 	}
 
 	public function fetch(string $query, array $parameters = []): array {
-		return $this->query($query, $parameters)->fetch();
+		return $this->query($query, $parameters)->fetch() ?: [];
 	}
 
 	public function fetchAll(string $query, array $parameters = []): array {
-		return $this->query($query, $parameters)->fetchAll();
+		return $this->query($query, $parameters)->fetchAll() ?: [];
 	}
 
 	public function fetchColumn(string $query, array $parameters = []) {

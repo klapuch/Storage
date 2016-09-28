@@ -64,6 +64,20 @@ final class PDODatabase extends TestCase\PostgresDatabase {
 		Assert::same(2, count($rows));
 		Assert::same(5, $rows['id']);
 		Assert::same('foo', $rows['name']);
+    }
+
+    public function testFetchingUnknownValue() {
+        Assert::same(
+            [],
+            $this->database->fetch('SELECT id, name FROM test')
+        );
+    }
+
+    public function testFetchingAllUnknownValue() {
+        Assert::same(
+            [],
+            $this->database->fetchAll('SELECT id, name FROM test')
+        );
 	}
 
 	public function testFetchingWithNamedPlaceholders() {
