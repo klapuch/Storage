@@ -23,7 +23,7 @@ final class MonitoredDatabase implements Database {
 
 	public function fetchColumn(string $query, array $parameters = []) {
 		$this->monitor($query);
-		return $this->origin->query($query, $parameters);
+		return $this->origin->fetchColumn($query, $parameters);
 	}
 
 	public function query(string $query, array $parameters = []): \PDOStatement {
