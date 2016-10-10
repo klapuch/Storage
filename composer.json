@@ -19,7 +19,8 @@
     "ext-pdo": "*",
     "ext-mysqlnd": "*",
     "ext-pdo_pgsql": "*",
-    "ext-pdo_mysql": "*"
+    "ext-pdo_mysql": "*",
+    "tracy/tracy": "^2.4"
   },
   "require-dev": {
     "nette/tester": "^1.7"
