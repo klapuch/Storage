@@ -10,7 +10,7 @@ env:
 matrix:
     include:
         - php: 7.0
-          env: coverage="--coverage ./coverage.xml --coverage-src ./Core" PHP_BIN=phpdbg
+          env: coverage="--coverage ./coverage.xml --coverage-src ./Core" PHP_BIN=php-cgi
 
 before_install:
   - composer self-update
@@ -32,7 +32,7 @@ after_script:
       || true; fi
 
 script:
-  - ./vendor/bin/tester -p $PHP_BIN -o console -s $coverage ./Tests/
+  - ./vendor/bin/tester -p $PHP_BIN -d extension=xdebug.so -o console -s $coverage ./Tests/
 
 after_failure:
   - for i in $(find Tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done
