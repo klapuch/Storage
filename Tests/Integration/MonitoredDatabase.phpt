@@ -14,9 +14,12 @@ require __DIR__ . '/../bootstrap.php';
 
 final class MonitoredDatabase extends Tester\TestCase {
 	public function testMonitoringSimpleQuery() {
-		(new Storage\MonitoredDatabase(
-			new Storage\FakeDatabase()
-		))->fetch('SELECT me, you FROM world');
+		Assert::same(
+			['fetch'],
+			(new Storage\MonitoredDatabase(
+				new Storage\FakeDatabase()
+			))->fetch('SELECT me, you FROM world')
+		);
 		ob_start();
 		Tracy\Debugger::getBar()->render();
 		$bar = ob_get_clean();
@@ -26,9 +29,12 @@ final class MonitoredDatabase extends Tester\TestCase {
 
 	public function testMonitoringLongQueryWithTruncating() {
 		$query = sprintf('SELECT %s FROM world', str_repeat('a, ', 4000));
-		(new Storage\MonitoredDatabase(
-			new Storage\FakeDatabase()
-		))->fetchAll($query);
+		Assert::same(
+			['fetchAll'],
+			(new Storage\MonitoredDatabase(
+				new Storage\FakeDatabase()
+			))->fetchAll($query)
+		);
 		ob_start();
 		Tracy\Debugger::getBar()->render();
 		$bar = ob_get_clean();
@@ -37,23 +43,27 @@ final class MonitoredDatabase extends Tester\TestCase {
 	}
 
 	public function testCapitalizedTitle() {
-		(new Storage\MonitoredDatabase(
-			new Storage\FakeDatabase()
-		))->query('delete * from world');
+		Assert::equal(
+			new \PDOStatement(),
+			(new Storage\MonitoredDatabase(
+				new Storage\FakeDatabase()
+			))->query('delete * from world')
+		);
 		ob_start();
 		Tracy\Debugger::getBar()->render();
-		$bar = ob_get_clean();
-		Assert::contains(htmlspecialchars('<h2>DELETE<\/h2>'), $bar);
+		Assert::contains(htmlspecialchars('<h2>DELETE<\/h2>'), ob_get_clean());
 	}
 
 	public function testIgnoringInvalidQuery() {
-		(new Storage\MonitoredDatabase(
-			new Storage\FakeDatabase()
-		))->fetchColumn('INSERT INTO idk () (abc)');
+		Assert::same(
+			'fetchColumn',
+			(new Storage\MonitoredDatabase(
+				new Storage\FakeDatabase()
+			))->fetchColumn('INSERT INTO idk () (abc)')
+		);
 		ob_start();
 		Tracy\Debugger::getBar()->render();
-		$bar = ob_get_clean();
-		Assert::contains(htmlspecialchars('<h2>INSERT<\/h2>'), $bar);
+		Assert::contains(htmlspecialchars('<h2>INSERT<\/h2>'), ob_get_clean());
 	}
 
 	public function testUnknownOperation() {

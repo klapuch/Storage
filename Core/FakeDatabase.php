@@ -4,15 +4,15 @@ namespace Klapuch\Storage;
 
 final class FakeDatabase implements Database {
 	public function fetch(string $query, array $parameters = []): array {
-		return [];
+		return ['fetch'];
 	}
 
 	public function fetchAll(string $query, array $parameters = []): array {
-		return [];
+		return ['fetchAll'];
 	}
 
 	public function fetchColumn(string $query, array $parameters = []) {
-		return '';
+		return 'fetchColumn';
 	}
 
 	public function query(
