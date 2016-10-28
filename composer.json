@@ -1,17 +1,17 @@
 {
-  "name": "klapuch/database",
+  "name": "klapuch/storage",
   "type": "library",
-  "description": "Easy way how to work with PDO database",
+  "description": "Easy way how to work with PDO",
   "keywords": [
     "pdo",
     "database",
     "storage"
   ],
-  "homepage": "https://github.com/klapuch/Database",
+  "homepage": "https://github.com/klapuch/Storage",
   "authors": [
     {
       "name": "Dominik Klapuch",
-      "homepage": "https://www.github.com/klapuch",
+      "homepage": "http://www.facedown.cz",
       "role": "Developer"
     }
   ],
@@ -27,7 +27,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Klapuch\\Database\\": "Core/"
+      "Klapuch\\Storage\\": "Core/"
     }
   }
 }

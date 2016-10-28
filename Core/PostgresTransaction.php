@@ -1,6 +1,6 @@
 <?php
 declare(strict_types = 1);
-namespace Klapuch\Database;
+namespace Klapuch\Storage;
 
 final class PostgresTransaction implements Transaction {
 	private $database;

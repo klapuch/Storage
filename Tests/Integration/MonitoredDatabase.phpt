@@ -3,12 +3,12 @@
  * @testCase
  * @phpVersion > 7.0.0
  */
-namespace Klapuch\Database\Integration;
+namespace Klapuch\Storage\Integration;
 
 use Tracy;
 use Tester;
 use Tester\Assert;
-use Klapuch\Database;
+use Klapuch\Storage;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -16,8 +16,8 @@ final class MonitoredDatabase extends Tester\TestCase {
 	public function testMonitoringSimpleQuery() {
 		Assert::same(
 			['fetch'],
-			(new Database\MonitoredDatabase(
-				new Database\FakeDatabase()
+			(new Storage\MonitoredDatabase(
+				new Storage\FakeDatabase()
 			))->fetch('SELECT me, you FROM world')
 		);
 		ob_start();
@@ -31,8 +31,8 @@ final class MonitoredDatabase extends Tester\TestCase {
 		$query = sprintf('SELECT %s FROM world', str_repeat('a, ', 4000));
 		Assert::same(
 			['fetchAll'],
-			(new Database\MonitoredDatabase(
-				new Database\FakeDatabase()
+			(new Storage\MonitoredDatabase(
+				new Storage\FakeDatabase()
 			))->fetchAll($query)
 		);
 		ob_start();
@@ -45,8 +45,8 @@ final class MonitoredDatabase extends Tester\TestCase {
 	public function testCapitalizedTitle() {
 		Assert::equal(
 			new \PDOStatement(),
-			(new Database\MonitoredDatabase(
-				new Database\FakeDatabase()
+			(new Storage\MonitoredDatabase(
+				new Storage\FakeDatabase()
 			))->query('delete * from world')
 		);
 		ob_start();
@@ -57,8 +57,8 @@ final class MonitoredDatabase extends Tester\TestCase {
 	public function testIgnoringInvalidQuery() {
 		Assert::same(
 			'fetchColumn',
-			(new Database\MonitoredDatabase(
-				new Database\FakeDatabase()
+			(new Storage\MonitoredDatabase(
+				new Storage\FakeDatabase()
 			))->fetchColumn('INSERT INTO idk () (abc)')
 		);
 		ob_start();
@@ -67,8 +67,8 @@ final class MonitoredDatabase extends Tester\TestCase {
 	}
 
 	public function testUnknownOperation() {
-		(new Database\MonitoredDatabase(
-			new Database\FakeDatabase()
+		(new Storage\MonitoredDatabase(
+			new Storage\FakeDatabase()
 		))->exec('WITH UPDATE do Something');
 		ob_start();
 		Tracy\Debugger::getBar()->render();

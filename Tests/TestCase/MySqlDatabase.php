@@ -1,12 +1,12 @@
 <?php
 declare(strict_types = 1);
-namespace Klapuch\Database\TestCase;
+namespace Klapuch\Storage\TestCase;
 
-use Klapuch\Database;
+use Klapuch\Storage;
 use Tester;
 
 abstract class MySqlDatabase extends Tester\TestCase {
-	/** @var Database\Database */
+	/** @var Storage\Database */
 	protected $database;
 
 	protected function setUp() {
@@ -15,9 +15,9 @@ abstract class MySqlDatabase extends Tester\TestCase {
 		$this->database = $this->connection();
 	}
 
-	private function connection(): Database\Database {
+	private function connection(): Storage\Database {
 		$credentials = parse_ini_file(__DIR__ . '/.database.ini', true);
-		$this->database = new Database\PDODatabase(
+		$this->database = new Storage\PDODatabase(
 			$credentials['MYSQL']['dsn'],
 			$credentials['MYSQL']['user'],
 			$credentials['MYSQL']['password']

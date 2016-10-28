@@ -3,21 +3,21 @@
  * @testCase
  * @phpVersion > 7.0.0
  */
-namespace Klapuch\Database\Integration;
+namespace Klapuch\Storage\Integration;
 
 use Tester\Assert;
-use Klapuch\Database;
-use Klapuch\Database\TestCase;
+use Klapuch\Storage;
+use Klapuch\Storage\TestCase;
 
 require __DIR__ . '/../bootstrap.php';
 
 final class MySqlTransaction extends TestCase\MySqlDatabase {
-	/** @var Database\Transaction */
+	/** @var Storage\Transaction */
 	private $transaction;
 
 	public function setUp() {
 		parent::setUp();
-		$this->transaction = new Database\MySqlTransaction($this->database);
+		$this->transaction = new Storage\MySqlTransaction($this->database);
 		$this->database->query('TRUNCATE test');
 	}
 
