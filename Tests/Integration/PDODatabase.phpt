@@ -3,11 +3,11 @@
  * @testCase
  * @phpVersion > 7.0.0
  */
-namespace Klapuch\Storage\Integration;
+namespace Klapuch\Database\Integration;
 
 use Tester\Assert;
-use Klapuch\Storage;
-use Klapuch\Storage\TestCase;
+use Klapuch\Database;
+use Klapuch\Database\TestCase;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -21,7 +21,7 @@ final class PDODatabase extends TestCase\PostgresDatabase {
 	 * @throws \RuntimeException Connection to database was not successful
 	 */
 	public function testWrongCredentials() {
-		new Storage\PDODatabase(
+		new Database\PDODatabase(
 			'???????',
 			'!!!!!!!',
 			',,,,,,,'
@@ -131,7 +131,7 @@ final class PDODatabase extends TestCase\PostgresDatabase {
 				(?, ?, ?), (?, ?, ?)',
 				[1, 'A', 'X', 2, 'B', 'X']
 			);
-		}, Storage\UniqueConstraint::class);
+		}, Database\UniqueConstraint::class);
 		Assert::type(\PDOException::class, $ex->getPrevious());
 		Assert::same(23505, $ex->getCode());
 	}

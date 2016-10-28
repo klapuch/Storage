@@ -1,6 +1,6 @@
 <?php
 declare(strict_types = 1);
-namespace Klapuch\Storage;
+namespace Klapuch\Database;
 
 interface Database {
 	const UNIQUE_CONSTRAINT = '23505';

@@ -1,5 +1,5 @@
 <?php
-namespace Klapuch\Storage;
+namespace Klapuch\Database;
 
 class UniqueConstraint extends \Exception {
 }
