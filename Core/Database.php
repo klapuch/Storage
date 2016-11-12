@@ -3,7 +3,7 @@ declare(strict_types = 1);
 namespace Klapuch\Storage;
 
 interface Database {
-	const UNIQUE_CONSTRAINT = '23505';
+	public const UNIQUE_CONSTRAINT = '23505';
 
 	/**
 	 * Fetch single row
@@ -41,7 +41,7 @@ interface Database {
 	/**
 	 * Execute dangerous query
 	 * @param string $query
-	 * @return mixed
+	 * @return void
 	 */
-	public function exec(string $query);
+	public function exec(string $query): void;
 }

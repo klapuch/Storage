@@ -22,7 +22,7 @@ final class FakeDatabase implements Database {
 			return new \PDOStatement();
 	}
 
-	public function exec(string $query) {
+	public function exec(string $query): void {
 
 	}
 }

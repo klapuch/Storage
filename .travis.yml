@@ -1,10 +1,14 @@
-sudo: required
+services:
+  - postgresql
+
+addons:
+  postgresql: 9.5
+
 dist: trusty
 
 language: php
 
 php:
-  - 7.0
   - 7.1
 
 env:
@@ -12,8 +16,8 @@ env:
 
 matrix:
     include:
-        - php: 7.0
-          env: coverage="--coverage ./coverage.xml --coverage-src ./Core" PHP_BIN=php-cgi
+        - php: 7.1
+          env: coverage="--coverage ./coverage.xml --coverage-src ./Core" PHP_BIN=phpdbg
 
 before_install:
   - composer self-update

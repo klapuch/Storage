@@ -4,7 +4,7 @@ namespace Klapuch\Storage;
 
 final class PDODatabase implements Database {
 	private $connection;
-	const OPTIONS = [
+	private const OPTIONS = [
 		\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
 		\PDO::ATTR_EMULATE_PREPARES => false,
 		\PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
@@ -59,8 +59,8 @@ final class PDODatabase implements Database {
 		}
 	}
 
-	public function exec(string $query) {
-		return $this->connection->exec($query);
+	public function exec(string $query): void {
+		$this->connection->exec($query);
 	}
 
 	/**

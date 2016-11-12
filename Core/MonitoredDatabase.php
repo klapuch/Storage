@@ -33,9 +33,9 @@ final class MonitoredDatabase implements Database {
 		return $this->origin->query($query, $parameters);
 	}
 
-	public function exec(string $query) {
+	public function exec(string $query): void {
 		$this->monitor($query);
-		return $this->origin->exec($query);
+		$this->origin->exec($query);
 	}
 
 	/**
@@ -43,7 +43,7 @@ final class MonitoredDatabase implements Database {
 	 * @param string $query
 	 * @return void
 	 */
-	private function monitor(string $query) {
+	private function monitor(string $query): void {
 		$this->logs->put(
 			new Log\PrettyLog(
 				new \Exception($query),

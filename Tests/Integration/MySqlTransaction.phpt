@@ -2,6 +2,7 @@
 /**
  * @testCase
  * @phpVersion > 7.0.0
+ * @skip Temporary because of travis
  */
 namespace Klapuch\Storage\Integration;
 
