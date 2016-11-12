@@ -2,13 +2,15 @@
 declare(strict_types = 1);
 namespace Klapuch\Storage;
 
-use Tracy;
+use Klapuch\Log;
 
 final class MonitoredDatabase implements Database {
 	private $origin;
+	private $logs;
 
-	public function __construct(Database $origin) {
+	public function __construct(Database $origin, Log\Logs $logs) {
 	    $this->origin = $origin;
+		$this->logs = $logs;
 	}
 
 	public function fetch(string $query, array $parameters = []): array {
@@ -42,19 +44,13 @@ final class MonitoredDatabase implements Database {
 	 * @return void
 	 */
 	private function monitor(string $query) {
-		Tracy\Debugger::barDump(
-			$query,
-			$this->operation($query),
-			[Tracy\Dumper::TRUNCATE => 5000]
+		$this->logs->put(
+			new Log\PrettyLog(
+				new \Exception($query),
+				new Log\PrettySeverity(
+					new Log\JustifiedSeverity(Log\Severity::INFO)
+				)
+			)
 		);
-	}
-
-	/**
-	 * Operation in SQL query - should be one of INSERT, SELECT, UPDATE, DELETE
-	 * @param string $query
-	 * @return string
-	 */
-	private function operation(string $query): string {
-		return strtoupper(substr($query, 0, strpos($query, ' ')));
 	}
 }

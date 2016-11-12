@@ -1,7 +1,7 @@
 {
   "name": "klapuch/storage",
   "type": "library",
-  "description": "Easy way how to work with PDO",
+  "description": "Easy way how to work with database storage",
   "keywords": [
     "pdo",
     "database",
@@ -11,7 +11,7 @@
   "authors": [
     {
       "name": "Dominik Klapuch",
-      "homepage": "http://www.facedown.cz",
+      "homepage": "https://www.github.com/klapuch",
       "role": "Developer"
     }
   ],
@@ -21,7 +21,7 @@
     "ext-mysqlnd": "*",
     "ext-pdo_pgsql": "*",
     "ext-pdo_mysql": "*",
-    "tracy/tracy": "^2.4"
+    "klapuch/log": "@dev"
   },
   "require-dev": {
     "nette/tester": "^1.7"
