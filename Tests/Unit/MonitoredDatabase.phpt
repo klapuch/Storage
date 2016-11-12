@@ -52,6 +52,31 @@ final class MonitoredDatabase extends Tester\TestCase {
 		);
 		Assert::contains($query, file_get_contents($location));
 	}
+
+	public function testMonitoringQueryCommand() {
+		$location = Tester\FileMock::create('');
+		$query = 'DELETE * FROM world';
+		Assert::type(
+			\PDOStatement::class,
+			(new Storage\MonitoredDatabase(
+				new Storage\FakeDatabase(),
+				new Log\FakeLogs($location)
+			))->query($query)
+		);
+		Assert::contains($query, file_get_contents($location));
+	}
+
+	public function testMonitoringExecCommand() {
+		$location = Tester\FileMock::create('');
+		$query = 'UPDATE world SET me = "you"';
+		Assert::null(
+			(new Storage\MonitoredDatabase(
+				new Storage\FakeDatabase(),
+				new Log\FakeLogs($location)
+			))->exec($query)
+		);
+		Assert::contains($query, file_get_contents($location));
+	}
 }
 
 (new MonitoredDatabase())->run();

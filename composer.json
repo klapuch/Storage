@@ -3,32 +3,32 @@
   "type": "library",
   "description": "Easy way how to work with database storage",
   "keywords": [
-    "pdo",
-    "database",
-    "storage"
+	"pdo",
+	"database",
+	"storage"
   ],
   "homepage": "https://github.com/klapuch/Storage",
   "authors": [
-    {
-      "name": "Dominik Klapuch",
-      "homepage": "https://www.github.com/klapuch",
-      "role": "Developer"
-    }
+	{
+	  "name": "Dominik Klapuch",
+	  "homepage": "https://www.github.com/klapuch",
+	  "role": "Developer"
+	}
   ],
   "require": {
-    "php": ">=7.0",
-    "ext-pdo": "*",
-    "ext-mysqlnd": "*",
-    "ext-pdo_pgsql": "*",
-    "ext-pdo_mysql": "*",
-    "klapuch/log": "@dev"
+	"php": ">=7.0",
+	"ext-pdo": "*",
+	"ext-mysqlnd": "*",
+	"ext-pdo_pgsql": "*",
+	"ext-pdo_mysql": "*",
+	"klapuch/log": "@dev"
   },
   "require-dev": {
-    "nette/tester": "^1.7"
+	"nette/tester": "^1.7"
   },
   "autoload": {
-    "psr-4": {
-      "Klapuch\\Storage\\": "Core/"
-    }
+	"psr-4": {
+	  "Klapuch\\Storage\\": "Core/"
+	}
   }
 }
