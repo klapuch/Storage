@@ -2,15 +2,16 @@
   "name": "klapuch/storage",
   "type": "library",
   "description": "Easy way how to work with database storage",
+  "homepage": "https://github.com/klapuch/Storage",
   "keywords": [
 	"pdo",
 	"database",
 	"storage"
   ],
-  "homepage": "https://github.com/klapuch/Storage",
   "authors": [
 	{
 	  "name": "Dominik Klapuch",
+	  "email": "klapuchdominik@gmail.com",
 	  "homepage": "https://www.github.com/klapuch",
 	  "role": "Developer"
 	}
@@ -21,14 +22,16 @@
 	"ext-mysqlnd": "*",
 	"ext-pdo_pgsql": "*",
 	"ext-pdo_mysql": "*",
-	"klapuch/log": "@dev"
+	"klapuch/log": "^1.0.0"
   },
   "require-dev": {
 	"nette/tester": "^1.7"
   },
   "autoload": {
 	"psr-4": {
-	  "Klapuch\\Storage\\": "Core/"
+	  "Klapuch\\Storage\\": [
+		"Core/"
+	  ]
 	}
   }
 }
