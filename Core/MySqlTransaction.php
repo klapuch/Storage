@@ -2,7 +2,7 @@
 declare(strict_types = 1);
 namespace Klapuch\Storage;
 
-final class MySqlTransaction implements Transaction {
+final class MySqlTransaction extends Transaction {
 	protected function begin(): void {
 		$this->database->exec('START TRANSACTION');
 	}
