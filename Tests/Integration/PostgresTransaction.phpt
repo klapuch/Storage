@@ -120,6 +120,18 @@ final class PostgresTransaction extends TestCase\PostgresDatabase {
 			$this->database->fetchAll('SELECT * FROM test')
 		);
 	}
+
+	/**
+	 * @throws \Exception Forced exception
+	 */
+	public function testThrowinOnBeginTransactionWithoutRollback() {
+		$ex = new \Exception('Forced exception');
+		$database = $this->mock(Storage\Database::class);
+		$database->shouldReceive('exec')
+			->once()
+			->andThrowExceptions([$ex]);
+		(new Storage\PostgresTransaction($database))->start(function() { });
+	}
 }
 
 (new PostgresTransaction())->run();

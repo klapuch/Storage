@@ -10,8 +10,8 @@ final class MySqlTransaction implements Transaction {
 	}
 
 	public function start(\Closure $callback) {
+		$this->database->exec('START TRANSACTION');
 		try {
-			$this->database->exec('START TRANSACTION');
 			$result = $callback();
 			$this->database->exec('COMMIT');
 			return $result;

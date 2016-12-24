@@ -5,7 +5,7 @@ namespace Klapuch\Storage\TestCase;
 use Klapuch\Storage;
 use Tester;
 
-abstract class PostgresDatabase extends Tester\TestCase {
+abstract class PostgresDatabase extends Mockery {
 	/** @var Storage\Database */
 	protected $database;
 

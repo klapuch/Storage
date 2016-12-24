@@ -10,8 +10,8 @@ final class PostgresTransaction implements Transaction {
 	}
 
 	public function start(\Closure $callback) {
+		$this->database->exec('BEGIN TRANSACTION');
 		try {
-			$this->database->exec('BEGIN TRANSACTION');
 			$result = $callback();
 			$this->database->exec('COMMIT TRANSACTION');
 			return $result;

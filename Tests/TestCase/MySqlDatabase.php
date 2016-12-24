@@ -5,7 +5,7 @@ namespace Klapuch\Storage\TestCase;
 use Klapuch\Storage;
 use Tester;
 
-abstract class MySqlDatabase extends Tester\TestCase {
+abstract class MySqlDatabase extends Mockery {
 	/** @var Storage\Database */
 	protected $database;
 

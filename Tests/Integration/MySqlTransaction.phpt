@@ -2,7 +2,7 @@
 /**
  * @testCase
  * @phpVersion > 7.0.0
- * @skip Temporary because of travis
+ * @skip Because of travis
  */
 namespace Klapuch\Storage\Integration;
 
@@ -94,6 +94,18 @@ final class MySqlTransaction extends TestCase\MySqlDatabase {
 			[],
 			$this->database->fetchAll('SELECT * FROM test')
 		);
+	}
+
+	/**
+	 * @throws \Exception Forced exception
+	 */
+	public function testThrowinOnBeginTransactionWithoutRollback() {
+		$ex = new \Exception('Forced exception');
+		$database = $this->mock(Storage\Database::class);
+		$database->shouldReceive('exec')
+			->once()
+			->andThrowExceptions([$ex]);
+		(new Storage\MySqlTransaction($database))->start(function() { });
 	}
 }
 
