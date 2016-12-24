@@ -21,7 +21,7 @@ final class PostgresTransaction extends TestCase\PostgresDatabase {
 		$this->database->query('TRUNCATE test');
 	}
 
-	public function testSuccessfulTransactionWithReturnedValue() {
+	public function testTransactionWithReturnedValue() {
 		$lastName = $this->transaction->start(
 			function() {
 				$this->database->query(
@@ -44,7 +44,7 @@ final class PostgresTransaction extends TestCase\PostgresDatabase {
 		);
 	}
 
-	public function testForcedPdoExceptionWithRollback() {
+	public function testPdoExceptionWithRollback() {
 		$exception = Assert::exception(
 			function() {
 				$this->transaction->start(
@@ -71,7 +71,7 @@ final class PostgresTransaction extends TestCase\PostgresDatabase {
 		);
 	}
 
-	public function testForcedGeneralExceptionWithRollback() {
+	public function testGeneralExceptionWithRollback() {
 		Assert::exception(
 			function() {
 				$this->transaction->start(

@@ -22,7 +22,7 @@ final class MySqlTransaction extends TestCase\MySqlDatabase {
 		$this->database->query('TRUNCATE test');
 	}
 
-	public function testSuccessfulTransactionWithReturnedValue() {
+	public function testTransactionWithReturnedValue() {
 		$lastId = $this->transaction->start(
 			function() {
 				$this->database->query(
@@ -45,7 +45,7 @@ final class MySqlTransaction extends TestCase\MySqlDatabase {
 		);
 	}
 
-	public function testForcedPdoExceptionWithRollback() {
+	public function testPdoExceptionWithRollback() {
 		$exception = Assert::exception(
 			function() {
 				$this->transaction->start(
@@ -72,7 +72,7 @@ final class MySqlTransaction extends TestCase\MySqlDatabase {
 		);
 	}
 
-	public function testForcedGeneralExceptionWithRollback() {
+	public function testGeneralExceptionWithRollback() {
 		Assert::exception(
 			function() {
 				$this->transaction->start(

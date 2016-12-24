@@ -20,25 +20,11 @@ final class PDODatabase extends TestCase\PostgresDatabase {
 	/**
 	 * @throws \RuntimeException Connection to database was not successful
 	 */
-	public function testWrongCredentials() {
+	public function testThrowingOnWrongCredentials() {
 		new Storage\PDODatabase(
 			'???????',
 			'!!!!!!!',
 			',,,,,,,'
-		);
-	}
-
-	public function testFetchingWithDisabledEmulatePrepares() {
-		$this->database->query(
-			'INSERT INTO test (id, name) VALUES (?, ?)',
-			[5, 'foo']
-		);
-		Assert::equal(
-			['id' => 5, 'name' => 'foo'],
-			$this->database->fetch(
-				'SELECT id, name FROM test WHERE id = ? LIMIT ? OFFSET ?',
-				[5, 10, 0]
-			)
 		);
 	}
 
@@ -64,7 +50,33 @@ final class PDODatabase extends TestCase\PostgresDatabase {
 		Assert::same(2, count($rows));
 		Assert::same(5, $rows['id']);
 		Assert::same('foo', $rows['name']);
-    }
+	}
+
+	public function testFormatOfFetchingColumn() {
+		$this->database->query(
+			'INSERT INTO test (id, name) VALUES (?, ?)',
+			[5, 'foo']
+		);
+		$name = $this->database->fetchColumn(
+			'SELECT name FROM test WHERE id = ?',
+			[5]
+		);
+		Assert::same('foo', $name);
+	}
+
+	public function testFetchingWithDisabledEmulatePrepares() {
+		$this->database->query(
+			'INSERT INTO test (id, name) VALUES (?, ?)',
+			[5, 'foo']
+		);
+		Assert::equal(
+			['id' => 5, 'name' => 'foo'],
+			$this->database->fetch(
+				'SELECT id, name FROM test WHERE id = ? LIMIT ? OFFSET ?',
+				[5, 10, 0]
+			)
+		);
+	}
 
     public function testFetchingUnknownValue() {
         Assert::same(
@@ -94,37 +106,24 @@ final class PDODatabase extends TestCase\PostgresDatabase {
 	/**
 	 * @throws \PDOException Parameters must be either named or placeholders
 	 */
-	public function testCombinationNamedAndPlaceholders() {
+	public function testThrowingOnCombinationNamedAndPlaceholderParameters() {
 		$this->database->query(
 			'INSERT INTO test (id, name) VALUES (:id, :fooName)',
 			[':id' => 5, 1 => 'foo']
 		);
 	}
 
-	public function testFormatOfFetchingColumn() {
-		$this->database->query(
-			'INSERT INTO test (id, name) VALUES (?, ?)',
-			[5, 'foo']
-		);
-		$name = $this->database->fetchColumn(
-			'SELECT name FROM test WHERE id = ?',
-			[5]
-		);
-		Assert::same('foo', $name);
-	}
-
 	/**
 	 * @throws \PDOException Parameters must be either named or placeholders
 	 */
-	public function testQueryWithStringAssociativeKeys() {
+	public function testThrowingOnQueryWithoutColonParameters() {
 		$this->database->query(
 			'INSERT INTO test (id, name) VALUES (?, ?)',
 			['ONE' => 5, 'two' => 'foo']
 		);
-		Assert::true(true);
 	}
 
-	public function testRaisingIntegrityConstraintOnUnique() {
+	public function testRaisingIntegrityConstraintOnUniqueKey() {
 		$ex = Assert::exception(function() {
 			$this->database->query(
 				'INSERT INTO test (id, name, type) VALUES
@@ -142,7 +141,7 @@ final class PDODatabase extends TestCase\PostgresDatabase {
 	public function testRethrowingExceptionOnRegularError() {
 		$this->database->query(
 			'INSERT INTO test (id, name, type) VALUES
-			(?, ?, ?)',
+			(?, ?, ?, ?, ?, ?)',
 			[1, 'A', 22]
 		);
 	}
