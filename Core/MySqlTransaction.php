@@ -3,28 +3,15 @@ declare(strict_types = 1);
 namespace Klapuch\Storage;
 
 final class MySqlTransaction implements Transaction {
-	private $database;
-
-	public function __construct(Database $database) {
-		$this->database = $database;
+	protected function begin(): void {
+		$this->database->exec('START TRANSACTION');
 	}
 
-	public function start(\Closure $callback) {
-		$this->database->exec('START TRANSACTION');
-		try {
-			$result = $callback();
-			$this->database->exec('COMMIT');
-			return $result;
-		} catch(\Throwable $ex) {
-			$this->database->exec('ROLLBACK');
-			if($ex instanceof \PDOException) {
-				throw new \RuntimeException(
-					'Error on the database side. Rolled back.',
-					(int)$ex->getCode(),
-					$ex
-				);
-			}
-			throw $ex;
-		}
+	protected function commit(): void {
+		$this->database->exec('COMMIT');
+	}
+
+	protected function rollback(): void {
+		$this->database->exec('ROLLBACK');
 	}
 }
