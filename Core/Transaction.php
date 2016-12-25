@@ -2,54 +2,31 @@
 declare(strict_types = 1);
 namespace Klapuch\Storage;
 
-abstract class Transaction {
-	protected $database;
+/**
+ * Transaction for PDO
+ */
+final class Transaction {
+	private $database;
 
-	final public function __construct(Database $database) {
+	public function __construct(\PDO $database) {
 		$this->database = $database;
 	}
 
 	/**
-	 * Start the transaction with proper commit/rollback
-	 * And rethrowing an exception in case error occur
+	 * Start the transaction with proper begin-commit-rollback flow
 	 * @param \Closure $callback
 	 * @return mixed
 	 * @throws \Throwable
 	 */
 	final public function start(\Closure $callback) {
-		$this->begin();
+		$this->database->beginTransaction();
 		try {
 			$result = $callback();
-			$this->commit();
+			$this->database->commit();
 			return $result;
 		} catch(\Throwable $ex) {
-			$this->rollback();
-			if($ex instanceof \PDOException) {
-				throw new \RuntimeException(
-					'Error on the database side. Rolled back.',
-					(int)$ex->getCode(),
-					$ex
-				);
-			}
+			$this->database->rollback();
 			throw $ex;
 		}
 	}
-
-	/**
-	 * Begin the transaction
-	 * @return void
-	 */
-	abstract protected function begin(): void;
-
-	/**
-	 * Commit the transaction
-	 * @return void
-	 */
-	abstract protected function commit(): void;
-
-	/**
-	 * Rollback the transaction
-	 * @return void
-	 */
-	abstract protected function rollback(): void;
 }

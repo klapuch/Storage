@@ -6,22 +6,21 @@ use Klapuch\Storage;
 use Tester;
 
 abstract class PostgresDatabase extends Mockery {
-	/** @var Storage\Database */
 	protected $database;
 
 	protected function setUp() {
 		parent::setUp();
 		Tester\Environment::lock('postgres_database', __DIR__ . '/../temporary');
-		$this->database = $this->connection();
+		$credentials = parse_ini_file(__DIR__ . '/.database.ini', true);
+		$this->database = $this->connection($credentials);
+		$this->database->exec('TRUNCATE test');
 	}
 
-	private function connection(): Storage\Database {
-		$credentials = parse_ini_file(__DIR__ . '/.database.ini', true);
-		$this->database = new Storage\PDODatabase(
+	private function connection(array $credentials): \PDO {
+		return new Storage\SafePDO(
 			$credentials['POSTGRES']['dsn'],
 			$credentials['POSTGRES']['user'],
 			$credentials['POSTGRES']['password']
 		);
-		return $this->database;
 	}
 }
