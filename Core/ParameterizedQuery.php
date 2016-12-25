@@ -12,16 +12,16 @@ final class ParameterizedQuery implements Query {
 	private const PLACEHOLDER = '?',
 		NAME_PREFIX = ':';
 	private const UNIQUE_CONSTRAINT = 23505;
-	private $pdo;
+	private $database;
 	private $statement;
 	private $parameters;
 
 	public function __construct(
-		\PDO $pdo,
+		\PDO $database,
 		string $statement,
 		array $parameters = []
 	) {
-		$this->pdo = $pdo;
+		$this->database = $database;
 		$this->statement = $statement;
 		$this->parameters = $parameters;
 	}
@@ -40,7 +40,7 @@ final class ParameterizedQuery implements Query {
 
 	public function execute(): \PDOStatement {
 		try {
-			$statement = $this->pdo->prepare($this->statement);
+			$statement = $this->database->prepare($this->statement);
 			$statement->execute($this->parameters());
 			return $statement;
 		} catch(\PDOException $ex) {
