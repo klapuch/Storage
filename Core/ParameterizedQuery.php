@@ -143,6 +143,7 @@ final class ParameterizedQuery implements Query {
 
 	/**
 	 * All the names extracted from the statement
+	 * TODO: Use pure regular
 	 * @param string $statement
 	 * @return array
 	 */
@@ -150,9 +151,14 @@ final class ParameterizedQuery implements Query {
 		return preg_replace(
 			sprintf('~[^\w\d%s]~', self::NAME_PREFIX),
 			'',
-			preg_grep(
-				sprintf('~%s[\w\d]+~', self::NAME_PREFIX),
-				array_unique(explode(' ', $statement))
+			array_filter(
+				preg_grep(
+					sprintf('~%s[\w\d]+~', self::NAME_PREFIX),
+					array_unique(explode(' ', $statement))
+				),
+				function(string $keyword): bool {
+					return strpos($keyword, '::') === false;
+				}
 			)
 		);
 	}

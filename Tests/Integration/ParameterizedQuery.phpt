@@ -322,6 +322,16 @@ final class ParameterizedQuery extends TestCase\PostgresDatabase {
 			))->execute();
 		}, \PDOException::class);
 	}
+
+	public function testPostgreRecasting() {
+		$query = 'SELECT name::INT FROM test';
+		Assert::noError(function() use($query) {
+			(new Storage\ParameterizedQuery(
+				$this->database,
+				$query
+			))->execute();
+		});
+	}
 }
 
 
