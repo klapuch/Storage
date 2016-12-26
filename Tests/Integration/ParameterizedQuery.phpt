@@ -26,10 +26,10 @@ final class ParameterizedQuery extends TestCase\PostgresDatabase {
 	}
 
 	/**
-	 * @throws \UnexpectedValueException Parameters must be either named or bare placeholders
+	 * @throws \UnexpectedValueException Parameters can not be mixed
 	 */
 	public function testThrowingOnMismatch() {
-		$statement = 'SELECT * FROM test';
+		$statement = 'SELECT * FROM test WHERE name = :name AND type = :type';
 		$parameters = [':name' => 'Dom', 1 => 'A'];
 		(new Storage\ParameterizedQuery(
 			$this->database,
@@ -329,20 +329,6 @@ final class ParameterizedQuery extends TestCase\PostgresDatabase {
 			(new Storage\ParameterizedQuery(
 				$this->database,
 				$query
-			))->execute();
-		});
-	}
-
-	public function testZigZagStatementNamedParameters() {
-		$query = 'INSERT INTO test (id, name)
-			VALUES (:id, :name)
-			ON CONFLICT (id) DO UPDATE
-			SET name = :name';
-		Assert::noError(function() use($query) {
-			(new Storage\ParameterizedQuery(
-				$this->database,
-				$query,
-				['id' => 1, 'name' => 'Dom']
 			))->execute();
 		});
 	}
