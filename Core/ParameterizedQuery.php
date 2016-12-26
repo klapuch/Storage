@@ -55,12 +55,16 @@ final class ParameterizedQuery implements Query {
 		}
 	}
 
+	private function statement(): string {
+		return preg_replace('~\s+~', ' ', $this->statement);
+	}
+
 	private function parameters(): array {
 		if($this->mismatched($this->parameters)) {
 			throw new \UnexpectedValueException(
 				'Parameters must be either named or bare placeholders'
 			);
-		} elseif(!$this->used($this->statement, $this->adjustment($this->parameters))) {
+		} elseif(!$this->used($this->statement(), $this->adjustment($this->parameters))) {
 			throw new \UnexpectedValueException(
 				'Not all parameters are used'
 			);
@@ -148,17 +152,23 @@ final class ParameterizedQuery implements Query {
 	 * @return array
 	 */
 	private function names(string $statement): array {
-		return preg_replace(
-			sprintf('~[^\w\d%s]~', self::NAME_PREFIX),
-			'',
-			array_filter(
-				preg_grep(
-					sprintf('~%s[\w\d]+~', self::NAME_PREFIX),
-					array_unique(explode(' ', $statement))
-				),
-				function(string $keyword): bool {
-					return strpos($keyword, '::') === false;
-				}
+		return array_unique(
+			preg_replace(
+				sprintf('~[^\w\d%s]~', self::NAME_PREFIX),
+				'',
+				preg_replace(
+					'~\s.*$~',
+					'',
+					array_filter(
+						preg_grep(
+							sprintf('~%s[\w\d]+~', self::NAME_PREFIX),
+							array_unique(explode(' ', $statement))
+						),
+						function(string $keyword): bool {
+							return strpos($keyword, '::') === false;
+						}
+					)
+				)
 			)
 		);
 	}

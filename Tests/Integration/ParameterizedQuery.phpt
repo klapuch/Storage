@@ -332,6 +332,20 @@ final class ParameterizedQuery extends TestCase\PostgresDatabase {
 			))->execute();
 		});
 	}
+
+	public function testZigZagStatementNamedParameters() {
+		$query = 'INSERT INTO test (id, name)
+			VALUES (:id, :name)
+			ON CONFLICT (id) DO UPDATE
+			SET name = :name';
+		Assert::noError(function() use($query) {
+			(new Storage\ParameterizedQuery(
+				$this->database,
+				$query,
+				['id' => 1, 'name' => 'Dom']
+			))->execute();
+		});
+	}
 }
 
 
