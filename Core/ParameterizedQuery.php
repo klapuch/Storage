@@ -8,7 +8,7 @@ namespace Klapuch\Storage;
 final class ParameterizedQuery implements Query {
 	private const POSITIONAL_APPROACH = 'integer';
 	private const UNIQUE_CONSTRAINT = '23505';
-	private const INVALID_COUNTS = ['HY093', '08P01'];
+	private const INVALID_PARAMETER_COUNT = ['HY093', '08P01'];
 	private $database;
 	private $statement;
 	private $parameters;
@@ -96,7 +96,7 @@ final class ParameterizedQuery implements Query {
 				(int)$exception->getCode(),
 				$exception
 			);
-		} elseif(in_array($exception->getCode(), self::INVALID_COUNTS)) {
+		} elseif(in_array($exception->getCode(), self::INVALID_PARAMETER_COUNT, true)) {
 			throw new \UnexpectedValueException(
 				'Not all parameters are used',
 				(int)$exception->getCode(),
