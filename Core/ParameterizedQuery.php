@@ -41,7 +41,7 @@ final class ParameterizedQuery implements Query {
 			$statement->execute($this->parameters());
 			return $statement;
 		} catch(\PDOException $ex) {
-			$this->amend($ex);
+			throw $this->amend($ex);
 		}
 	}
 
@@ -87,22 +87,22 @@ final class ParameterizedQuery implements Query {
 	/**
 	 * Amend the given exception to the more comprehensibility format
 	 * @param \Throwable $exception
-	 * @return void
+	 * @return \Throwable
 	 */
-	private function amend(\Throwable $exception): void {
+	private function amend(\Throwable $exception): \Throwable {
 		if($exception->getCode() === self::UNIQUE_CONSTRAINT) {
-			throw new UniqueConstraint(
+			return new UniqueConstraint(
 				$exception->getMessage(),
 				(int)$exception->getCode(),
 				$exception
 			);
 		} elseif(in_array($exception->getCode(), self::INVALID_PARAMETER_COUNT, true)) {
-			throw new \UnexpectedValueException(
+			return new \UnexpectedValueException(
 				'Not all parameters are used',
 				(int)$exception->getCode(),
 				$exception
 			);
 		}
-		throw $exception;
+		return $exception;
 	}
 }
