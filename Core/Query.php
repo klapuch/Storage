@@ -4,6 +4,12 @@ namespace Klapuch\Storage;
 
 interface Query {
 	/**
+	 * Single field
+	 * @return mixed
+	 */
+	public function field();
+
+	/**
 	 * Single row
 	 * @return array
 	 */
@@ -14,12 +20,6 @@ interface Query {
 	 * @return array
 	 */
 	public function rows(): array;
-
-	/**
-	 * Single field
-	 * @return mixed
-	 */
-	public function field();
 
 	/**
 	 * Execute the query
