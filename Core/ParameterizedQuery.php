@@ -55,6 +55,7 @@ final class ParameterizedQuery implements Query {
 			throw new \UnexpectedValueException('Parameters can not be mixed');
 		return $this->adjustment($this->parameters);
 	}
+
 	/**
 	 * Are the parameters mixed?
 	 * @param array $parameters
