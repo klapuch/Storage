@@ -22,7 +22,6 @@
 	"klapuch/log": "^1.0.0"
   },
   "require-dev": {
-	"ext-pdo_pgsql": "*",
 	"nette/tester": "^1.7",
 	"mockery/mockery": "@dev"
   },
