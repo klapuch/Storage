@@ -28,7 +28,7 @@ install:
 
 before_script:
     - psql -c 'CREATE DATABASE pdo_test;' -U postgres
-    - psql -U postgres pdo_test < ./Tests/TestCase/postgres_schema.sql
+    - psql -U postgres pdo_test < ./Tests/TestCase/schema.sql
 
 after_script:
     - >

@@ -21,7 +21,7 @@ init:
 build_script:
     - echo password="Password12!" >> .\Tests\TestCase\.database.ini
     - createdb pdo_test
-    - psql pdo_test < .\Tests\TestCase\postgres_schema.sql
+    - psql pdo_test < .\Tests\TestCase\schema.sql
 
 install:
     - IF EXIST c:\php\71 (SET PHP=0) ELSE (SET PHP=1)
