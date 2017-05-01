@@ -5,9 +5,9 @@
  */
 namespace Klapuch\Storage\Integration;
 
-use Tester\Assert;
 use Klapuch\Storage;
 use Klapuch\Storage\TestCase;
+use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -23,12 +23,8 @@ final class Transaction extends TestCase\PostgresDatabase {
 	public function testTransactionWithReturnedValue() {
 		$result = $this->transaction->start(
 			function() {
-				$this->database->exec(
-					"INSERT INTO test (id, name) VALUES (1, 'foo')"
-				);
-				$this->database->exec(
-					"INSERT INTO test (id, name) VALUES (2, 'bar')"
-				);
+				$this->database->exec("INSERT INTO test (id, name) VALUES (1, 'foo')");
+				$this->database->exec("INSERT INTO test (id, name) VALUES (2, 'bar')");
 				$this->database->exec("DELETE FROM test WHERE id = 2");
 				return 666;
 			}
@@ -44,12 +40,8 @@ final class Transaction extends TestCase\PostgresDatabase {
 			function() {
 				$this->transaction->start(
 					function() {
-						$this->database->exec(
-							"INSERT INTO test (name) VALUES ('foo')"
-						);
-						$this->database->exec(
-							"INSERT INTO test (name) VALUES ('foo2')"
-						);
+						$this->database->exec("INSERT INTO test (name) VALUES ('foo')");
+						$this->database->exec("INSERT INTO test (name) VALUES ('foo2')");
 						throw new \DomainException('foo');
 					}
 				);
@@ -62,14 +54,32 @@ final class Transaction extends TestCase\PostgresDatabase {
 		Assert::equal([], $statement->fetchAll());
 	}
 
+	public function testPassingWithNestedTransaction() {
+		Assert::noError(
+			function() {
+				(new Storage\Transaction($this->database))->start(
+					function() {
+						$this->database->exec("INSERT INTO test (name) VALUES ('foo')");
+						(new Storage\Transaction($this->database))->start(
+							function() {
+								$this->database->exec("INSERT INTO test (name) VALUES ('foo2')");
+							}
+						);
+					}
+				);
+			}
+		);
+	}
+
 	/**
 	 * @throws \DomainException Forced exception
 	 */
-	public function testThrowinOnBeginTransactionWithoutRollback() {
+	public function testThrowingOnBeginTransactionWithoutRollback() {
 		$ex = new \DomainException('Forced exception');
 		$database = $this->mock(\PDO::class);
-		$database->shouldReceive('beginTransaction')
+		$database->shouldReceive('exec')
 			->once()
+			->with('START TRANSACTION')
 			->andThrowExceptions([$ex]);
 		(new Storage\Transaction($database))->start(function() { });
 	}

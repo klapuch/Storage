@@ -3,7 +3,7 @@ declare(strict_types = 1);
 namespace Klapuch\Storage;
 
 /**
- * Transaction for PDO
+ * Transaction for PDO (in this moment for postgres)
  */
 final class Transaction {
 	private $database;
@@ -19,13 +19,13 @@ final class Transaction {
 	 * @throws \Throwable
 	 */
 	final public function start(\Closure $callback) {
-		$this->database->beginTransaction();
+		$this->database->exec('START TRANSACTION');
 		try {
 			$result = $callback();
-			$this->database->commit();
+			$this->database->exec('COMMIT TRANSACTION');
 			return $result;
 		} catch(\Throwable $ex) {
-			$this->database->rollback();
+			$this->database->exec('ROLLBACK TRANSACTION');
 			throw $ex;
 		}
 	}
