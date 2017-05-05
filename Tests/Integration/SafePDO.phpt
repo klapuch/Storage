@@ -1,13 +1,13 @@
 <?php
+declare(strict_types = 1);
 /**
  * @testCase
  * @phpVersion > 7.1.0
  */
 namespace Klapuch\Storage\Integration;
 
-use Tester\Assert;
-use Klapuch\Storage;
 use Klapuch\Storage\TestCase;
+use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 

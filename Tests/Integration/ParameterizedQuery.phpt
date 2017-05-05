@@ -1,14 +1,14 @@
 <?php
+declare(strict_types = 1);
 /**
  * @testCase
  * @phpVersion > 7.1
  */
-namespace Klapuch\Storage\Unit;
+namespace Klapuch\Storage\Integration;
 
-use Tester;
-use Tester\Assert;
 use Klapuch\Storage;
 use Klapuch\Storage\TestCase;
+use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -197,8 +197,8 @@ final class ParameterizedQuery extends TestCase\PostgresDatabase {
 		$parameters = [':name' => 'Dom', ':type' => 'A'];
 		(new Storage\ParameterizedQuery(
 			$this->database,
-			 $statement,
-			 $parameters
+			$statement,
+			$parameters
 		))->rows();
 	}
 
@@ -255,7 +255,7 @@ final class ParameterizedQuery extends TestCase\PostgresDatabase {
 			$statement,
 			$parameters
 		);
-		Assert::noError(function() use($query) {
+		Assert::noError(function() use ($query) {
 			$query->execute();
 		});
 	}
@@ -294,7 +294,7 @@ final class ParameterizedQuery extends TestCase\PostgresDatabase {
 			$statement,
 			$parameters
 		);
-		Assert::noError(function() use($query) {
+		Assert::noError(function() use ($query) {
 			$query->row();
 		});
 	}
@@ -302,7 +302,7 @@ final class ParameterizedQuery extends TestCase\PostgresDatabase {
 	public function testThrowingToUniqueConstraint() {
 		$query = "INSERT INTO test (id, name, type) VALUES (1, 'Dom', 'A')";
 		$this->database->exec($query);
-		$ex = Assert::exception(function() use($query) {
+		$ex = Assert::exception(function() use ($query) {
 			(new Storage\ParameterizedQuery(
 				$this->database,
 				$query
@@ -315,7 +315,7 @@ final class ParameterizedQuery extends TestCase\PostgresDatabase {
 
 	public function testReThrowing() {
 		$query = "INSERT INTO test (id, name, type) VALUES (1, 'Dom', 'A')";
-		$ex = Assert::exception(function() use($query) {
+		$ex = Assert::exception(function() use ($query) {
 			(new Storage\ParameterizedQuery(
 				$this->database,
 				$query . 'FOOOOOOOOOOOOO'
@@ -325,7 +325,7 @@ final class ParameterizedQuery extends TestCase\PostgresDatabase {
 
 	public function testPostgreRecasting() {
 		$query = 'SELECT name::INT FROM test';
-		Assert::noError(function() use($query) {
+		Assert::noError(function() use ($query) {
 			(new Storage\ParameterizedQuery(
 				$this->database,
 				$query

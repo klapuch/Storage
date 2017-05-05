@@ -18,13 +18,13 @@ final class Transaction {
 	 * @return mixed
 	 * @throws \Throwable
 	 */
-	final public function start(\Closure $callback) {
+	public function start(\Closure $callback) {
 		$this->database->exec('START TRANSACTION');
 		try {
 			$result = $callback();
 			$this->database->exec('COMMIT TRANSACTION');
 			return $result;
-		} catch(\Throwable $ex) {
+		} catch (\Throwable $ex) {
 			$this->database->exec('ROLLBACK TRANSACTION');
 			throw $ex;
 		}

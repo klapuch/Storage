@@ -21,7 +21,7 @@ final class MonitoredPDO extends \PDO {
 		return $this->origin->prepare($statement, $options);
 	}
 
-	public function query(string $statement): \PDOStatement {
+	public function query($statement): \PDOStatement {
 		$this->monitor($statement);
 		return $this->origin->query($statement);
 	}

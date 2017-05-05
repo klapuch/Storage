@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 /**
  * @testCase
  * @phpVersion > 7.1.0
@@ -25,7 +26,7 @@ final class Transaction extends TestCase\PostgresDatabase {
 			function() {
 				$this->database->exec("INSERT INTO test (id, name) VALUES (1, 'foo')");
 				$this->database->exec("INSERT INTO test (id, name) VALUES (2, 'bar')");
-				$this->database->exec("DELETE FROM test WHERE id = 2");
+				$this->database->exec('DELETE FROM test WHERE id = 2');
 				return 666;
 			}
 		);
@@ -81,7 +82,8 @@ final class Transaction extends TestCase\PostgresDatabase {
 			->once()
 			->with('START TRANSACTION')
 			->andThrowExceptions([$ex]);
-		(new Storage\Transaction($database))->start(function() { });
+		(new Storage\Transaction($database))->start(function() {
+		});
 	}
 }
 

@@ -1,16 +1,16 @@
 <?php
+declare(strict_types = 1);
 /**
  * @testCase
  * @phpVersion > 7.1.0
  */
-namespace Klapuch\Storage\Unit;
+namespace Klapuch\Storage\Integration;
 
+use Klapuch\Log;
+use Klapuch\Storage;
+use Klapuch\Storage\TestCase;
 use Tester;
 use Tester\Assert;
-use Klapuch\Storage\TestCase;
-use Klapuch\{
-	Storage, Log
-};
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -52,7 +52,7 @@ final class MonitoredPDO extends TestCase\PostgresDatabase {
 				$this->database,
 				new Log\FakeLogs($location)
 			))->query($query);
-		} catch(\PDOException $ex) {
+		} catch (\PDOException $ex) {
 			Assert::contains($query, file_get_contents($location));
 			Assert::true(strlen(file_get_contents($location)) >= strlen($query));
 		}
@@ -66,7 +66,7 @@ final class MonitoredPDO extends TestCase\PostgresDatabase {
 				$this->database,
 				new Log\FakeLogs($location)
 			))->query($query);
-		} catch(\PDOException $ex) {
+		} catch (\PDOException $ex) {
 			Assert::contains($query, file_get_contents($location));
 		}
 	}
