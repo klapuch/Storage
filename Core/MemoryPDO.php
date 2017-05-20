@@ -16,11 +16,13 @@ final class MemoryPDO extends \PDO {
 
 	public function prepare($statement, $options = []): \PDOStatement {
 		if (preg_match('~^SELECT~', $statement)) {
-			return new class($this->memory) extends \PDOStatement {
+			return new class($this->memory, $statement) extends \PDOStatement {
 				private $memory;
+				private $statement;
 
-				public function __construct(array $memory) {
+				public function __construct(array $memory, string $statement) {
 					$this->memory = $memory;
+					$this->statement = $statement;
 				}
 
 				public function fetch(
@@ -42,14 +44,12 @@ final class MemoryPDO extends \PDO {
 				}
 
 				/**
-				 * @param int $column
+				 * @param int $columnNumber
 				 * @return mixed
 				 */
-				public function fetchColumn($column = 0) {
-					$row = $this->fetch();
-					if (isset($row[$column]))
-						return $row[$column];
-					return $column === 0 ? current($row) : false;
+				public function fetchColumn($columnNumber = 0) {
+					preg_match('~^SELECT\s+([\w\d_]+)~', $this->statement, $column);
+					return $columnNumber === 0 ? $this->fetch()[$column[1]] : false;
 				}
 			};
 		}

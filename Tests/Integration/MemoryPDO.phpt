@@ -32,23 +32,23 @@ final class MemoryPDO extends TestCase\PostgresDatabase {
 		Assert::same(['name' => 'Dominik', 'title' => 'Developer'], $statement->fetch());
 	}
 
-	public function testFetchingColumnFromArray() {
+	public function testFetchingColumnFromArrayBySingleFieldQuery() {
 		$statement = (new Storage\MemoryPDO(
 			$this->database,
 			['name' => 'Dominik', 'title' => 'Developer']
 		))->prepare('SELECT name FROM table');
-		Assert::same('Dominik', $statement->fetchColumn('name'));
+		Assert::same('Dominik', $statement->fetchColumn());
 	}
 
-	public function testFetchingColumnFromMultipleArray() {
+	public function testFetchingFirstColumnFromMultipleArray() {
 		$statement = (new Storage\MemoryPDO(
 			$this->database,
 			[
 				['name' => 'Dominik', 'title' => 'Developer'],
-				['name' => 'Jacob', 'title' => 'Developer'],
+				['name' => 'Jacob', 'title' => 'Programmer'],
 			]
-		))->prepare('SELECT name, title FROM table');
-		Assert::same('Dominik', $statement->fetchColumn('name'));
+		))->prepare('SELECT title, name FROM table');
+		Assert::same('Developer', $statement->fetchColumn());
 	}
 
 	public function testFetchingUnknownColumnFromArrayLeadingToFalse() {
@@ -56,13 +56,13 @@ final class MemoryPDO extends TestCase\PostgresDatabase {
 			$this->database,
 			['name' => 'Dominik', 'title' => 'Developer']
 		))->prepare('SELECT name, title FROM table');
-		Assert::false($statement->fetchColumn('foo'));
+		Assert::false($statement->fetchColumn(3));
 	}
 
-	public function testFetchingCurrentColumnFromArray() {
+	public function testFetchingFirstColumnFromArrayByQuery() {
 		$statement = (new Storage\MemoryPDO(
 			$this->database,
-			['name' => 'Dominik', 'title' => 'Developer']
+			['foo' => 'bar', 'name' => 'Dominik']
 		))->prepare('SELECT name, title FROM table');
 		Assert::same('Dominik', $statement->fetchColumn());
 	}
