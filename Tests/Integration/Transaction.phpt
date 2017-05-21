@@ -78,7 +78,7 @@ final class Transaction extends TestCase\PostgresDatabase {
 	public function testThrowingOnBeginTransactionWithoutRollback() {
 		$ex = new \DomainException('Forced exception');
 		$database = $this->mock(\PDO::class);
-		$database->shouldReceive('exec')
+		$database->shouldReceive('query')
 			->once()
 			->with('START TRANSACTION')
 			->andThrowExceptions([$ex]);

@@ -19,13 +19,13 @@ final class Transaction {
 	 * @throws \Throwable
 	 */
 	public function start(\Closure $callback) {
-		$this->database->exec('START TRANSACTION');
+		$this->database->query('START TRANSACTION')->execute();
 		try {
 			$result = $callback();
-			$this->database->exec('COMMIT TRANSACTION');
+			$this->database->query('COMMIT TRANSACTION')->execute();
 			return $result;
 		} catch (\Throwable $ex) {
-			$this->database->exec('ROLLBACK TRANSACTION');
+			$this->database->query('ROLLBACK TRANSACTION')->execute();
 			throw $ex;
 		}
 	}
