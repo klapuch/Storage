@@ -12,7 +12,7 @@ final class MonitoredPDO extends \PDO {
 	private $logs;
 
 	public function __construct(\PDO $origin, Log\Logs $logs) {
-	    $this->origin = $origin;
+		$this->origin = $origin;
 		$this->logs = $logs;
 	}
 
