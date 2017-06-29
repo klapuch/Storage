@@ -72,6 +72,28 @@ final class Transaction extends TestCase\PostgresDatabase {
 		);
 	}
 
+	public function testChangingIsolationLevelForSingleTransaction() {
+		(new Storage\Transaction($this->database, 'serializable'))->start(
+			function() {
+				Assert::same(
+					'serializable',
+					$this->database->query('SHOW TRANSACTION ISOLATION LEVEL')->fetchColumn()
+				);
+			}
+		);
+		Assert::same(
+			'read committed',
+			$this->database->query('SHOW TRANSACTION ISOLATION LEVEL')->fetchColumn()
+		);
+	}
+
+	public function testThrowingOnUnknownIsolationLevel() {
+		Assert::exception(function() {
+			(new Storage\Transaction($this->database, 'foo'))->start(function() {
+			});
+		}, \PDOException::class);
+	}
+
 	/**
 	 * @throws \DomainException Forced exception
 	 */
@@ -80,7 +102,6 @@ final class Transaction extends TestCase\PostgresDatabase {
 		$database = $this->mock(\PDO::class);
 		$database->shouldReceive('prepare')
 			->once()
-			->with('START TRANSACTION')
 			->andThrowExceptions([$ex]);
 		(new Storage\Transaction($database))->start(function() {
 		});
