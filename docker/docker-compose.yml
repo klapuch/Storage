@@ -1,0 +1,26 @@
+version: '3'
+services:
+    postgres:
+      image: postgres:alpine
+      container_name: storage-postgres
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+        - POSTGRES_DB=storage
+      ports:
+        - 5432:5432
+      volumes:
+          - ./..:/var/www/Storage
+    adminer:
+      image: adminer:standalone
+      container_name: storage-adminer
+      ports:
+        - 8080:8080
+    php-fpm:
+      build: ./php-fpm
+      working_dir: /var/www/Storage
+      volumes:
+          - ./..:/var/www/Storage
+          - ./php-fpm/php.ini:/usr/local/etc/php/php.ini
+      ports:
+        - 80:80

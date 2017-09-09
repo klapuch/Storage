@@ -56,7 +56,7 @@ final class ParameterizedQuery implements Query {
 	private function parameters(): array {
 		if ($this->mixed($this->parameters))
 			throw new \UnexpectedValueException('Parameters can not be mixed');
-		return $this->adjustment($this->parameters);
+		return array_map([$this, 'cast'], $this->adjustment($this->parameters));
 	}
 
 	/**
@@ -78,6 +78,19 @@ final class ParameterizedQuery implements Query {
 			return array_values($parameters);
 		return $parameters;
 	}
+
+	// @codingStandardsIgnoreStart
+	/**
+	 * Cast given value to database engine type
+	 * @param mixed $value
+	 * @return mixed
+	 */
+	private function cast($value) {
+		if (is_bool($value))
+			return $value ? 'true' : 'false';
+		return $value;
+	}
+	// @codingStandardsIgnoreEnd
 
 	/**
 	 * What approach is used for parameterized query?

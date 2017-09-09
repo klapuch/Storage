@@ -332,6 +332,34 @@ final class ParameterizedQuery extends TestCase\PostgresDatabase {
 			))->execute();
 		});
 	}
+
+	public function testInsertingBooleanAsBoolean() {
+		(new Storage\ParameterizedQuery(
+			$this->database,
+			'INSERT INTO test (name, type, flag) VALUES (:name, :type, :flag)',
+			['name' => 'Dom', 'type' => 'A', 'flag' => false]
+		))->execute();
+		Assert::false(
+			(new Storage\ParameterizedQuery(
+				$this->database,
+				'SELECT flag FROM test'
+			))->field()
+		);
+	}
+
+	public function testInsertingNullAsNull() {
+		(new Storage\ParameterizedQuery(
+			$this->database,
+			'INSERT INTO test (name, type, flag) VALUES (:name, :type, :flag)',
+			['name' => 'Dom', 'type' => 'A', 'flag' => null]
+		))->execute();
+		Assert::null(
+			(new Storage\ParameterizedQuery(
+				$this->database,
+				'SELECT flag FROM test'
+			))->field()
+		);
+	}
 }
 
 
