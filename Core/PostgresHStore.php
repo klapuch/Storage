@@ -2,7 +2,7 @@
 declare(strict_types = 1);
 namespace Klapuch\Storage;
 
-final class PostgresHStore {
+final class PostgresHStore implements Type {
 	private $database;
 	private $original;
 

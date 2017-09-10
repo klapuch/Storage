@@ -2,7 +2,7 @@
 declare(strict_types = 1);
 namespace Klapuch\Storage;
 
-final class PostgresArray {
+final class PostgresArray implements Type {
 	private $database;
 	private $original;
 	private $type;
