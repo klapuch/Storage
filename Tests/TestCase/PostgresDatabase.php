@@ -13,8 +13,8 @@ abstract class PostgresDatabase extends Mockery {
 
 	protected function setUp() {
 		parent::setUp();
-		Tester\Environment::lock('postgres_database', __DIR__ . '/../temporary');
-		$credentials = parse_ini_file(__DIR__ . '/.database.ini', true);
+		Tester\Environment::lock('postgres', __DIR__ . '/../Temporary');
+		$credentials = parse_ini_file(__DIR__ . '/../Configuration/.config.local.ini', true);
 		$this->database = $this->connection($credentials);
 		$this->database->exec('TRUNCATE test');
 	}

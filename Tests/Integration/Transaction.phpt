@@ -13,16 +13,8 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 final class Transaction extends TestCase\PostgresDatabase {
-	/** @var \Klapuch\Storage\Transaction */
-	private $transaction;
-
-	public function setUp() {
-		parent::setUp();
-		$this->transaction = new Storage\Transaction($this->database);
-	}
-
 	public function testTransactionWithReturnedValue() {
-		$result = $this->transaction->start(
+		$result = (new Storage\Transaction($this->database))->start(
 			function() {
 				$this->database->exec("INSERT INTO test (id, name) VALUES (1, 'foo')");
 				$this->database->exec("INSERT INTO test (id, name) VALUES (2, 'bar')");
@@ -39,7 +31,7 @@ final class Transaction extends TestCase\PostgresDatabase {
 	public function testForcedExceptionWithRollback() {
 		Assert::exception(
 			function() {
-				$this->transaction->start(
+				(new Storage\Transaction($this->database))->start(
 					function() {
 						$this->database->exec("INSERT INTO test (name) VALUES ('foo')");
 						$this->database->exec("INSERT INTO test (name) VALUES ('foo2')");

@@ -2,4 +2,4 @@ composer.lock
 vendor/*
 *.expected
 *.actual
-.idea
+.config.local.ini
