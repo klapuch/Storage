@@ -248,7 +248,7 @@ final class ParameterizedQuery extends TestCase\PostgresDatabase {
 	}
 
 	public function testNoSpacesAroundPlaceholderParameters() {
-		$statement = 'INSERT INTO test (name, type) VALUES (?, ?)';
+		$statement = 'INSERT INTO test (name, type) VALUES (?,?)';
 		$parameters = ['foo', 'B'];
 		$query = new Storage\ParameterizedQuery(
 			$this->database,
@@ -261,7 +261,7 @@ final class ParameterizedQuery extends TestCase\PostgresDatabase {
 	}
 
 	public function testNoSpacesAroundNamedParameters() {
-		$statement = 'INSERT INTO test (name, type) VALUES (:name, :type)';
+		$statement = 'INSERT INTO test (name, type) VALUES (:name,:type)';
 		$parameters = [':name' => 'foo', ':type' => 'A'];
 		$query = new Storage\ParameterizedQuery(
 			$this->database,
@@ -315,22 +315,12 @@ final class ParameterizedQuery extends TestCase\PostgresDatabase {
 
 	public function testReThrowing() {
 		$query = "INSERT INTO test (id, name, type) VALUES (1, 'Dom', 'A')";
-		$ex = Assert::exception(function() use ($query) {
+		Assert::exception(function() use ($query) {
 			(new Storage\ParameterizedQuery(
 				$this->database,
 				$query . 'FOOOOOOOOOOOOO'
 			))->execute();
 		}, \PDOException::class);
-	}
-
-	public function testPostgreRecasting() {
-		$query = 'SELECT name::INT FROM test';
-		Assert::noError(function() use ($query) {
-			(new Storage\ParameterizedQuery(
-				$this->database,
-				$query
-			))->execute();
-		});
 	}
 
 	public function testInsertingBooleanAsBoolean() {
