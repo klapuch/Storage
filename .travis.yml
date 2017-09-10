@@ -21,7 +21,7 @@ install:
 before_script:
   - mv Tests/Configuration/.config.travis.ini Tests/Configuration/.config.local.ini
   - psql -c 'CREATE DATABASE storage;' -U postgres
-  - psql -U postgres pdo_test < ./Tests/fixtures/schema.sql
+  - psql -U postgres storage < ./Tests/fixtures/schema.sql
 
 script:
   - ./vendor/bin/phing ci
