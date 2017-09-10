@@ -18,16 +18,16 @@ install:
   - composer install --no-interaction --prefer-dist --no-scripts --no-progress --no-suggest --optimize-autoloader --classmap-authoritative
 
 before_script:
-  - psql -c 'CREATE DATABASE pdo_test;' -U postgres
-  - psql -U postgres pdo_test < ./Tests/TestCase/schema.sql
+  - mv Tests/Configuration/.config.travis.ini Tests/Configuration/.config.local.ini
+  - psql -c 'CREATE DATABASE storage;' -U postgres
+  - psql -U postgres pdo_test < ./Tests/fixtures/schema.sql
 
 script:
   - ./vendor/bin/phing ci
 
 after_script:
-    - >
-        wget https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar
-        && php coveralls.phar --verbose --config Tests/.coveralls.yml;
+    - wget https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar
+    - php coveralls.phar --verbose --config Tests/.coveralls.yml;
 
 after_failure:
   - for i in $(find Tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done
