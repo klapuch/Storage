@@ -19,9 +19,9 @@ init:
     - SET PATH=%POSTGRES_PATH%\bin;%PATH%
 
 build_script:
-    - echo password="Password12!" >> .\Tests\TestCase\.database.ini
-    - createdb pdo_test
-    - psql pdo_test < .\Tests\TestCase\schema.sql
+    - copy Tests\Configuration\.config.appveyor.ini Tests\Configuration\.config.local.ini
+    - createdb storage
+    - psql storage < .\Tests\fixtures\schema.sql
 
 install:
     - IF EXIST c:\php\71 (SET PHP=0) ELSE (SET PHP=1)
