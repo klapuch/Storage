@@ -2,7 +2,7 @@
 declare(strict_types = 1);
 namespace Klapuch\Storage;
 
-final class PostgresArray implements Type {
+final class PgArrayToArray implements Conversion {
 	private $database;
 	private $original;
 	private $type;
@@ -16,7 +16,7 @@ final class PostgresArray implements Type {
 	/**
 	 * @return mixed
 	 */
-	public function cast() {
+	public function value() {
 		return json_decode(
 			(new ParameterizedQuery(
 				$this->database,

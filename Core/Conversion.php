@@ -2,10 +2,10 @@
 declare(strict_types = 1);
 namespace Klapuch\Storage;
 
-interface Type {
+interface Conversion {
 	/**
-	 * Cast type to the PHP one
+	 * Converted value
 	 * @return mixed
 	 */
-	public function cast();
+	public function value();
 }

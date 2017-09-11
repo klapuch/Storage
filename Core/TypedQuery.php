@@ -5,34 +5,34 @@ namespace Klapuch\Storage;
 final class TypedQuery implements Query {
 	private $database;
 	private $origin;
-	private $casts;
+	private $conversions;
 
-	public function __construct(\PDO $database, Query $origin, array $casts) {
+	public function __construct(\PDO $database, Query $origin, array $conversions) {
 		$this->database = $database;
 		$this->origin = $origin;
-		$this->casts = $casts;
+		$this->conversions = $conversions;
 	}
 
 	public function field(): void {
 	}
 
 	public function row(): array {
-		if ($this->unsupported($this->casts)) {
+		if ($this->unsupported($this->conversions)) {
 			throw new \UnexpectedValueException(
 				sprintf(
 					'Following types are not supported: "%s"',
-					implode(', ', $this->unsupported($this->casts))
+					implode(', ', $this->unsupported($this->conversions))
 				)
 			);
 		}
 		$rows = $this->origin->row();
 		array_walk(
-			$this->casts,
+			$this->conversions,
 			function(string $type, string $column) use (&$rows): void {
 				if (strcasecmp($type, 'hstore') === 0) {
-					$rows[$column] = (new PostgresHStore($this->database, $rows[$column]))->cast();
+					$rows[$column] = (new PgHStoreToArray($this->database, $rows[$column]))->value();
 				} elseif (preg_match('~^(\w+)\[\]$~', $type, $match)) {
-					$rows[$column] = (new PostgresArray($this->database, $rows[$column], $match[1]))->cast();
+					$rows[$column] = (new PgArrayToArray($this->database, $rows[$column], $match[1]))->value();
 				}
 			}
 		);

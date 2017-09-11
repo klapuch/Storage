@@ -12,13 +12,13 @@ use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
-final class PostgresArray extends TestCase\PostgresDatabase {
-	public function testCastingToArray() {
+final class PgArrayToArray extends TestCase\PostgresDatabase {
+	public function testConvertingToArray() {
 		Assert::same(
 			[1, 2, 3],
-			(new Storage\PostgresArray($this->database, '{1,2,3}', 'INTEGER'))->cast()
+			(new Storage\PgArrayToArray($this->database, '{1,2,3}', 'INTEGER'))->value()
 		);
 	}
 }
 
-(new PostgresArray())->run();
+(new PgArrayToArray())->run();

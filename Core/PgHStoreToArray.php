@@ -2,7 +2,7 @@
 declare(strict_types = 1);
 namespace Klapuch\Storage;
 
-final class PostgresHStore implements Type {
+final class PgHStoreToArray implements Conversion {
 	private $database;
 	private $original;
 
@@ -14,7 +14,7 @@ final class PostgresHStore implements Type {
 	/**
 	 * @return mixed
 	 */
-	public function cast() {
+	public function value() {
 		return array_reduce(
 			(new ParameterizedQuery(
 				$this->database,
