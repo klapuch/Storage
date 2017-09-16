@@ -57,10 +57,10 @@ final class FlatParameterizedQuery implements Query {
 		))->execute();
 	}
 
-	function flatten($array, $prefix = ''): array {
+	private function flatten($array, $prefix = ''): array {
 		return array_reduce(
 			array_keys($array),
-			function(array $flatten, $key) use ($array, $prefix) {
+			function(array $flatten, $key) use ($array, $prefix): array {
 				if (is_array($array[$key]))
 					$flatten += $this->flatten($array[$key], $prefix . $key . '_');
 				else $flatten[$prefix . $key] = $array[$key];
