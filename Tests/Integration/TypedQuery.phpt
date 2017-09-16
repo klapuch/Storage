@@ -13,7 +13,7 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 final class TypedQuery extends TestCase\PostgresDatabase {
-	public function testCastingToHStore() {
+	public function testCastingSimpleTypeForRow() {
 		Assert::same(
 			['list' => ['name' => 'Dom', 'race' => 'human']],
 			(new Storage\TypedQuery(
@@ -24,14 +24,17 @@ final class TypedQuery extends TestCase\PostgresDatabase {
 		);
 	}
 
-	public function testCastingFieldAsFirstValue() {
+	public function testCastingSimpleTypeForRows() {
 		Assert::same(
-			['name' => 'Dom', 'race' => 'human'],
+			[
+				['list' => ['name' => 'Dom', 'race' => 'human']],
+				['list' => ['name' => 'Dan', 'race' => 'master']],
+			],
 			(new Storage\TypedQuery(
 				$this->database,
-				new Storage\FakeQuery(['list' => 'name=>Dom,race=>human']),
+				new Storage\FakeQuery([['list' => 'name=>Dom,race=>human'], ['list' => 'name=>Dan,race=>master']]),
 				['list' => 'hstore']
-			))->field()
+			))->rows()
 		);
 	}
 
@@ -39,60 +42,11 @@ final class TypedQuery extends TestCase\PostgresDatabase {
 		(new Storage\ParameterizedQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
 		(new Storage\ParameterizedQuery($this->database, 'CREATE TYPE person AS (name TEXT, race TEXT)'))->execute();
 		Assert::same(
-			['list' => ['name' => 'Dom', 'race' => 'human']],
+			['list' => ['name' => 'Dom', 'race' => 'master']],
 			(new Storage\TypedQuery(
 				$this->database,
-				new Storage\FakeQuery([['list' => '(Dom,human)']]),
+				new Storage\FakeQuery([['list' => '(Dom,master)']]),
 				['list' => 'person']
-			))->row()
-		);
-	}
-
-	public function testCastingCaseInsensitiveCompoundType() {
-		(new Storage\ParameterizedQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
-		(new Storage\ParameterizedQuery($this->database, 'CREATE TYPE person AS (name TEXT, race TEXT)'))->execute();
-		Assert::same(
-			['list' => ['name' => 'Dom', 'race' => 'human']],
-			(new Storage\TypedQuery(
-				$this->database,
-				new Storage\FakeQuery([['list' => '(Dom,human)']]),
-				['list' => 'PERSON']
-			))->row()
-		);
-	}
-
-	public function testCastingArrayOfComposedTypes() {
-		(new Storage\ParameterizedQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
-		(new Storage\ParameterizedQuery($this->database, 'CREATE TYPE person AS (name TEXT, race TEXT)'))->execute();
-		Assert::same(
-			[
-				['list' => [
-					[
-						'name' => 'Dom',
-						'race' => 'human',
-					],
-					[
-						'name' => 'Dan',
-						'race' => 'master',
-					],
-				],
-				],
-			],
-			(new Storage\TypedQuery(
-				$this->database,
-				new Storage\FakeQuery([['list' => '{"(Dom,human)","(Dan,master)"}']]),
-				['list' => 'person[]']
-			))->rows()
-		);
-	}
-
-	public function testCastingToArray() {
-		Assert::same(
-			['list' => [1, 2, 3]],
-			(new Storage\TypedQuery(
-				$this->database,
-				new Storage\FakeQuery([['list' => '{1, 2, 3}']]),
-				['list' => 'integer[]']
 			))->row()
 		);
 	}
@@ -124,35 +78,46 @@ final class TypedQuery extends TestCase\PostgresDatabase {
 		});
 	}
 
-	public function testThrowingOnUnsupportedType() {
-		Assert::exception(function() {
+	public function testCastingFieldAsFirstValue() {
+		Assert::same(
+			['name' => 'Dom', 'race' => 'human'],
 			(new Storage\TypedQuery(
 				$this->database,
-				new Storage\FakeQuery([]),
-				['list' => 'foo', 'list2' => 'bar']
+				new Storage\FakeQuery(['list' => 'name=>Dom,race=>human']),
+				['list' => 'hstore']
+			))->field()
+		);
+	}
+
+	public function testIgnoringOnUnsupportedType() {
+		Assert::noError(function() {
+			(new Storage\TypedQuery(
+				$this->database,
+				new Storage\FakeQuery([['list' => '{1, 2, 3}']]),
+				['list' => 'foo']
 			))->row();
-		}, \UnexpectedValueException::class, 'Following types are not supported: "foo, bar"');
-		Assert::exception(function() {
+		});
+		Assert::noError(function() {
 			(new Storage\TypedQuery(
 				$this->database,
-				new Storage\FakeQuery([]),
-				['list' => 'foo', 'list2' => 'bar']
+				new Storage\FakeQuery([['list' => '{1, 2, 3}']]),
+				['list' => 'foo']
 			))->rows();
-		}, \UnexpectedValueException::class, 'Following types are not supported: "foo, bar"');
-		Assert::exception(function() {
+		});
+		Assert::noError(function() {
 			(new Storage\TypedQuery(
 				$this->database,
-				new Storage\FakeQuery([]),
-				['list' => 'foo', 'list2' => 'bar']
+				new Storage\FakeQuery([['list' => '{1, 2, 3}']]),
+				['list' => 'foo']
 			))->execute();
-		}, \UnexpectedValueException::class, 'Following types are not supported: "foo, bar"');
-		Assert::exception(function() {
+		});
+		Assert::noError(function() {
 			(new Storage\TypedQuery(
 				$this->database,
-				new Storage\FakeQuery([]),
-				['list' => 'foo', 'list2' => 'bar']
+				new Storage\FakeQuery(['list' => '{1, 2, 3}']),
+				['list' => 'foo']
 			))->field();
-		}, \UnexpectedValueException::class, 'Following types are not supported: "foo, bar"');
+		});
 	}
 }
 
