@@ -19,6 +19,10 @@ final class PgArrayToArray extends TestCase\PostgresDatabase {
 			(new Storage\PgArrayToArray($this->database, '{1,2,3}', 'INTEGER'))->value()
 		);
 	}
+
+	public function testAllowingNull() {
+		Assert::null((new Storage\PgArrayToArray($this->database, null, 'INTEGER'))->value());
+	}
 }
 
 (new PgArrayToArray())->run();

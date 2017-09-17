@@ -19,6 +19,10 @@ final class PgHStoreToArray extends TestCase\PostgresDatabase {
 			(new Storage\PgHStoreToArray($this->database, 'name=>Dom,race=>human'))->value()
 		);
 	}
+
+	public function testAllowingNull() {
+		Assert::null((new Storage\PgHStoreToArray($this->database, null))->value());
+	}
 }
 
 (new PgHStoreToArray())->run();

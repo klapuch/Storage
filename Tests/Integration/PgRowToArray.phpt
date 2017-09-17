@@ -62,6 +62,12 @@ final class PgRowToArray extends TestCase\PostgresDatabase {
 			(new Storage\PgRowToArray($this->database, '{"(Dom,human)","(Dan,master)"}', 'person[]'))->value()
 		);
 	}
+
+	public function testAllowingNull() {
+		(new Storage\ParameterizedQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
+		(new Storage\ParameterizedQuery($this->database, 'CREATE TYPE person AS (name TEXT, race TEXT)'))->execute();
+		Assert::null((new Storage\PgRowToArray($this->database, null, 'person'))->value());
+	}
 }
 
 (new PgRowToArray())->run();

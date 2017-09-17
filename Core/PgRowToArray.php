@@ -7,7 +7,7 @@ final class PgRowToArray implements Conversion {
 	private $original;
 	private $type;
 
-	public function __construct(\PDO $database, string $original, string $type) {
+	public function __construct(\PDO $database, ?string $original, string $type) {
 		$this->database = $database;
 		$this->original = $original;
 		$this->type = $type;
@@ -17,6 +17,8 @@ final class PgRowToArray implements Conversion {
 	 * @return mixed
 	 */
 	public function value() {
+		if ($this->original === null)
+			return $this->original;
 		try {
 			if (strpos($this->type, '[]') === false)
 				return $this->row();
