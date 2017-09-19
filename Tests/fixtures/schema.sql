@@ -26,6 +26,19 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
+--
+-- Name: hstore; Type: EXTENSION; Schema: -; Owner:
+--
+
+CREATE EXTENSION IF NOT EXISTS hstore WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION hstore; Type: COMMENT; Schema: -; Owner:
+--
+
+COMMENT ON EXTENSION hstore IS 'data type for storing sets of (key, value) pairs';
+
 
 SET search_path = public, pg_catalog;
 
