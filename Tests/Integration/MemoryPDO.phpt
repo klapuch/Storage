@@ -120,6 +120,15 @@ final class MemoryPDO extends TestCase\PostgresDatabase {
 		$statement->execute([]);
 		Assert::same('abc', $statement->fetchColumn());
 	}
+
+	public function testExecutingFunctionOnOriginal() {
+		$statement = (new Storage\MemoryPDO(
+			$this->database,
+			['foo' => 'bar', 'name' => 'Dominik']
+		))->prepare("SELECT hstore('a=>b')");
+		$statement->execute([]);
+		Assert::same('"a"=>"b"', $statement->fetchColumn());
+	}
 }
 
 (new MemoryPDO())->run();
