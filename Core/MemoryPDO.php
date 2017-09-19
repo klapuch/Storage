@@ -15,7 +15,7 @@ final class MemoryPDO extends \PDO {
 	}
 
 	public function prepare($statement, $options = []): \PDOStatement {
-		if (preg_match('~^SELECT~', $statement)) {
+		if (preg_match('~^SELECT\s+[a-z_*]~i', $statement)) {
 			return new class($this->memory, $statement) extends \PDOStatement {
 				private $memory;
 				private $statement;

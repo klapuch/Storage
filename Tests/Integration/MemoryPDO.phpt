@@ -21,6 +21,14 @@ final class MemoryPDO extends TestCase\PostgresDatabase {
 		Assert::same(['name' => 'Dominik', 'title' => 'Developer'], $statement->fetch());
 	}
 
+	public function testCaseInseitiveQuery() {
+		$statement = (new Storage\MemoryPDO(
+			$this->database,
+			['name' => 'Dominik', 'title' => 'Developer']
+		))->prepare('select name, title from table');
+		Assert::same(['name' => 'Dominik', 'title' => 'Developer'], $statement->fetch());
+	}
+
 	public function testFetchingRowFromMultipleArray() {
 		$statement = (new Storage\MemoryPDO(
 			$this->database,
@@ -74,7 +82,7 @@ final class MemoryPDO extends TestCase\PostgresDatabase {
 				['name' => 'Dominik', 'title' => 'Developer'],
 				['name' => 'Jacob', 'title' => 'Developer'],
 			]
-		))->prepare('SELECT');
+		))->prepare('SELECT * FROM xx');
 		Assert::same(
 			[
 				['name' => 'Dominik', 'title' => 'Developer'],
@@ -93,6 +101,24 @@ final class MemoryPDO extends TestCase\PostgresDatabase {
 		$p = $this->database->prepare('SELECT name FROM test');
 		$p->execute();
 		Assert::same('foo', $p->fetchColumn());
+	}
+
+	public function testFetchingColumnAsNumericLiteralUsingOriginal() {
+		$statement = (new Storage\MemoryPDO(
+			$this->database,
+			['foo' => 'bar', 'name' => 'Dominik']
+		))->prepare('SELECT 1');
+		$statement->execute([]);
+		Assert::same(1, $statement->fetchColumn());
+	}
+
+	public function testFetchingColumnAsStringLiteralUsingOriginal() {
+		$statement = (new Storage\MemoryPDO(
+			$this->database,
+			['foo' => 'bar', 'name' => 'Dominik']
+		))->prepare("SELECT 'abc'");
+		$statement->execute([]);
+		Assert::same('abc', $statement->fetchColumn());
 	}
 }
 
