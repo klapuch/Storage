@@ -8,14 +8,16 @@ namespace Klapuch\Storage;
 final class MemoryPDO extends \PDO {
 	private $memory;
 	private $origin;
+	private $tables;
 
-	public function __construct(\PDO $origin, array $memory) {
+	public function __construct(\PDO $origin, array $memory, array $tables) {
 		$this->origin = $origin;
 		$this->memory = $memory;
+		$this->tables = $tables;
 	}
 
 	public function prepare($statement, $options = []): \PDOStatement {
-		if ($this->identifier($statement) && !$this->function($statement)) {
+		if ($this->identifier($statement) && !$this->function($statement) && !$this->direct($statement, $this->tables)) {
 			return new class($this->memory, $statement) extends \PDOStatement {
 				private $memory;
 				private $statement;
@@ -62,5 +64,19 @@ final class MemoryPDO extends \PDO {
 
 	private function function(string $statement): bool {
 		return (bool) preg_match('~^SELECT\s+[\w\d_]+\(~i', $statement);
+	}
+
+	/**
+	 * Will be the statement called directly?
+	 * @param string $statement
+	 * @param string[] $tables
+	 * @return bool
+	 */
+	private function direct(string $statement, array $tables): bool {
+		preg_match_all(sprintf('~FROM\s+([\w\d_]+)~i'), $statement, $from);
+		preg_match_all(sprintf('~JOIN\s+([\w\d_]+)~i'), $statement, $join);
+		array_shift($from);
+		array_shift($join);
+		return (bool) array_udiff($tables, array_merge(current($from), current($join)), 'strcasecmp');
 	}
 }
