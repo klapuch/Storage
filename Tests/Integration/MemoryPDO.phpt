@@ -151,7 +151,7 @@ final class MemoryPDO extends TestCase\PostgresDatabase {
 		Assert::same(['foo' => 'bar', 'name' => 'Dominik'], $statement->fetchAll());
 	}
 
-	public function testMatchingWithAllFromTables() {
+	public function testMatchingWithAllFromAndJoinTables() {
 		$statement = (new Storage\MemoryPDO(
 			$this->database,
 			['foo' => 'bar', 'name' => 'Dominik'],
@@ -165,7 +165,7 @@ final class MemoryPDO extends TestCase\PostgresDatabase {
 			$this->database,
 			['foo' => 'bar', 'name' => 'Dominik'],
 			['test2', 'test', 'test3']
-		))->prepare('SELECT title FROM test INNER JOIN test2 USING(id) LEFT JOIN test3 USING(ip)');
+		))->prepare('SELECT title FROM test INNER JOIN test2 USING(id) LEFT join test3 USING(ip)');
 		Assert::same(['foo' => 'bar', 'name' => 'Dominik'], $statement->fetchAll());
 	}
 
@@ -183,7 +183,7 @@ final class MemoryPDO extends TestCase\PostgresDatabase {
 			$this->database,
 			['foo' => 'bar', 'name' => 'Dominik'],
 			['test']
-		))->prepare('SELECT title FROM TEST');
+		))->prepare('SELECT title from TEST');
 		Assert::same(['foo' => 'bar', 'name' => 'Dominik'], $statement->fetchAll());
 		$statement = (new Storage\MemoryPDO(
 			$this->database,
