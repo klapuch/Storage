@@ -12,6 +12,12 @@
 		<exclude name="Squiz.WhiteSpace.MemberVarSpacing.Incorrect"/>
 		<exclude name="Squiz.Commenting.FunctionComment.MissingParamTag"/>
 		<exclude name="Squiz.Functions.GlobalFunction.Found"/>
+		<exclude name="PSR2.Methods.FunctionCallSignature.SpaceBeforeOpenBracket"/>
+		<exclude name="PSR2.Methods.FunctionCallSignature.ContentAfterOpenBracket"/>
+		<exclude name="Squiz.WhiteSpace.MemberVarSpacing.FirstIncorrect"/>
+		<exclude name="Consistence.Exceptions.ExceptionDeclaration.NotEndingWithException"/>
+		<exclude name="PSR2.Methods.FunctionCallSignature.CloseBracketLine"/>
+		<exclude name="Consistence.Exceptions.ExceptionDeclaration.IncorrectExceptionDirectory"/>
 	</rule>
 
 	<rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
@@ -30,6 +36,9 @@
 		<exclude name="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName"/>
 		<exclude name="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.PartialUse"/>
 		<exclude name="SlevomatCodingStandard.Types.EmptyLinesAroundTypeBraces"/>
+		<exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalFunctions.NonFullyQualified"/>
+		<exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalConstants.NonFullyQualified"/>
+		<exclude name="SlevomatCodingStandard.ControlStructures.RequireYodaComparison.RequiredYodaComparison"/>
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
