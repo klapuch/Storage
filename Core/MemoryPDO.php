@@ -73,8 +73,8 @@ final class MemoryPDO extends \PDO {
 	 * @return bool
 	 */
 	private function direct(string $statement, array $tables): bool {
-		preg_match_all(sprintf('~FROM\s+([\w\d_]+)~i'), $statement, $from);
-		preg_match_all(sprintf('~JOIN\s+([\w\d_]+)~i'), $statement, $join);
+		preg_match_all('~FROM\s+([\w\d_]+)~i', $statement, $from);
+		preg_match_all('~JOIN\s+([\w\d_]+)~i', $statement, $join);
 		array_shift($from);
 		array_shift($join);
 		return (bool) array_udiff($tables, array_merge(current($from), current($join)), 'strcasecmp');
