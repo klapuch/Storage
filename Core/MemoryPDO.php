@@ -17,7 +17,7 @@ final class MemoryPDO extends \PDO {
 	}
 
 	public function prepare($statement, $options = []): \PDOStatement {
-		if ($this->identifier($statement) && !$this->function($statement) && !$this->direct($statement, $this->tables)) {
+		if ($this->direct($statement)) {
 			return new class($this->memory, $statement) extends \PDOStatement {
 				private $memory;
 				private $statement;
@@ -67,16 +67,27 @@ final class MemoryPDO extends \PDO {
 	}
 
 	/**
-	 * Will be the statement called directly?
+	 * Does the statement contains listed tables?
 	 * @param string $statement
 	 * @param string[] $tables
 	 * @return bool
 	 */
-	private function direct(string $statement, array $tables): bool {
+	private function contains(string $statement, array $tables): bool {
 		preg_match_all('~FROM\s+([\w\d_]+)~i', $statement, $from);
 		preg_match_all('~JOIN\s+([\w\d_]+)~i', $statement, $join);
 		array_shift($from);
 		array_shift($join);
 		return (bool) array_udiff($tables, array_merge(current($from), current($join)), 'strcasecmp');
+	}
+
+	/**
+	 * Will be the statement called directly?
+	 * @param string $statement
+	 * @return bool
+	 */
+	private function direct(string $statement): bool {
+		return $this->identifier($statement)
+			&& !$this->function($statement)
+			&& !$this->contains($statement, $this->tables);
 	}
 }
