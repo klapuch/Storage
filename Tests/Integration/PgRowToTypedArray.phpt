@@ -38,6 +38,19 @@ final class PgRowToTypedArray extends TestCase\PostgresDatabase {
 			))->value()
 		);
 	}
+
+	public function testPassingWithCaseInsensitiveType() {
+		(new Storage\ParameterizedQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
+		(new Storage\ParameterizedQuery($this->database, 'CREATE TYPE person AS (name TEXT, age INTEGER, cool BOOLEAN)'))->execute();
+		Assert::same(
+			['name' => 'Dom', 'age' => 21, 'cool' => true],
+			(new Storage\PgRowToTypedArray(
+				new Storage\FakeConversion(['name' => 'Dom', 'age' => '21', 'cool' => 't']),
+				'PERSON',
+				$this->database
+			))->value()
+		);
+	}
 }
 
 (new PgRowToTypedArray())->run();

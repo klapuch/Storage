@@ -37,13 +37,6 @@ final class PgStringToScalar extends \Tester\TestCase {
 		Assert::null((new Storage\PgStringToScalar(null, 'boolean'))->value());
 		Assert::null((new Storage\PgStringToScalar(null, 'text'))->value());
 	}
-
-	public function testAutomaticCasting() {
-		Assert::true((new Storage\PgStringToScalar('t'))->value());
-		Assert::false((new Storage\PgStringToScalar('f'))->value());
-		Assert::same(10, (new Storage\PgStringToScalar('10'))->value());
-		Assert::same('1bla', (new Storage\PgStringToScalar('1bla'))->value());
-	}
 }
 
 (new PgStringToScalar())->run();

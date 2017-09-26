@@ -120,15 +120,15 @@ final class TypedQuery extends TestCase\PostgresDatabase {
 		});
 	}
 
-	public function testCastingCompoundTypeByCustomTypes() {
+	public function testCastingCompoundTypeToPhpType() {
 		(new Storage\ParameterizedQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
 		(new Storage\ParameterizedQuery($this->database, 'CREATE TYPE person AS (name TEXT, age INTEGER, cool BOOLEAN)'))->execute();
 		Assert::equal(
-			['list' => ['name' => 'Dom', 'age' => '21', 'cool' => true]],
+			['list' => ['name' => 'Dom', 'age' => 21, 'cool' => true]],
 			(new Storage\TypedQuery(
 				$this->database,
 				new Storage\FakeQuery([['list' => '(Dom,21,t)']]),
-				['list' => ['person' => ['age' => 'string']]]
+				['list' => 'person']
 			))->row()
 		);
 	}

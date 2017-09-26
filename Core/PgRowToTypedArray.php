@@ -38,7 +38,7 @@ final class PgRowToTypedArray implements Conversion {
 				$this->database,
 				'SELECT attribute_name, data_type
 				FROM information_schema.attributes
-				WHERE udt_name = ?
+				WHERE udt_name = lower(?)
 				ORDER BY ordinal_position',
 				[$compound]
 			))->rows(),

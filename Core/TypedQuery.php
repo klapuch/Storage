@@ -20,9 +20,7 @@ final class TypedQuery implements Query {
 		return (new PgConversions(
 			$this->database,
 			$this->origin->field(),
-			is_array(current($this->conversions))
-				? current($this->conversions)
-				: [current($this->conversions)]
+			current($this->conversions)
 		))->value();
 	}
 
@@ -58,7 +56,7 @@ final class TypedQuery implements Query {
 				$rows[$column] = (new PgConversions(
 					$this->database,
 					$rows[$column],
-					is_array($type) ? $type : [$type]
+					$type
 				))->value();
 			}
 		);
