@@ -51,6 +51,19 @@ final class PgRowToTypedArray extends TestCase\PostgresDatabase {
 			))->value()
 		);
 	}
+
+	public function testPassingWithNull() {
+		(new Storage\ParameterizedQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
+		(new Storage\ParameterizedQuery($this->database, 'CREATE TYPE person AS (name TEXT)'))->execute();
+		Assert::same(
+			['name' => null],
+			(new Storage\PgRowToTypedArray(
+				new Storage\FakeConversion(['name' => null]),
+				'person',
+				$this->database
+			))->value()
+		);
+	}
 }
 
 (new PgRowToTypedArray())->run();
