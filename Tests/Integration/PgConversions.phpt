@@ -89,6 +89,20 @@ final class PgConversions extends TestCase\PostgresDatabase {
 			(new Storage\PgConversions($this->database, '(Dom,21,t)', 'person'))->value()
 		);
 	}
+
+	public function testCastingToInt4Range() {
+		Assert::same(
+			[10, 20, '[', ')'],
+			(new Storage\PgConversions($this->database, '[10,20)', 'int4range'))->value()
+		);
+	}
+
+	public function testCastingInt4RangeAsCaseInsensitive() {
+		Assert::same(
+			[10, 20, '[', ')'],
+			(new Storage\PgConversions($this->database, '[10,20)', 'int4RANGE'))->value()
+		);
+	}
 }
 
 (new PgConversions())->run();

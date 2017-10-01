@@ -19,6 +19,8 @@ final class PgConversions implements Conversion {
 	public function value() {
 		if (strcasecmp($this->type, 'HSTORE') === 0)
 			return (new PgHStoreToArray($this->database, $this->original))->value();
+		elseif (strcasecmp($this->type, 'int4range') === 0)
+			return (new PgIntRangeToArray($this->database, $this->original))->value();
 		elseif (preg_match('~^(\w+)\[\]$~', $this->type, $match))
 			return (new PgArrayToArray($this->database, $this->original, $match[1]))->value();
 		elseif ($this->compound($this->type)) {
