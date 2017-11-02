@@ -50,16 +50,18 @@ final class TypedQuery implements Query {
 	 * @return array
 	 */
 	private function conversions(array $rows, array $conversions): array {
-		array_walk(
-			$conversions,
-			function($type, string $column) use (&$rows): void {
-				$rows[$column] = (new PgConversions(
-					$this->database,
-					$rows[$column],
-					$type
-				))->value();
-			}
-		);
+		if ($rows === array_filter($rows, 'is_scalar')) {
+			array_walk(
+				$conversions,
+				function($type, string $column) use (&$rows): void {
+					$rows[$column] = (new PgConversions(
+						$this->database,
+						$rows[$column],
+						$type
+					))->value();
+				}
+			);
+		}
 		return $rows;
 	}
 }

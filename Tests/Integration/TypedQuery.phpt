@@ -132,6 +132,17 @@ final class TypedQuery extends TestCase\PostgresDatabase {
 			))->row()
 		);
 	}
+
+	public function testAcceptingOnlyScalars() {
+		Assert::same(
+			['list' => 'name=>Dom,race=>human', 'bla' => []],
+			(new Storage\TypedQuery(
+				$this->database,
+				new Storage\FakeQuery([['list' => 'name=>Dom,race=>human', 'bla' => []]]),
+				['list' => 'hstore']
+			))->row()
+		);
+	}
 }
 
 

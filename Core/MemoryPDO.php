@@ -8,12 +8,10 @@ namespace Klapuch\Storage;
 final class MemoryPDO extends \PDO {
 	private $memory;
 	private $origin;
-	private $tables;
 
-	public function __construct(\PDO $origin, array $memory, array $tables) {
+	public function __construct(\PDO $origin, array $memory) {
 		$this->origin = $origin;
 		$this->memory = $memory;
-		$this->tables = $tables;
 	}
 
 	public function prepare($statement, $options = []): \PDOStatement {
@@ -32,9 +30,7 @@ final class MemoryPDO extends \PDO {
 					$cursorOrientation = \PDO::FETCH_ORI_NEXT,
 					$cursorOffset = 0
 				): array {
-					if (count($this->memory) === count($this->memory, COUNT_RECURSIVE))
-						return $this->memory;
-					return current($this->memory);
+					return $this->memory;
 				}
 
 				public function fetchAll(
@@ -51,7 +47,7 @@ final class MemoryPDO extends \PDO {
 				 */
 				public function fetchColumn($columnNumber = 0) {
 					preg_match('~^SELECT\s+([\w\d_]+)~', $this->statement, $column);
-					return $columnNumber === 0 ? $this->fetch()[$column[1]] : false;
+					return $columnNumber === 0 ? $this->memory[$column[1]] : false;
 				}
 			};
 		}
@@ -67,27 +63,12 @@ final class MemoryPDO extends \PDO {
 	}
 
 	/**
-	 * Does the statement contains listed tables?
-	 * @param string $statement
-	 * @param string[] $tables
-	 * @return bool
-	 */
-	private function contains(string $statement, array $tables): bool {
-		preg_match_all('~FROM\s+([\w\d_]+)~i', $statement, $from);
-		preg_match_all('~JOIN\s+([\w\d_]+)~i', $statement, $join);
-		array_shift($from);
-		array_shift($join);
-		return (bool) array_udiff($tables, array_merge(current($from), current($join)), 'strcasecmp');
-	}
-
-	/**
 	 * Will be the statement called directly?
 	 * @param string $statement
 	 * @return bool
 	 */
 	private function direct(string $statement): bool {
 		return $this->identifier($statement)
-			&& !$this->function($statement)
-			&& !$this->contains($statement, $this->tables);
+			&& !$this->function($statement);
 	}
 }
