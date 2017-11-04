@@ -103,6 +103,20 @@ final class PgConversions extends TestCase\PostgresDatabase {
 			(new Storage\PgConversions($this->database, '[10,20)', 'int4RANGE'))->value()
 		);
 	}
+
+	public function testCastingToPoint() {
+		Assert::same(
+			['x' => 10.2, 'y' => 10.3],
+			(new Storage\PgConversions($this->database, '(10.2,10.3)', 'point'))->value()
+		);
+	}
+
+	public function testCastingToPointAsCaseInsensitive() {
+		Assert::same(
+			['x' => 10.2, 'y' => 10.3],
+			(new Storage\PgConversions($this->database, '(10.2,10.3)', 'POINT'))->value()
+		);
+	}
 }
 
 (new PgConversions())->run();
