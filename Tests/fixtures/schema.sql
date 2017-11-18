@@ -106,6 +106,17 @@ ALTER TABLE ONLY test
     ADD CONSTRAINT test_type UNIQUE (type);
 
 
+CREATE FUNCTION exception_procedure(message TEXT) RETURNS VOID
+LANGUAGE plpgsql
+AS $$
+BEGIN
+	RAISE EXCEPTION '%', message;
+END;
+$$;
+
+ALTER FUNCTION public.exception_procedure(message TEXT) OWNER TO postgres;
+
+
 --
 -- Name: public; Type: ACL; Schema: -; Owner: postgres
 --
