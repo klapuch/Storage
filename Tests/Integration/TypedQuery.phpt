@@ -142,6 +142,14 @@ final class TypedQuery extends TestCase\PostgresDatabase {
 				['list' => 'hstore']
 			))->row()
 		);
+		Assert::same(
+			['list' => ['name' => 'Dom', 'race' => 'human'], 'bla' => null],
+			(new Storage\TypedQuery(
+				$this->database,
+				new Storage\FakeQuery([['list' => 'name=>Dom,race=>human', 'bla' => null]]),
+				['list' => 'hstore']
+			))->row()
+		);
 	}
 }
 

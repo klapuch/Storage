@@ -50,7 +50,7 @@ final class TypedQuery implements Query {
 	 * @return array
 	 */
 	private function conversions(array $rows, array $conversions): array {
-		if ($rows === array_filter($rows, 'is_scalar')) {
+		if ($rows === array_filter($rows, [$this, 'convertible'])) {
 			array_walk(
 				$conversions,
 				function($type, string $column) use (&$rows): void {
@@ -64,4 +64,15 @@ final class TypedQuery implements Query {
 		}
 		return $rows;
 	}
+
+	// @codingStandardsIgnoreStart Used by callback
+	/**
+	 * @param mixed $row
+	 * @return bool
+	 */
+	private function convertible($row): bool
+	{
+		return $row === null || is_scalar($row);
+	}
+	// @codingStandardsIgnoreEnd
 }
