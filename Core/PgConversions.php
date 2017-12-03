@@ -45,8 +45,12 @@ final class PgConversions implements Conversion {
 			$this->database,
 			'SELECT 1
 			FROM information_schema.user_defined_types
-			WHERE user_defined_type_name = lower(?)',
-			[$type]
+			WHERE user_defined_type_name = lower(:type)
+			UNION ALL
+			SELECT 1
+			FROM information_schema.columns
+			WHERE table_name = lower(:type)',
+			['type' => $type]
 		))->field();
 	}
 }

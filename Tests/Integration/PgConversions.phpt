@@ -117,6 +117,15 @@ final class PgConversions extends TestCase\PostgresDatabase {
 			(new Storage\PgConversions($this->database, '(10.2,10.3)', 'POINT'))->value()
 		);
 	}
+
+	public function testCastingCompoundTypeAsTable() {
+		(new Storage\ParameterizedQuery($this->database, 'DROP TABLE IF EXISTS person_table'))->execute();
+		(new Storage\ParameterizedQuery($this->database, 'CREATE TABLE person_table (name TEXT, age INTEGER, cool BOOLEAN)'))->execute();
+		Assert::equal(
+			['name' => 'Dom', 'age' => 21, 'cool' => true],
+			(new Storage\PgConversions($this->database, '(Dom,21,t)', 'person_table'))->value()
+		);
+	}
 }
 
 (new PgConversions())->run();
