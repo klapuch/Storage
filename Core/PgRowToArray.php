@@ -68,11 +68,15 @@ final class PgRowToArray implements Conversion {
 			array_column(
 				(new ParameterizedQuery(
 					$this->database,
-					'SELECT attribute_name
+					'SELECT attribute_name, ordinal_position
 					FROM information_schema.attributes
-					WHERE udt_name = lower(?)
+					WHERE udt_name = lower(:type)
+					UNION ALL
+					SELECT column_name AS attribute_name, ordinal_position
+					FROM information_schema.columns
+					WHERE table_name = lower(:type)
 					ORDER BY ordinal_position',
-					[$type]
+					['type' => $type]
 				))->rows(),
 				'attribute_name'
 			)

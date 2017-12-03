@@ -38,6 +38,15 @@ final class PgRowToArray extends TestCase\PostgresDatabase {
 		Assert::type(\PDOException::class, $ex->getPrevious());
 	}
 
+	public function testThrowingOnNotProperUseOfRowAsTable() {
+		(new Storage\ParameterizedQuery($this->database, 'DROP TABLE IF EXISTS person_table'))->execute();
+		(new Storage\ParameterizedQuery($this->database, 'CREATE TABLE person_table (name TEXT, race TEXT)'))->execute();
+		$ex = Assert::exception(function() {
+			(new Storage\PgRowToArray($this->database, '(Dom,human,idk)', 'person_table'))->value();
+		}, \UnexpectedValueException::class, 'Type "person_table" only exists as (name, race)');
+		Assert::type(\PDOException::class, $ex->getPrevious());
+	}
+
 	public function testThrowingOnNotProperUseOfRowWithCaseInsensitiveMatch() {
 		(new Storage\ParameterizedQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
 		(new Storage\ParameterizedQuery($this->database, 'CREATE TYPE person AS (name TEXT, race TEXT)'))->execute();
@@ -67,6 +76,15 @@ final class PgRowToArray extends TestCase\PostgresDatabase {
 		(new Storage\ParameterizedQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
 		(new Storage\ParameterizedQuery($this->database, 'CREATE TYPE person AS (name TEXT, race TEXT)'))->execute();
 		Assert::null((new Storage\PgRowToArray($this->database, null, 'person'))->value());
+	}
+
+	public function testConvertingTableTypeToArray() {
+		(new Storage\ParameterizedQuery($this->database, 'DROP TABLE IF EXISTS person_table'))->execute();
+		(new Storage\ParameterizedQuery($this->database, 'CREATE TABLE person_table (name TEXT, race TEXT)'))->execute();
+		Assert::same(
+			['name' => 'Dom', 'race' => 'human'],
+			(new Storage\PgRowToArray($this->database, '(Dom,human)', 'person_table'))->value()
+		);
 	}
 }
 
