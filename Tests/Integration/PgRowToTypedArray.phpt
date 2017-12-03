@@ -64,6 +64,19 @@ final class PgRowToTypedArray extends TestCase\PostgresDatabase {
 			))->value()
 		);
 	}
+
+	public function testConvertingTableTypeToArray() {
+		(new Storage\ParameterizedQuery($this->database, 'DROP TABLE IF EXISTS person_table'))->execute();
+		(new Storage\ParameterizedQuery($this->database, 'CREATE TABLE person_table (name TEXT, age INTEGER, cool BOOLEAN)'))->execute();
+		Assert::same(
+			['name' => 'Dom', 'age' => 21, 'cool' => true],
+			(new Storage\PgRowToTypedArray(
+				new Storage\FakeConversion(['name' => 'Dom', 'age' => '21', 'cool' => 't']),
+				'person_table',
+				$this->database
+			))->value()
+		);
+	}
 }
 
 (new PgRowToTypedArray())->run();
