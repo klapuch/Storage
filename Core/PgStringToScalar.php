@@ -6,6 +6,7 @@ final class PgStringToScalar implements Conversion {
 	private const TYPES = [
 		'integer' => 'toInt',
 		'int' => 'toInt',
+		'smallint' => 'toInt',
 		'boolean' => 'toBool',
 		'bool' => 'toBool',
 	];

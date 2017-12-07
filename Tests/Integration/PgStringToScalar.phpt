@@ -17,6 +17,8 @@ final class PgStringToScalar extends \Tester\TestCase {
 		Assert::same(10, (new Storage\PgStringToScalar('10', 'int'))->value());
 		Assert::same(10, (new Storage\PgStringToScalar('10', 'INTEGER'))->value());
 		Assert::same(10, (new Storage\PgStringToScalar('10', 'INT'))->value());
+		Assert::same(10, (new Storage\PgStringToScalar('10', 'smallint'))->value());
+		Assert::same(10, (new Storage\PgStringToScalar('10', 'SMALLINT'))->value());
 	}
 
 	public function testUnknownTypeToBeString() {
