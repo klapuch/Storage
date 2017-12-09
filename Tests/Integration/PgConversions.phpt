@@ -126,6 +126,13 @@ final class PgConversions extends TestCase\PostgresDatabase {
 			(new Storage\PgConversions($this->database, '(Dom,21,t)', 'person_table'))->value()
 		);
 	}
+
+	public function testAllowingOriginalToBeNull() {
+		Assert::same(
+			null,
+			(new Storage\PgConversions($this->database, null, 'int4range'))->value()
+		);
+	}
 }
 
 (new PgConversions())->run();

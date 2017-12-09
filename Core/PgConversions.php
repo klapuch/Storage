@@ -7,7 +7,7 @@ final class PgConversions implements Conversion {
 	private $original;
 	private $type;
 
-	public function __construct(\PDO $database, string $original, string $type) {
+	public function __construct(\PDO $database, ?string $original, string $type) {
 		$this->database = $database;
 		$this->original = $original;
 		$this->type = $type;
