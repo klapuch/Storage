@@ -7,6 +7,7 @@ final class PgStringToScalar implements Conversion {
 		'integer' => 'toInt',
 		'int' => 'toInt',
 		'smallint' => 'toInt',
+		'bigint' => 'toInt',
 		'boolean' => 'toBool',
 		'bool' => 'toBool',
 	];
