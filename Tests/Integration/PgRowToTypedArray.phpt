@@ -77,6 +77,16 @@ final class PgRowToTypedArray extends TestCase\PostgresDatabase {
 			))->value()
 		);
 	}
+
+	public function testPassingWithNullForWholeType() {
+		Assert::null(
+			(new Storage\PgRowToTypedArray(
+				new Storage\FakeConversion(null),
+				'',
+				$this->database
+			))->value()
+		);
+	}
 }
 
 (new PgRowToTypedArray())->run();

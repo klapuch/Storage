@@ -18,6 +18,8 @@ final class PgRowToTypedArray implements Conversion {
 	 */
 	public function value() {
 		$row = $this->origin->value();
+		if ($row === null)
+			return $row;
 		$columns = array_keys($row);
 		$types = $this->types($this->compound);
 		return array_combine(
