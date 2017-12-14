@@ -17,7 +17,7 @@ final class PgPointToArray implements Conversion {
 	public function value() {
 		return $this->original === null ? null : array_map(
 			'floatval',
-			(new ParameterizedQuery(
+			(new NativeQuery(
 				$this->database,
 				'SELECT (:point::POINT)[0] AS x, (:point::POINT)[1] AS y',
 				['point' => $this->original]

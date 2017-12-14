@@ -3,11 +3,11 @@ declare(strict_types = 1);
 namespace Klapuch\Storage;
 
 /**
- * Parameters made flat and passed to PDO as ParameterizedQuery
+ * Parameters made flat and passed to PDO as TypedQuery
  * [book => [author => myself]] made book_author with value myself
- * @see \Klapuch\Storage\ParameterizedQuery
+ * @see \Klapuch\Storage\TypedQuery
  */
-final class FlatParameterizedQuery implements Query {
+final class FlatQuery implements Query {
 	private $database;
 	private $statement;
 	private $parameters;
@@ -26,7 +26,7 @@ final class FlatParameterizedQuery implements Query {
 	 * @return mixed
 	 */
 	public function field() {
-		return (new ParameterizedQuery(
+		return (new TypedQuery(
 			$this->database,
 			$this->statement,
 			$this->flatten($this->parameters)
@@ -34,7 +34,7 @@ final class FlatParameterizedQuery implements Query {
 	}
 
 	public function row(): array {
-		return (new ParameterizedQuery(
+		return (new TypedQuery(
 			$this->database,
 			$this->statement,
 			$this->flatten($this->parameters)
@@ -42,7 +42,7 @@ final class FlatParameterizedQuery implements Query {
 	}
 
 	public function rows(): array {
-		return (new ParameterizedQuery(
+		return (new TypedQuery(
 			$this->database,
 			$this->statement,
 			$this->flatten($this->parameters)
@@ -50,7 +50,7 @@ final class FlatParameterizedQuery implements Query {
 	}
 
 	public function execute(): \PDOStatement {
-		return (new ParameterizedQuery(
+		return (new TypedQuery(
 			$this->database,
 			$this->statement,
 			$this->flatten($this->parameters)

@@ -18,7 +18,7 @@ final class PgArrayToArray implements Conversion {
 	 */
 	public function value() {
 		return $this->original === null ? $this->original : json_decode(
-			(new ParameterizedQuery(
+			(new NativeQuery(
 				$this->database,
 				sprintf('SELECT array_to_json(?::%s[])', $this->type),
 				[$this->original]

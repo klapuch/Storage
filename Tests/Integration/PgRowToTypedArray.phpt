@@ -14,8 +14,8 @@ require __DIR__ . '/../bootstrap.php';
 
 final class PgRowToTypedArray extends TestCase\PostgresDatabase {
 	public function testTypingToProperPhpTypes() {
-		(new Storage\ParameterizedQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
-		(new Storage\ParameterizedQuery($this->database, 'CREATE TYPE person AS (name TEXT, age INTEGER, cool BOOLEAN)'))->execute();
+		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
+		(new Storage\NativeQuery($this->database, 'CREATE TYPE person AS (name TEXT, age INTEGER, cool BOOLEAN)'))->execute();
 		Assert::same(
 			['name' => 'Dom', 'age' => 21, 'cool' => true],
 			(new Storage\PgRowToTypedArray(
@@ -27,8 +27,8 @@ final class PgRowToTypedArray extends TestCase\PostgresDatabase {
 	}
 
 	public function testTypingCorrectlyNumberInText() {
-		(new Storage\ParameterizedQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
-		(new Storage\ParameterizedQuery($this->database, 'CREATE TYPE person AS (name TEXT)'))->execute();
+		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
+		(new Storage\NativeQuery($this->database, 'CREATE TYPE person AS (name TEXT)'))->execute();
 		Assert::same(
 			['name' => '123'],
 			(new Storage\PgRowToTypedArray(
@@ -40,8 +40,8 @@ final class PgRowToTypedArray extends TestCase\PostgresDatabase {
 	}
 
 	public function testPassingWithCaseInsensitiveType() {
-		(new Storage\ParameterizedQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
-		(new Storage\ParameterizedQuery($this->database, 'CREATE TYPE person AS (name TEXT, age INTEGER, cool BOOLEAN)'))->execute();
+		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
+		(new Storage\NativeQuery($this->database, 'CREATE TYPE person AS (name TEXT, age INTEGER, cool BOOLEAN)'))->execute();
 		Assert::same(
 			['name' => 'Dom', 'age' => 21, 'cool' => true],
 			(new Storage\PgRowToTypedArray(
@@ -53,8 +53,8 @@ final class PgRowToTypedArray extends TestCase\PostgresDatabase {
 	}
 
 	public function testPassingWithNull() {
-		(new Storage\ParameterizedQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
-		(new Storage\ParameterizedQuery($this->database, 'CREATE TYPE person AS (name TEXT)'))->execute();
+		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
+		(new Storage\NativeQuery($this->database, 'CREATE TYPE person AS (name TEXT)'))->execute();
 		Assert::same(
 			['name' => null],
 			(new Storage\PgRowToTypedArray(
@@ -66,8 +66,8 @@ final class PgRowToTypedArray extends TestCase\PostgresDatabase {
 	}
 
 	public function testConvertingTableTypeToArray() {
-		(new Storage\ParameterizedQuery($this->database, 'DROP TABLE IF EXISTS person_table'))->execute();
-		(new Storage\ParameterizedQuery($this->database, 'CREATE TABLE person_table (name TEXT, age INTEGER, cool BOOLEAN)'))->execute();
+		(new Storage\NativeQuery($this->database, 'DROP TABLE IF EXISTS person_table'))->execute();
+		(new Storage\NativeQuery($this->database, 'CREATE TABLE person_table (name TEXT, age INTEGER, cool BOOLEAN)'))->execute();
 		Assert::same(
 			['name' => 'Dom', 'age' => 21, 'cool' => true],
 			(new Storage\PgRowToTypedArray(

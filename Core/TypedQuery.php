@@ -2,37 +2,45 @@
 declare(strict_types = 1);
 namespace Klapuch\Storage;
 
+/**
+ * Automatically typed query
+ */
 final class TypedQuery implements Query {
 	private $database;
-	private $origin;
-	private $conversions;
+	private $statement;
+	private $parameters;
 
-	public function __construct(\PDO $database, Query $origin, array $conversions) {
+	public function __construct(\PDO $database, string $statement, array $parameters = []) {
 		$this->database = $database;
-		$this->origin = $origin;
-		$this->conversions = $conversions;
+		$this->statement = $statement;
+		$this->parameters = $parameters;
 	}
 
 	/**
 	 * @return mixed
 	 */
 	public function field() {
-		return (new PgConversions(
-			$this->database,
-			$this->origin->field(),
-			current($this->conversions)
-		))->value();
+		$statement = $this->execute();
+		$meta = $statement->getColumnMeta(0);
+		return current(
+			$this->conversions(
+				[$meta['name'] => $statement->fetchColumn()],
+				$statement
+			)
+		);
 	}
 
 	public function row(): array {
-		return $this->conversions($this->origin->row(), $this->conversions);
+		$statement = $this->execute();
+		return $this->conversions($statement->fetch() ?: [], $statement);
 	}
 
 	public function rows(): array {
+		$statement = $this->execute();
 		return array_reduce(
-			$this->origin->rows(),
-			function(array $rows, array $row): array {
-				$rows[] = $this->conversions($row, $this->conversions);
+			$statement->fetchAll(),
+			function(array $rows, array $row) use ($statement): array {
+				$rows[] = $this->conversions($row, $statement);
 				return $rows;
 			},
 			[]
@@ -40,39 +48,59 @@ final class TypedQuery implements Query {
 	}
 
 	public function execute(): \PDOStatement {
-		return $this->origin->execute();
+		$statement = $this->database->prepare($this->statement);
+		$statement->execute(
+			array_map(
+				function($value) {
+					if (is_bool($value))
+						return $value ? 't' : 'f';
+					return $value;
+				},
+				$this->parameters
+			)
+		);
+		return $statement;
 	}
 
 	/**
 	 * Rows converted by conversion lookup table
 	 * @param array $rows
-	 * @param array $conversions
+	 * @param \PDOStatement $statement
 	 * @return array
 	 */
-	private function conversions(array $rows, array $conversions): array {
-		if ($rows === array_filter($rows, [$this, 'convertible'])) {
-			array_walk(
-				$conversions,
-				function($type, string $column) use (&$rows): void {
-					$rows[$column] = (new PgConversions(
-						$this->database,
-						$rows[$column],
-						$type
-					))->value();
-				}
-			);
-		}
-		return $rows;
+	private function conversions(array $rows, \PDOStatement $statement): array {
+		$raw = array_filter($rows, 'is_string');
+		$conversions = array_intersect_key($this->types($statement), $raw);
+		array_walk(
+			$conversions,
+			function($type, string $column) use (&$raw): void {
+				$raw[$column] = (new PgConversions(
+					$this->database,
+					$raw[$column],
+					$type
+				))->value();
+			}
+		);
+		return $raw + $rows;
 	}
 
-	// @codingStandardsIgnoreStart Used by callback
 	/**
-	 * @param mixed $row
-	 * @return bool
+	 * Meta types extracted from the statement
+	 * @param \PDOStatement $statement
+	 * @return array
 	 */
-	private function convertible($row): bool
-	{
-		return $row === null || is_scalar($row);
+	private function types(\PDOStatement $statement): array {
+		return array_column(
+			array_reduce(
+				range(0, $statement->columnCount() - 1),
+				function(array $meta, int $column) use ($statement): array {
+					$meta[] = $statement->getColumnMeta($column);
+					return $meta;
+				},
+				[]
+			),
+			'native_type',
+			'name'
+		);
 	}
-	// @codingStandardsIgnoreEnd
 }

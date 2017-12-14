@@ -41,7 +41,7 @@ final class PgConversions implements Conversion {
 	 * @return bool
 	 */
 	private function compound(string $type): bool {
-		return (bool) (new ParameterizedQuery(
+		return (bool) (new NativeQuery(
 			$this->database,
 			'SELECT 1
 			FROM information_schema.user_defined_types

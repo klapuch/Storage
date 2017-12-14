@@ -16,7 +16,7 @@ final class PgHStoreToArray implements Conversion {
 	 */
 	public function value() {
 		return $this->original === null ? $this->original : array_reduce(
-			(new ParameterizedQuery(
+			(new NativeQuery(
 				$this->database,
 				'SELECT key, value FROM EACH(?::hstore)',
 				[$this->original]

@@ -16,7 +16,7 @@ final class ApplicationQuery extends TestCase\PostgresDatabase {
 	public function testExceptionAsReadableMessage() {
 		$ex = Assert::exception(function() {
 			(new Storage\ApplicationQuery(
-				new Storage\ParameterizedQuery(
+				new Storage\NativeQuery(
 					$this->database,
 					'SELECT exception_procedure(?)',
 					['abc']
@@ -29,7 +29,7 @@ final class ApplicationQuery extends TestCase\PostgresDatabase {
 	public function testApplyingOnlyForExceptions() {
 		$ex = Assert::exception(function() {
 			(new Storage\ApplicationQuery(
-				new Storage\ParameterizedQuery(
+				new Storage\NativeQuery(
 					$this->database,
 					'SELECT * FROM xxx'
 				)

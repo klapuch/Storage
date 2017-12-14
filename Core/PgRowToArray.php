@@ -38,7 +38,7 @@ final class PgRowToArray implements Conversion {
 	private function row(): array {
 		return (new PgHStoreToArray(
 			$this->database,
-			(new ParameterizedQuery(
+			(new NativeQuery(
 				$this->database,
 				sprintf('SELECT hstore(?::%s)', $this->type),
 				[$this->original]
@@ -52,7 +52,7 @@ final class PgRowToArray implements Conversion {
 				return (new PgHStoreToArray($this->database, $row))->value();
 			},
 			array_column(
-				(new ParameterizedQuery(
+				(new NativeQuery(
 					$this->database,
 					sprintf('SELECT hstore(UNNEST(?::%s))', $this->type),
 					[$this->original]
@@ -66,7 +66,7 @@ final class PgRowToArray implements Conversion {
 		return implode(
 			', ',
 			array_column(
-				(new ParameterizedQuery(
+				(new NativeQuery(
 					$this->database,
 					'SELECT attribute_name, ordinal_position
 					FROM information_schema.attributes
