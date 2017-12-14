@@ -13,143 +13,85 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 final class TypedQuery extends TestCase\PostgresDatabase {
-	public function testCastingSimpleTypeForRow() {
+	public function testCastingCommonScalarValues() {
+		(new Storage\TypedQuery($this->database, 'DROP TABLE IF EXISTS scalars'))->execute();
+		(new Storage\TypedQuery($this->database, 'CREATE TABLE scalars (name text, age smallint, good boolean, bad boolean, id integer)'))->execute();
+		(new Storage\TypedQuery(
+			$this->database,
+			'INSERT INTO scalars (name, age, good, bad, id) VALUES
+			(?, ?, ?, ?, ?)',
+			['Dom', 21, true, false, 123456789]
+		))->execute();
 		Assert::same(
-			['list' => ['name' => 'Dom', 'race' => 'human']],
-			(new Storage\TypedQuery(
-				$this->database,
-				new Storage\FakeQuery([['list' => 'name=>Dom,race=>human']]),
-				['list' => 'hstore']
-			))->row()
+			['name' => 'Dom', 'age' => 21, 'good' => true, 'bad' => false, 'id' => 123456789],
+			(new Storage\TypedQuery($this->database, 'SELECT * FROM scalars'))->row()
 		);
 	}
 
-	public function testCastingSimpleTypeForRows() {
+	public function testCastingPgTypes() {
+		(new Storage\TypedQuery($this->database, 'DROP TABLE IF EXISTS pg_types'))->execute();
+		(new Storage\TypedQuery($this->database, 'CREATE TABLE pg_types (list hstore, age int4range, gps point)'))->execute();
+		(new Storage\TypedQuery(
+			$this->database,
+			'INSERT INTO pg_types (list, age, gps) VALUES
+				(hstore(?, ?), int4range(21, 25), point(40.5,20.6))',
+			['name', 'Dom']
+		))->execute();
+		Assert::same(
+			['list' => ['name' => 'Dom'], 'age' => [21, 25, '[', ')'], 'gps' => ['x' => 40.5, 'y' => 20.6]],
+			(new Storage\TypedQuery($this->database, 'SELECT * FROM pg_types'))->row()
+		);
+	}
+
+	public function testKeepingNull() {
+		(new Storage\TypedQuery($this->database, 'DROP TABLE IF EXISTS pg_types'))->execute();
+		(new Storage\TypedQuery($this->database, 'CREATE TABLE pg_types (list hstore, age int4range, gps point)'))->execute();
+		(new Storage\TypedQuery($this->database, 'INSERT INTO pg_types (list, age, gps) VALUES (NULL, NULL, NULL)'))->execute();
+		Assert::same(
+			['list' => null, 'age' => null, 'gps' => null],
+			(new Storage\TypedQuery($this->database, 'SELECT * FROM pg_types'))->row()
+		);
+	}
+
+	public function testCastingBatchOfTypes() {
+		(new Storage\TypedQuery($this->database, 'DROP TABLE IF EXISTS pg_types'))->execute();
+		(new Storage\TypedQuery($this->database, 'CREATE TABLE pg_types (list hstore, age int4range, gps point)'))->execute();
+		(new Storage\TypedQuery(
+			$this->database,
+			'INSERT INTO pg_types (list, age, gps) VALUES
+				(hstore(?, ?), int4range(21, 25), point(40.5,20.6)),
+				(hstore(?, ?), int4range(10, 20), point(10,15))',
+			['name', 'Dom', 'name', 'Dell']
+		))->execute();
 		Assert::same(
 			[
-				['list' => ['name' => 'Dom', 'race' => 'human']],
-				['list' => ['name' => 'Dan', 'race' => 'master']],
+				['list' => ['name' => 'Dom'], 'age' => [21, 25, '[', ')'], 'gps' => ['x' => 40.5, 'y' => 20.6]],
+				['list' => ['name' => 'Dell'], 'age' => [10, 20, '[', ')'], 'gps' => ['x' => 10.0, 'y' => 15.0]],
 			],
-			(new Storage\TypedQuery(
-				$this->database,
-				new Storage\FakeQuery([['list' => 'name=>Dom,race=>human'], ['list' => 'name=>Dan,race=>master']]),
-				['list' => 'hstore']
-			))->rows()
+			(new Storage\TypedQuery($this->database, 'SELECT * FROM pg_types'))->rows()
 		);
 	}
 
-	public function testCastingCompoundType() {
-		(new Storage\ParameterizedQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
-		(new Storage\ParameterizedQuery($this->database, 'CREATE TYPE person AS (name TEXT, race TEXT)'))->execute();
-		Assert::same(
-			['list' => ['name' => 'Dom', 'race' => 'master']],
-			(new Storage\TypedQuery(
-				$this->database,
-				new Storage\FakeQuery([['list' => '(Dom,master)']]),
-				['list' => 'person']
-			))->row()
-		);
+	public function testCastingSingleField() {
+		(new Storage\TypedQuery($this->database, 'DROP TABLE IF EXISTS scalars'))->execute();
+		(new Storage\TypedQuery($this->database, 'CREATE TABLE scalars (name text, age smallint, good boolean, bad boolean, id integer)'))->execute();
+		(new Storage\TypedQuery(
+			$this->database,
+			'INSERT INTO scalars (name, age, good, bad, id) VALUES
+			(?, ?, ?, ?, ?)',
+			['Dom', 21, true, false, 123456789]
+		))->execute();
+		Assert::same(123456789, (new Storage\TypedQuery($this->database, 'SELECT id FROM scalars'))->field());
+		Assert::true((new Storage\TypedQuery($this->database, 'SELECT good FROM scalars'))->field());
+		Assert::same('Dom', (new Storage\TypedQuery($this->database, 'SELECT name FROM scalars'))->field());
 	}
 
-	public function testCastingToMultipleTypesAtTime() {
-		Assert::same(
-			['list' => [1, 2, 3], 'list2' => ['name' => 'Dom', 'race' => 'human']],
-			(new Storage\TypedQuery(
-				$this->database,
-				new Storage\FakeQuery([['list' => '{1, 2, 3}', 'list2' => 'name=>Dom,race=>human']]),
-				[
-					'list' => 'integer[]',
-					'list2' => 'hstore',
-				]
-			))->row()
-		);
-	}
-
-	public function testCaseInsensitiveMatch() {
-		Assert::noError(function() {
-			(new Storage\TypedQuery(
-				$this->database,
-				new Storage\FakeQuery([['list' => '{1, 2, 3}', 'list2' => 'name=>Dom,race=>human']]),
-				[
-					'list' => 'INTEGER[]',
-					'list2' => 'HSTORE',
-				]
-			))->row();
-		});
-	}
-
-	public function testCastingFieldAsFirstValue() {
-		Assert::same(
-			['name' => 'Dom', 'race' => 'human'],
-			(new Storage\TypedQuery(
-				$this->database,
-				new Storage\FakeQuery(['list' => 'name=>Dom,race=>human']),
-				['list' => 'hstore']
-			))->field()
-		);
-	}
-
-	public function testIgnoringOnUnsupportedType() {
-		Assert::noError(function() {
-			(new Storage\TypedQuery(
-				$this->database,
-				new Storage\FakeQuery([['list' => '{1, 2, 3}']]),
-				['list' => 'foo']
-			))->row();
-		});
-		Assert::noError(function() {
-			(new Storage\TypedQuery(
-				$this->database,
-				new Storage\FakeQuery([['list' => '{1, 2, 3}']]),
-				['list' => 'foo']
-			))->rows();
-		});
-		Assert::noError(function() {
-			(new Storage\TypedQuery(
-				$this->database,
-				new Storage\FakeQuery([['list' => '{1, 2, 3}']]),
-				['list' => 'foo']
-			))->execute();
-		});
-		Assert::noError(function() {
-			(new Storage\TypedQuery(
-				$this->database,
-				new Storage\FakeQuery(['list' => '{1, 2, 3}']),
-				['list' => 'foo']
-			))->field();
-		});
-	}
-
-	public function testCastingCompoundTypeToPhpType() {
-		(new Storage\ParameterizedQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
-		(new Storage\ParameterizedQuery($this->database, 'CREATE TYPE person AS (name TEXT, age INTEGER, cool BOOLEAN)'))->execute();
-		Assert::equal(
-			['list' => ['name' => 'Dom', 'age' => 21, 'cool' => true]],
-			(new Storage\TypedQuery(
-				$this->database,
-				new Storage\FakeQuery([['list' => '(Dom,21,t)']]),
-				['list' => 'person']
-			))->row()
-		);
-	}
-
-	public function testAcceptingOnlyScalars() {
-		Assert::same(
-			['list' => 'name=>Dom,race=>human', 'bla' => []],
-			(new Storage\TypedQuery(
-				$this->database,
-				new Storage\FakeQuery([['list' => 'name=>Dom,race=>human', 'bla' => []]]),
-				['list' => 'hstore']
-			))->row()
-		);
-		Assert::same(
-			['list' => ['name' => 'Dom', 'race' => 'human'], 'bla' => null],
-			(new Storage\TypedQuery(
-				$this->database,
-				new Storage\FakeQuery([['list' => 'name=>Dom,race=>human', 'bla' => null]]),
-				['list' => 'hstore']
-			))->row()
-		);
+	public function testPassingWithEmptySet() {
+		(new Storage\TypedQuery($this->database, 'DROP TABLE IF EXISTS scalars'))->execute();
+		(new Storage\TypedQuery($this->database, 'CREATE TABLE scalars (name text, age smallint, good boolean, bad boolean, id integer)'))->execute();
+		Assert::same([], (new Storage\TypedQuery($this->database, 'SELECT * FROM scalars'))->row());
+		Assert::same([], (new Storage\TypedQuery($this->database, 'SELECT * FROM scalars'))->rows());
+		Assert::false((new Storage\TypedQuery($this->database, 'SELECT * FROM scalars'))->field());
 	}
 }
 

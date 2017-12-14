@@ -12,14 +12,14 @@ use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
-final class FlatParameterizedQuery extends TestCase\PostgresDatabase {
+final class FlatQuery extends TestCase\PostgresDatabase {
 	public function testArbitraryDimensionToSingle() {
-		(new Storage\ParameterizedQuery(
+		(new Storage\NativeQuery(
 			$this->database,
 			'INSERT INTO test (name, type) VALUES (?, ?)',
 			['Dom', 'A']
 		))->execute();
-		$query = new Storage\FlatParameterizedQuery(
+		$query = new Storage\FlatQuery(
 			$this->database,
 			'SELECT name, type FROM test WHERE name = :nested_name AND type = :nested_nested_type',
 			[
@@ -38,12 +38,12 @@ final class FlatParameterizedQuery extends TestCase\PostgresDatabase {
 	}
 
 	public function testSingleDimensionWithoutChange() {
-		(new Storage\ParameterizedQuery(
+		(new Storage\NativeQuery(
 			$this->database,
 			'INSERT INTO test (name, type) VALUES (?, ?)',
 			['Dom', 'A']
 		))->execute();
-		$query = new Storage\FlatParameterizedQuery(
+		$query = new Storage\FlatQuery(
 			$this->database,
 			'SELECT name, type FROM test WHERE name = :name AND type = :type',
 			[
@@ -59,4 +59,4 @@ final class FlatParameterizedQuery extends TestCase\PostgresDatabase {
 }
 
 
-(new FlatParameterizedQuery())->run();
+(new FlatQuery())->run();

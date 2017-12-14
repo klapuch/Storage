@@ -19,7 +19,7 @@ final class PgIntRangeToArray implements Conversion {
 			return $this->original;
 		$range = (new PgArrayToArray(
 			$this->database,
-			(new ParameterizedQuery(
+			(new NativeQuery(
 				$this->database,
 				"SELECT
 					ARRAY[

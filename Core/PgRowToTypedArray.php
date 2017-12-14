@@ -36,7 +36,7 @@ final class PgRowToTypedArray implements Conversion {
 
 	private function types(string $compound): array {
 		return array_column(
-			(new ParameterizedQuery(
+			(new NativeQuery(
 				$this->database,
 				'SELECT attribute_name, data_type, ordinal_position
 				FROM information_schema.attributes
