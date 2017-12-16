@@ -13,6 +13,20 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 final class PgConversions extends TestCase\PostgresDatabase {
+	public function testCasting() {
+		Assert::equal(
+			(new Storage\PgTimestamptzRangeToArray($this->database, '[2004-10-19 10:23:54.20+02,2005-10-19 10:23:54.20+02)'))->value(),
+			(new Storage\PgConversions($this->database, '[2004-10-19 10:23:54.20+02,2005-10-19 10:23:54.20+02)', 'tstzrange'))->value()
+		);
+	}
+
+	public function testCaseInsensitiveCasting() {
+		Assert::equal(
+			(new Storage\PgTimestamptzRangeToArray($this->database, '[2004-10-19 10:23:54.20+02,2005-10-19 10:23:54.20+02)'))->value(),
+			(new Storage\PgConversions($this->database, '[2004-10-19 10:23:54.20+02,2005-10-19 10:23:54.20+02)', 'TSTZRANGE'))->value()
+		);
+	}
+
 	public function testCastingToHStore() {
 		Assert::same(
 			['name' => 'Dom', 'race' => 'human'],
