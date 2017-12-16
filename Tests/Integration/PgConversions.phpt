@@ -18,6 +18,18 @@ final class PgConversions extends TestCase\PostgresDatabase {
 			(new Storage\PgTimestamptzRangeToArray($this->database, '[2004-10-19 10:23:54.20+02,2005-10-19 10:23:54.20+02)'))->value(),
 			(new Storage\PgConversions($this->database, '[2004-10-19 10:23:54.20+02,2005-10-19 10:23:54.20+02)', 'tstzrange'))->value()
 		);
+		Assert::same(
+			(new Storage\PgHStoreToArray($this->database, 'name=>Dom,race=>human'))->value(),
+			(new Storage\PgConversions($this->database, 'name=>Dom,race=>human', 'hstore'))->value()
+		);
+		Assert::same(
+			(new Storage\PgIntRangeToArray($this->database, '[10,20)'))->value(),
+			(new Storage\PgConversions($this->database, '[10,20)', 'int4range'))->value()
+		);
+		Assert::same(
+			(new Storage\PgPointToArray($this->database, '(10.2,10.3)'))->value(),
+			(new Storage\PgConversions($this->database, '(10.2,10.3)', 'point'))->value()
+		);
 	}
 
 	public function testCaseInsensitiveCasting() {
@@ -25,19 +37,17 @@ final class PgConversions extends TestCase\PostgresDatabase {
 			(new Storage\PgTimestamptzRangeToArray($this->database, '[2004-10-19 10:23:54.20+02,2005-10-19 10:23:54.20+02)'))->value(),
 			(new Storage\PgConversions($this->database, '[2004-10-19 10:23:54.20+02,2005-10-19 10:23:54.20+02)', 'TSTZRANGE'))->value()
 		);
-	}
-
-	public function testCastingToHStore() {
 		Assert::same(
-			['name' => 'Dom', 'race' => 'human'],
+			(new Storage\PgHStoreToArray($this->database, 'name=>Dom,race=>human'))->value(),
 			(new Storage\PgConversions($this->database, 'name=>Dom,race=>human', 'HSTORE'))->value()
 		);
-	}
-
-	public function testCastingToHStoreAsCaseInsensitive() {
 		Assert::same(
-			['name' => 'Dom', 'race' => 'human'],
-			(new Storage\PgConversions($this->database, 'name=>Dom,race=>human', 'hstore'))->value()
+			(new Storage\PgIntRangeToArray($this->database, '[10,20)'))->value(),
+			(new Storage\PgConversions($this->database, '[10,20)', 'INT4RANGE'))->value()
+		);
+		Assert::same(
+			(new Storage\PgPointToArray($this->database, '(10.2,10.3)'))->value(),
+			(new Storage\PgConversions($this->database, '(10.2,10.3)', 'POINT'))->value()
 		);
 	}
 
@@ -70,65 +80,6 @@ final class PgConversions extends TestCase\PostgresDatabase {
 		Assert::same(
 			['name' => 'Dom', 'race' => 'human'],
 			(new Storage\PgConversions($this->database, '(Dom,human)', 'PERson'))->value()
-		);
-	}
-
-	public function testCastingArrayOfCompoundTypes() {
-		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
-		(new Storage\NativeQuery($this->database, 'CREATE TYPE person AS (name TEXT, race TEXT)'))->execute();
-		Assert::same(
-			[
-				[
-					'name' => 'Dom',
-					'race' => 'human',
-				],
-				[
-					'name' => 'Dan',
-					'race' => 'master',
-				],
-			],
-			(new Storage\PgConversions(
-				$this->database,
-				'{"(Dom,human)","(Dan,master)"}',
-				'person[]'
-			))->value()
-		);
-	}
-
-	public function testCastingByDefaultToPhpValuesForCompoundType() {
-		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
-		(new Storage\NativeQuery($this->database, 'CREATE TYPE person AS (name TEXT, age INTEGER, cool BOOLEAN)'))->execute();
-		Assert::equal(
-			['name' => 'Dom', 'age' => 21, 'cool' => true],
-			(new Storage\PgConversions($this->database, '(Dom,21,t)', 'person'))->value()
-		);
-	}
-
-	public function testCastingToInt4Range() {
-		Assert::same(
-			[10, 20, '[', ')'],
-			(new Storage\PgConversions($this->database, '[10,20)', 'int4range'))->value()
-		);
-	}
-
-	public function testCastingInt4RangeAsCaseInsensitive() {
-		Assert::same(
-			[10, 20, '[', ')'],
-			(new Storage\PgConversions($this->database, '[10,20)', 'int4RANGE'))->value()
-		);
-	}
-
-	public function testCastingToPoint() {
-		Assert::same(
-			['x' => 10.2, 'y' => 10.3],
-			(new Storage\PgConversions($this->database, '(10.2,10.3)', 'point'))->value()
-		);
-	}
-
-	public function testCastingToPointAsCaseInsensitive() {
-		Assert::same(
-			['x' => 10.2, 'y' => 10.3],
-			(new Storage\PgConversions($this->database, '(10.2,10.3)', 'POINT'))->value()
 		);
 	}
 
