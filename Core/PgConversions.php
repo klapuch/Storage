@@ -21,6 +21,8 @@ final class PgConversions implements Conversion {
 			return (new PgHStoreToArray($this->database, $this->original))->value();
 		elseif (strcasecmp($this->type, 'int4range') === 0)
 			return (new PgIntRangeToArray($this->database, $this->original))->value();
+		elseif (strcasecmp($this->type, 'tstzrange') === 0)
+			return (new PgTimestamptzRangeToArray($this->database, $this->original))->value();
 		elseif (strcasecmp($this->type, 'point') === 0)
 			return (new PgPointToArray($this->database, $this->original))->value();
 		elseif (preg_match('~^(\w+)\[\]$~', $this->type, $match))

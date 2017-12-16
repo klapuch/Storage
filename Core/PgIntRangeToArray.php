@@ -17,7 +17,7 @@ final class PgIntRangeToArray implements Conversion {
 	public function value() {
 		if ($this->original === null)
 			return $this->original;
-		$range = (new PgArrayToArray(
+		$ranges = (new PgArrayToArray(
 			$this->database,
 			(new NativeQuery(
 				$this->database,
@@ -32,6 +32,6 @@ final class PgIntRangeToArray implements Conversion {
 			))->field(),
 			'TEXT'
 		))->value();
-		return array_map('intval', array_filter($range, 'is_numeric')) + $range;
+		return array_map('intval', array_filter($ranges, 'is_numeric')) + $ranges;
 	}
 }
