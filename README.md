@@ -1,2 +1,2 @@
 # Storage
-[![Build Status](https://travis-ci.org/klapuch/Storage.svg?branch=master)](https://travis-ci.org/klapuch/Storage) [![Build status](https://ci.appveyor.com/api/projects/status/w7jjblhtsg45x0ce/branch/master?svg=true)](https://ci.appveyor.com/project/facedown/storage/branch/master) [![Coverage Status](https://coveralls.io/repos/github/klapuch/Storage/badge.svg?branch=master)](https://coveralls.io/github/klapuch/Storage?branch=master)
+[![Build Status](https://travis-ci.org/klapuch/Storage.svg?branch=master)](https://travis-ci.org/klapuch/Storage) [![Coverage Status](https://coveralls.io/repos/github/klapuch/Storage/badge.svg?branch=master)](https://coveralls.io/github/klapuch/Storage?branch=master)
