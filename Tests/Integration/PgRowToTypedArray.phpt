@@ -77,6 +77,22 @@ final class PgRowToTypedArray extends TestCase\PostgresDatabase {
 			))->value()
 		);
 	}
+//
+//	public function testCastingForNestedTypes() {
+//		(new Storage\NativeQuery($this->database, 'DROP TABLE IF EXISTS person_table'))->execute();
+//		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
+//		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS length'))->execute();
+//		(new Storage\NativeQuery($this->database, 'CREATE TYPE length AS (value INTEGER, unit TEXT)'))->execute();
+//		(new Storage\NativeQuery($this->database, 'CREATE TABLE person_table (length length)'))->execute();
+//		Assert::same(
+//			['name' => 'Dom', 'age' => 21, 'cool' => true],
+//			(new Storage\PgRowToTypedArray(
+//				new Storage\FakeConversion(['length' => '(10,mm)']),
+//				'length',
+//				$this->database
+//			))->value()
+//		);
+//	}
 
 	public function testPassingWithNullForWholeType() {
 		Assert::null(

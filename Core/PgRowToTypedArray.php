@@ -35,6 +35,20 @@ final class PgRowToTypedArray implements Conversion {
 	}
 
 	private function types(string $compound): array {
+//		var_dump(
+//			(new NativeQuery(
+//				$this->database,
+//				'SELECT attribute_name, data_type, ordinal_position
+//				FROM information_schema.attributes
+//				WHERE udt_name = lower(:type)
+//				UNION ALL
+//				SELECT column_name AS attribute_name, data_type, ordinal_position
+//				FROM information_schema.columns
+//				WHERE table_name = lower(:type)
+//				ORDER BY ordinal_position',
+//				['type' => $compound]
+//			))->rows()
+//		);
 		return array_column(
 			(new NativeQuery(
 				$this->database,

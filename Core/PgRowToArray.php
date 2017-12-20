@@ -36,28 +36,28 @@ final class PgRowToArray implements Conversion {
 	}
 
 	private function row(): array {
-		return (new PgHStoreToArray(
-			$this->database,
+		return json_decode(
 			(new NativeQuery(
 				$this->database,
-				sprintf('SELECT hstore(?::%s)', $this->type),
+				sprintf('SELECT row_to_json(?::%s)', $this->type),
 				[$this->original]
-			))->field()
-		))->value();
+			))->field(),
+			true
+		);
 	}
 
 	private function rows(): array {
 		return array_map(
 			function(string $row): array {
-				return (new PgHStoreToArray($this->database, $row))->value();
+				return json_decode($row, true);
 			},
 			array_column(
 				(new NativeQuery(
 					$this->database,
-					sprintf('SELECT hstore(UNNEST(?::%s))', $this->type),
+					sprintf('SELECT row_to_json(UNNEST(?::%s))', $this->type),
 					[$this->original]
 				))->rows(),
-				'hstore'
+				'row_to_json'
 			)
 		);
 	}

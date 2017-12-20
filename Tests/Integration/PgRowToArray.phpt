@@ -86,6 +86,17 @@ final class PgRowToArray extends TestCase\PostgresDatabase {
 			(new Storage\PgRowToArray($this->database, '(Dom,human)', 'person_table'))->value()
 		);
 	}
+
+	public function testConvertingNestedType() {
+		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS length'))->execute();
+		(new Storage\NativeQuery($this->database, 'CREATE TYPE length AS (value INTEGER, unit TEXT)'))->execute();
+		(new Storage\NativeQuery($this->database, 'DROP TABLE IF EXISTS person_table'))->execute();
+		(new Storage\NativeQuery($this->database, 'CREATE TABLE person_table (length length, name TEXT)'))->execute();
+		Assert::same(
+			['length' => ['value' => 10, 'unit' => 'mm'], 'name' => 'Dom'],
+			(new Storage\PgRowToArray($this->database, '("(10,mm)",Dom)', 'person_table'))->value()
+		);
+	}
 }
 
 (new PgRowToArray())->run();
