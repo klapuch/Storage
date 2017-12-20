@@ -17,7 +17,9 @@ final class PgConversions implements Conversion {
 	 * @return mixed
 	 */
 	public function value() {
-		if (strcasecmp($this->type, 'hstore') === 0)
+		if (array_uintersect(['text', 'varchar', 'bpchar'], [$this->type], 'strcasecmp'))
+			return $this->original;
+		elseif (strcasecmp($this->type, 'hstore') === 0)
 			return (new PgHStoreToArray($this->database, $this->original))->value();
 		elseif (strcasecmp($this->type, 'int4range') === 0)
 			return (new PgIntRangeToArray($this->database, $this->original))->value();

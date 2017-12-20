@@ -32,6 +32,17 @@ final class PgConversions extends TestCase\PostgresDatabase {
 		);
 	}
 
+	public function testDatabaseStringsWithoutQuerying() {
+		/** @var \PDO $database */
+		$database = $this->mock(\PDO::class);
+		Assert::same('abc', (new Storage\PgConversions($database, 'abc', 'varchar'))->value());
+		Assert::same('abc', (new Storage\PgConversions($database, 'abc', 'VARCHAR'))->value());
+		Assert::same('abc', (new Storage\PgConversions($database, 'abc', 'bpchar'))->value());
+		Assert::same('abc', (new Storage\PgConversions($database, 'abc', 'BPCHAR'))->value());
+		Assert::same('abc', (new Storage\PgConversions($database, 'abc', 'text'))->value());
+		Assert::same('abc', (new Storage\PgConversions($database, 'abc', 'TEXT'))->value());
+	}
+
 	public function testCaseInsensitiveCasting() {
 		Assert::equal(
 			(new Storage\PgTimestamptzRangeToArray($this->database, '[2004-10-19 10:23:54.20+02,2005-10-19 10:23:54.20+02)'))->value(),
