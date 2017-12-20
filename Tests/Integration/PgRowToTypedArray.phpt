@@ -78,6 +78,19 @@ final class PgRowToTypedArray extends TestCase\PostgresDatabase {
 		);
 	}
 
+	public function testKeepingAlreadyConvertedBoolean() {
+		(new Storage\NativeQuery($this->database, 'DROP TABLE IF EXISTS person_table'))->execute();
+		(new Storage\NativeQuery($this->database, 'CREATE TABLE person_table (name TEXT, age INTEGER, cool BOOLEAN)'))->execute();
+		Assert::same(
+			['cool' => true, 'name' => 'Dom', 'age' => 21],
+			(new Storage\PgRowToTypedArray(
+				new Storage\FakeConversion(['name' => 'Dom', 'age' => '21', 'cool' => true]),
+				'person_table',
+				$this->database
+			))->value()
+		);
+	}
+
 	public function testPassingWithNullForWholeType() {
 		Assert::null(
 			(new Storage\PgRowToTypedArray(

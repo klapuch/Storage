@@ -17,18 +17,19 @@ final class PgRowToTypedArray implements Conversion {
 	 * @return mixed
 	 */
 	public function value() {
-		$row = $this->origin->value();
-		if ($row === null)
-			return $row;
-		$columns = array_keys($row);
+		$raw = $this->origin->value();
+		if ($raw === null)
+			return $raw;
+		$converted = array_filter($raw, 'is_bool');
+		$columns = array_keys($raw);
 		$types = $this->types($this->compound);
-		return array_combine(
+		return $converted + array_combine(
 			$columns,
 			array_map(
 				function(?string $value, string $column) use ($types) {
 					return (new PgStringToScalar($value, $types[$column]))->value();
 				},
-				$row,
+				$raw,
 				$columns
 			)
 		);
