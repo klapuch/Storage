@@ -77,7 +77,7 @@ final class PgConversions extends TestCase\PostgresDatabase {
 	}
 
 	public function testCastingCompoundType() {
-		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
+		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person CASCADE'))->execute();
 		(new Storage\NativeQuery($this->database, 'CREATE TYPE person AS (name TEXT, race TEXT)'))->execute();
 		Assert::same(
 			['name' => 'Dom', 'race' => 'human'],
@@ -86,7 +86,7 @@ final class PgConversions extends TestCase\PostgresDatabase {
 	}
 
 	public function testCastingAsCaseInsensitiveCompoundType() {
-		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
+		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person CASCADE'))->execute();
 		(new Storage\NativeQuery($this->database, 'CREATE TYPE person AS (name TEXT, race TEXT)'))->execute();
 		Assert::same(
 			['name' => 'Dom', 'race' => 'human'],
@@ -95,7 +95,7 @@ final class PgConversions extends TestCase\PostgresDatabase {
 	}
 
 	public function testCastingCompoundTypeAsTable() {
-		(new Storage\NativeQuery($this->database, 'DROP TABLE IF EXISTS person_table'))->execute();
+		(new Storage\NativeQuery($this->database, 'DROP TABLE IF EXISTS person_table CASCADE'))->execute();
 		(new Storage\NativeQuery($this->database, 'CREATE TABLE person_table (name TEXT, age INTEGER, cool BOOLEAN)'))->execute();
 		Assert::equal(
 			['name' => 'Dom', 'age' => 21, 'cool' => true],

@@ -17,10 +17,11 @@ final class PgRowToTypedArray implements Conversion {
 	 * @return mixed
 	 */
 	public function value() {
-		$row = $this->origin->value();
-		if ($row === null)
-			return $row;
-		$columns = array_keys($row);
+		$converted = $this->origin->value();
+		if ($converted === null)
+			return $converted;
+		$raw = array_filter($converted, 'is_string');
+		$columns = array_keys($raw);
 		$types = $this->types($this->compound);
 		return array_combine(
 			$columns,
@@ -28,10 +29,10 @@ final class PgRowToTypedArray implements Conversion {
 				function(?string $value, string $column) use ($types) {
 					return (new PgStringToScalar($value, $types[$column]))->value();
 				},
-				$row,
+				$raw,
 				$columns
 			)
-		);
+		) + $converted;
 	}
 
 	private function types(string $compound): array {

@@ -14,7 +14,7 @@ require __DIR__ . '/../bootstrap.php';
 
 final class NativeQuery extends TestCase\PostgresDatabase {
 	public function testPassingWithEmptySet() {
-		(new Storage\NativeQuery($this->database, 'DROP TABLE IF EXISTS scalars'))->execute();
+		(new Storage\NativeQuery($this->database, 'DROP TABLE IF EXISTS scalars CASCADE'))->execute();
 		(new Storage\NativeQuery($this->database, 'CREATE TABLE scalars (name text, age smallint, good boolean, bad boolean, id integer)'))->execute();
 		Assert::same([], (new Storage\NativeQuery($this->database, 'SELECT * FROM scalars'))->row());
 		Assert::same([], (new Storage\NativeQuery($this->database, 'SELECT * FROM scalars'))->rows());
