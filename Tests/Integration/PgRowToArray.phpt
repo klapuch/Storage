@@ -14,7 +14,7 @@ require __DIR__ . '/../bootstrap.php';
 
 final class PgRowToArray extends TestCase\PostgresDatabase {
 	public function testConvertingToArray() {
-		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
+		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person CASCADE'))->execute();
 		(new Storage\NativeQuery($this->database, 'CREATE TYPE person AS (name TEXT, race TEXT)'))->execute();
 		Assert::same(
 			['name' => 'Dom', 'race' => 'human'],
@@ -30,7 +30,7 @@ final class PgRowToArray extends TestCase\PostgresDatabase {
 	}
 
 	public function testThrowingOnNotProperUseOfRow() {
-		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
+		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person CASCADE'))->execute();
 		(new Storage\NativeQuery($this->database, 'CREATE TYPE person AS (name TEXT, race TEXT)'))->execute();
 		$ex = Assert::exception(function() {
 			(new Storage\PgRowToArray($this->database, '(Dom,human,idk)', 'person'))->value();
@@ -39,7 +39,7 @@ final class PgRowToArray extends TestCase\PostgresDatabase {
 	}
 
 	public function testThrowingOnNotProperUseOfRowAsTable() {
-		(new Storage\NativeQuery($this->database, 'DROP TABLE IF EXISTS person_table'))->execute();
+		(new Storage\NativeQuery($this->database, 'DROP TABLE IF EXISTS person_table CASCADE'))->execute();
 		(new Storage\NativeQuery($this->database, 'CREATE TABLE person_table (name TEXT, race TEXT)'))->execute();
 		$ex = Assert::exception(function() {
 			(new Storage\PgRowToArray($this->database, '(Dom,human,idk)', 'person_table'))->value();
@@ -48,12 +48,12 @@ final class PgRowToArray extends TestCase\PostgresDatabase {
 	}
 
 	public function testThrowingOnNotProperUseOfRowWithCaseInsensitiveMatch() {
-		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
+		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person CASCADE'))->execute();
 		(new Storage\NativeQuery($this->database, 'CREATE TYPE person AS (name TEXT, race TEXT)'))->execute();
 		Assert::exception(function() {
 			(new Storage\PgRowToArray($this->database, '(Dom,human,idk)', 'PERSON'))->value();
 		}, \UnexpectedValueException::class, 'Type "PERSON" only exists as (name, race)');
-		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
+		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person CASCADE'))->execute();
 		(new Storage\NativeQuery($this->database, 'CREATE TYPE PERSON AS (name TEXT, race TEXT)'))->execute();
 		Assert::exception(function() {
 			(new Storage\PgRowToArray($this->database, '(Dom,human,idk)', 'person'))->value();
@@ -61,7 +61,7 @@ final class PgRowToArray extends TestCase\PostgresDatabase {
 	}
 
 	public function testConvertingArrayOfRowsArray() {
-		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
+		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person CASCADE'))->execute();
 		(new Storage\NativeQuery($this->database, 'CREATE TYPE person AS (name TEXT, race TEXT)'))->execute();
 		Assert::same(
 			[
@@ -73,13 +73,13 @@ final class PgRowToArray extends TestCase\PostgresDatabase {
 	}
 
 	public function testAllowingNull() {
-		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person'))->execute();
+		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person CASCADE'))->execute();
 		(new Storage\NativeQuery($this->database, 'CREATE TYPE person AS (name TEXT, race TEXT)'))->execute();
 		Assert::null((new Storage\PgRowToArray($this->database, null, 'person'))->value());
 	}
 
 	public function testConvertingTableTypeToArray() {
-		(new Storage\NativeQuery($this->database, 'DROP TABLE IF EXISTS person_table'))->execute();
+		(new Storage\NativeQuery($this->database, 'DROP TABLE IF EXISTS person_table CASCADE'))->execute();
 		(new Storage\NativeQuery($this->database, 'CREATE TABLE person_table (name TEXT, race TEXT)'))->execute();
 		Assert::same(
 			['name' => 'Dom', 'race' => 'human'],
@@ -88,9 +88,9 @@ final class PgRowToArray extends TestCase\PostgresDatabase {
 	}
 
 	public function testConvertingNestedType() {
-		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS length'))->execute();
+		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS length CASCADE'))->execute();
 		(new Storage\NativeQuery($this->database, 'CREATE TYPE length AS (value INTEGER, unit TEXT)'))->execute();
-		(new Storage\NativeQuery($this->database, 'DROP TABLE IF EXISTS person_table'))->execute();
+		(new Storage\NativeQuery($this->database, 'DROP TABLE IF EXISTS person_table CASCADE'))->execute();
 		(new Storage\NativeQuery($this->database, 'CREATE TABLE person_table (length length, name TEXT)'))->execute();
 		Assert::same(
 			['length' => ['value' => 10, 'unit' => 'mm'], 'name' => 'Dom'],

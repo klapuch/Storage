@@ -14,7 +14,7 @@ require __DIR__ . '/../bootstrap.php';
 
 final class TypedQuery extends TestCase\PostgresDatabase {
 	public function testCastingCommonScalarValues() {
-		(new Storage\TypedQuery($this->database, 'DROP TABLE IF EXISTS scalars'))->execute();
+		(new Storage\TypedQuery($this->database, 'DROP TABLE IF EXISTS scalars CASCADE'))->execute();
 		(new Storage\TypedQuery($this->database, 'CREATE TABLE scalars (name text, age smallint, good boolean, bad boolean, id integer)'))->execute();
 		(new Storage\TypedQuery(
 			$this->database,
@@ -29,7 +29,7 @@ final class TypedQuery extends TestCase\PostgresDatabase {
 	}
 
 	public function testCastingPgTypes() {
-		(new Storage\TypedQuery($this->database, 'DROP TABLE IF EXISTS pg_types'))->execute();
+		(new Storage\TypedQuery($this->database, 'DROP TABLE IF EXISTS pg_types CASCADE'))->execute();
 		(new Storage\TypedQuery($this->database, 'CREATE TABLE pg_types (list hstore, age int4range, gps point)'))->execute();
 		(new Storage\TypedQuery(
 			$this->database,
@@ -44,7 +44,7 @@ final class TypedQuery extends TestCase\PostgresDatabase {
 	}
 
 	public function testKeepingNull() {
-		(new Storage\TypedQuery($this->database, 'DROP TABLE IF EXISTS pg_types'))->execute();
+		(new Storage\TypedQuery($this->database, 'DROP TABLE IF EXISTS pg_types CASCADE'))->execute();
 		(new Storage\TypedQuery($this->database, 'CREATE TABLE pg_types (list hstore, age int4range, gps point)'))->execute();
 		(new Storage\TypedQuery($this->database, 'INSERT INTO pg_types (list, age, gps) VALUES (NULL, NULL, NULL)'))->execute();
 		Assert::same(
@@ -54,7 +54,7 @@ final class TypedQuery extends TestCase\PostgresDatabase {
 	}
 
 	public function testCastingBatchOfTypes() {
-		(new Storage\TypedQuery($this->database, 'DROP TABLE IF EXISTS pg_types'))->execute();
+		(new Storage\TypedQuery($this->database, 'DROP TABLE IF EXISTS pg_types CASCADE'))->execute();
 		(new Storage\TypedQuery($this->database, 'CREATE TABLE pg_types (list hstore, age int4range, gps point)'))->execute();
 		(new Storage\TypedQuery(
 			$this->database,
@@ -73,7 +73,7 @@ final class TypedQuery extends TestCase\PostgresDatabase {
 	}
 
 	public function testCastingSingleField() {
-		(new Storage\TypedQuery($this->database, 'DROP TABLE IF EXISTS scalars'))->execute();
+		(new Storage\TypedQuery($this->database, 'DROP TABLE IF EXISTS scalars CASCADE'))->execute();
 		(new Storage\TypedQuery($this->database, 'CREATE TABLE scalars (name text, age smallint, good boolean, bad boolean, id integer)'))->execute();
 		(new Storage\TypedQuery(
 			$this->database,
@@ -87,7 +87,7 @@ final class TypedQuery extends TestCase\PostgresDatabase {
 	}
 
 	public function testPassingWithEmptySet() {
-		(new Storage\TypedQuery($this->database, 'DROP TABLE IF EXISTS scalars'))->execute();
+		(new Storage\TypedQuery($this->database, 'DROP TABLE IF EXISTS scalars CASCADE'))->execute();
 		(new Storage\TypedQuery($this->database, 'CREATE TABLE scalars (name text, age smallint, good boolean, bad boolean, id integer)'))->execute();
 		Assert::same([], (new Storage\TypedQuery($this->database, 'SELECT * FROM scalars'))->row());
 		Assert::same([], (new Storage\TypedQuery($this->database, 'SELECT * FROM scalars'))->rows());
