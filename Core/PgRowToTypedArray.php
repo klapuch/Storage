@@ -17,13 +17,13 @@ final class PgRowToTypedArray implements Conversion {
 	 * @return mixed
 	 */
 	public function value() {
-		$raw = $this->origin->value();
-		if ($raw === null)
-			return $raw;
-		$converted = array_filter($raw, 'is_bool');
+		$converted = $this->origin->value();
+		if ($converted === null)
+			return $converted;
+		$raw = array_filter($converted, 'is_string');
 		$columns = array_keys($raw);
 		$types = $this->types($this->compound);
-		return $converted + array_combine(
+		return array_combine(
 			$columns,
 			array_map(
 				function(?string $value, string $column) use ($types) {
@@ -32,7 +32,7 @@ final class PgRowToTypedArray implements Conversion {
 				$raw,
 				$columns
 			)
-		);
+		) + $converted;
 	}
 
 	private function types(string $compound): array {

@@ -78,13 +78,27 @@ final class PgRowToTypedArray extends TestCase\PostgresDatabase {
 		);
 	}
 
-	public function testKeepingAlreadyConvertedBoolean() {
+	public function testKeepingAlreadyConvertedValue() {
+		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS length'))->execute();
+		(new Storage\NativeQuery($this->database, 'CREATE TYPE length AS (value INTEGER, unit TEXT)'))->execute();
 		(new Storage\NativeQuery($this->database, 'DROP TABLE IF EXISTS person_table'))->execute();
-		(new Storage\NativeQuery($this->database, 'CREATE TABLE person_table (name TEXT, age INTEGER, cool BOOLEAN)'))->execute();
+		(new Storage\NativeQuery($this->database, 'CREATE TABLE person_table (name TEXT, age INTEGER, cool BOOLEAN, length length)'))->execute();
 		Assert::same(
-			['cool' => true, 'name' => 'Dom', 'age' => 21],
+			[
+				'name' => 'Dom',
+				'age' => 21,
+				'cool' => true,
+				'length' => ['value' => 10, 'unit' => 'mm'],
+			],
 			(new Storage\PgRowToTypedArray(
-				new Storage\FakeConversion(['name' => 'Dom', 'age' => '21', 'cool' => true]),
+				new Storage\FakeConversion(
+					[
+						'name' => 'Dom',
+						'age' => '21',
+						'cool' => true,
+						'length' => ['value' => 10, 'unit' => 'mm'],
+					]
+				),
 				'person_table',
 				$this->database
 			))->value()
