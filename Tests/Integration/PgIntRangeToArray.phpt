@@ -19,10 +19,6 @@ final class PgIntRangeToArray extends TestCase\PostgresDatabase {
 			(new Storage\PgIntRangeToArray($this->database, '[10,20)'))->value()
 		);
 	}
-
-	public function testAllowingNull() {
-		Assert::null((new Storage\PgIntRangeToArray($this->database, null))->value());
-	}
 }
 
 (new PgIntRangeToArray())->run();

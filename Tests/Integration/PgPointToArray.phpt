@@ -19,10 +19,6 @@ final class PgPointToArray extends TestCase\PostgresDatabase {
 			(new Storage\PgPointToArray($this->database, '(50.556785,70)'))->value()
 		);
 	}
-
-	public function testAllowingNull() {
-		Assert::null((new Storage\PgPointToArray($this->database, null))->value());
-	}
 }
 
 (new PgPointToArray())->run();

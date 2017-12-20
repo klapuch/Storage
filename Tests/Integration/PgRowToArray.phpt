@@ -72,12 +72,6 @@ final class PgRowToArray extends TestCase\PostgresDatabase {
 		);
 	}
 
-	public function testAllowingNull() {
-		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person CASCADE'))->execute();
-		(new Storage\NativeQuery($this->database, 'CREATE TYPE person AS (name TEXT, race TEXT)'))->execute();
-		Assert::null((new Storage\PgRowToArray($this->database, null, 'person'))->value());
-	}
-
 	public function testConvertingTableTypeToArray() {
 		(new Storage\NativeQuery($this->database, 'DROP TABLE IF EXISTS person_table CASCADE'))->execute();
 		(new Storage\NativeQuery($this->database, 'CREATE TABLE person_table (name TEXT, race TEXT)'))->execute();

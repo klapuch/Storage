@@ -18,21 +18,18 @@ final class PgRowToTypedArray implements Conversion {
 	 */
 	public function value() {
 		$converted = $this->origin->value();
-		if ($converted === null)
-			return $converted;
 		$raw = array_filter($converted, 'is_string');
-		$columns = array_keys($raw);
 		$types = $this->types($this->compound);
 		return array_combine(
-			$columns,
-			array_map(
-				function(?string $value, string $column) use ($types) {
-					return (new PgStringToScalar($value, $types[$column]))->value();
-				},
-				$raw,
-				$columns
-			)
-		) + $converted;
+				array_keys($raw),
+				array_map(
+					function(?string $value, string $column) use ($types) {
+						return (new PgStringToScalar($value, $types[$column]))->value();
+					},
+					$raw,
+					array_keys($raw)
+				)
+			) + $converted;
 	}
 
 	private function types(string $compound): array {

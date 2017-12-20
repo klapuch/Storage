@@ -6,7 +6,7 @@ final class PgPointToArray implements Conversion {
 	private $database;
 	private $original;
 
-	public function __construct(\PDO $database, ?string $original) {
+	public function __construct(\PDO $database, string $original) {
 		$this->database = $database;
 		$this->original = $original;
 	}
@@ -15,7 +15,7 @@ final class PgPointToArray implements Conversion {
 	 * @return mixed
 	 */
 	public function value() {
-		return $this->original === null ? null : array_map(
+		return array_map(
 			'floatval',
 			(new NativeQuery(
 				$this->database,

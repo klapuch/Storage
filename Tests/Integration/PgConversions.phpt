@@ -41,6 +41,7 @@ final class PgConversions extends TestCase\PostgresDatabase {
 		Assert::same('abc', (new Storage\PgConversions($database, 'abc', 'BPCHAR'))->value());
 		Assert::same('abc', (new Storage\PgConversions($database, 'abc', 'text'))->value());
 		Assert::same('abc', (new Storage\PgConversions($database, 'abc', 'TEXT'))->value());
+		Assert::null((new Storage\PgConversions($database, null, 'foo'))->value());
 	}
 
 	public function testCaseInsensitiveCasting() {
