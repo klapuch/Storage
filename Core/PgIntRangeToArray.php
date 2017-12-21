@@ -6,7 +6,7 @@ final class PgIntRangeToArray implements Conversion {
 	private $database;
 	private $original;
 
-	public function __construct(\PDO $database, ?string $original) {
+	public function __construct(\PDO $database, string $original) {
 		$this->database = $database;
 		$this->original = $original;
 	}
@@ -15,8 +15,6 @@ final class PgIntRangeToArray implements Conversion {
 	 * @return mixed
 	 */
 	public function value() {
-		if ($this->original === null)
-			return $this->original;
 		$ranges = (new PgArrayToArray(
 			$this->database,
 			(new NativeQuery(
