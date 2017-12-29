@@ -12,23 +12,23 @@ use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
-final class CachedPDO extends TestCase\PostgresDatabase {
+final class SideCachedPDO extends TestCase\PostgresDatabase {
 	public function testCachingForStatement() {
-		$pdo = new Storage\CachedPDO($this->database);
+		$pdo = new Storage\SideCachedPDO($this->database);
 		Assert::same($pdo->prepare('SELECT 1'), $pdo->prepare('SELECT 1'));
 	}
 
 	public function testNoCacheForDifferentStatements() {
-		$pdo = new Storage\CachedPDO($this->database);
+		$pdo = new Storage\SideCachedPDO($this->database);
 		Assert::notSame($pdo->prepare('SELECT 1'), $pdo->prepare('SELECT 2'));
 	}
 
 	public function testPersistentCache() {
 		Assert::same(
-			(new Storage\CachedPDO($this->database))->prepare('SELECT 1'),
-			(new Storage\CachedPDO($this->database))->prepare('SELECT 1')
+			(new Storage\SideCachedPDO($this->database))->prepare('SELECT 1'),
+			(new Storage\SideCachedPDO($this->database))->prepare('SELECT 1')
 		);
 	}
 }
 
-(new CachedPDO())->run();
+(new SideCachedPDO())->run();

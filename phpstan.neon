@@ -2,4 +2,4 @@ parameters:
 	ignoreErrors:
 		- '#Klapuch\\Storage\\MonitoredPDO::__construct\(\) does not call parent constructor from PDO#'
 		- '#Klapuch\\Storage\\MemoryPDO::__construct\(\) does not call parent constructor from PDO#'
-		- '#Klapuch\\Storage\\CachedPDO::__construct\(\) does not call parent constructor from PDO#'
+		- '#Klapuch\\Storage\\SideCachedPDO::__construct\(\) does not call parent constructor from PDO#'
