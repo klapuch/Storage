@@ -14,7 +14,7 @@ class MetaPDO extends \PDO {
 	private $origin;
 	private $redis;
 
-	public function __construct(\PDO $origin, Predis\Client $redis) {
+	public function __construct(\PDO $origin, Predis\ClientInterface $redis) {
 		$this->origin = $origin;
 		$this->redis = $redis;
 	}
