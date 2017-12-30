@@ -15,7 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 final class MetaPDO extends TestCase\PostgresDatabase {
 	public function testCachingOnSecondRun() {
-		$this->database->exec('DROP TABLE IF EXISTS test_table2');
+		$this->database->exec('DROP TABLE IF EXISTS test_table2 CASCADE');
 		$this->database->exec('CREATE TABLE test_table2 (first integer)');
 		$meta = [
 			[
@@ -36,9 +36,29 @@ final class MetaPDO extends TestCase\PostgresDatabase {
 		);
 	}
 
+	public function testUsingNamespaceForRedis() {
+		$this->database->exec('DROP TABLE IF EXISTS test_table2 CASCADE');
+		$this->database->exec('CREATE TABLE test_table2 (first integer)');
+		Assert::noError(function() {
+			$meta = [
+				[
+					'attribute_name' => 'first',
+					'data_type' => 'integer',
+					'ordinal_position' => 1,
+					'native_type' => 'integer',
+				],
+			];
+			$redis = $this->mock(Predis\Client::class);
+			$redis->shouldReceive('exists')->once()->with('postgres:meta:test_table2')->andReturn(false);
+			$redis->shouldReceive('get')->once()->with('postgres:meta:test_table2')->andReturn(serialize($meta));
+			$redis->shouldReceive('set')->once()->with('postgres:meta:test_table2', serialize($meta));
+			(new Storage\MetaPDO($this->database, $redis))->meta('test_table2');
+		});
+	}
+
 	public function testMetaForTypeAndTable() {
-		$this->database->exec('DROP TABLE IF EXISTS test_table2');
-		$this->database->exec('DROP TYPE IF EXISTS test_type2');
+		$this->database->exec('DROP TABLE IF EXISTS test_table2 CASCADE');
+		$this->database->exec('DROP TYPE IF EXISTS test_type2 CASCADE');
 		$this->database->exec('CREATE TABLE test_table2 (first integer)');
 		$this->database->exec('CREATE TYPE test_type2 AS (second integer)');
 		Assert::same(
@@ -66,7 +86,7 @@ final class MetaPDO extends TestCase\PostgresDatabase {
 	}
 
 	public function testMappingOfAvailableTypes() {
-		$this->database->exec('DROP TABLE IF EXISTS test_full');
+		$this->database->exec('DROP TABLE IF EXISTS test_full CASCADE');
 		$this->database->exec(
 			'CREATE TABLE test_full (
 				one integer,
@@ -139,6 +159,51 @@ final class MetaPDO extends TestCase\PostgresDatabase {
 			],
 			(new Storage\MetaPDO($this->database, $this->redis))->meta('test_full')
 		);
+	}
+
+	public function testConvertingTypeInType() {
+		$this->database->exec('DROP TYPE IF EXISTS test_type1 CASCADE');
+		$this->database->exec('DROP TYPE IF EXISTS test_type2 CASCADE');
+		$this->database->exec('CREATE TYPE test_type1 AS (second integer)');
+		$this->database->exec('CREATE TYPE test_type2 AS (first test_type1)');
+		Assert::same(
+			[
+				[
+					'attribute_name' => 'first',
+					'data_type' => 'test_type1',
+					'ordinal_position' => 1,
+					'native_type' => 'test_type1',
+				],
+			],
+			(new Storage\MetaPDO($this->database, $this->redis))->meta('test_type2')
+		);
+	}
+
+	public function testConvertingTypeInTable() {
+		$this->database->exec('DROP TYPE IF EXISTS test_type3 CASCADE');
+		$this->database->exec('DROP TABLE IF EXISTS test_table4 CASCADE');
+		$this->database->exec('CREATE TYPE test_type3 AS (second integer)');
+		$this->database->exec('CREATE TABLE test_table4 (first test_type3)');
+		Assert::same(
+			[
+				[
+					'attribute_name' => 'first',
+					'data_type' => 'test_type3',
+					'ordinal_position' => 1,
+					'native_type' => 'test_type3',
+				],
+			],
+			(new Storage\MetaPDO($this->database, $this->redis))->meta('test_table4')
+		);
+	}
+
+	public function testIgnoringCases() {
+		$this->database->exec('DROP TABLE IF EXISTS test_table2 CASCADE');
+		$this->database->exec('DROP TYPE IF EXISTS test_type2 CASCADE');
+		$this->database->exec('CREATE TABLE test_table2 (first integer)');
+		$this->database->exec('CREATE TYPE test_type2 AS (second integer)');
+		Assert::notSame([], (new Storage\MetaPDO($this->database, $this->redis))->meta('TEST_TYPE2'));
+		Assert::notSame([], (new Storage\MetaPDO($this->database, $this->redis))->meta('TEST_TABLE2'));
 	}
 }
 
