@@ -23,7 +23,7 @@ final class PgConversions extends TestCase\PostgresDatabase {
 			(new Storage\PgConversions($this->database, 'name=>Dom,race=>human', 'hstore'))->value()
 		);
 		Assert::same(
-			(new Storage\PgIntRangeToArray($this->database, '[10,20)'))->value(),
+			(new Storage\PgIntRangeToArray('[10,20)'))->value(),
 			(new Storage\PgConversions($this->database, '[10,20)', 'int4range'))->value()
 		);
 		Assert::same(
@@ -50,7 +50,7 @@ final class PgConversions extends TestCase\PostgresDatabase {
 			(new Storage\PgConversions($this->database, 'name=>Dom,race=>human', 'HSTORE'))->value()
 		);
 		Assert::same(
-			(new Storage\PgIntRangeToArray($this->database, '[10,20)'))->value(),
+			(new Storage\PgIntRangeToArray('[10,20)'))->value(),
 			(new Storage\PgConversions($this->database, '[10,20)', 'INT4RANGE'))->value()
 		);
 		Assert::same(

@@ -15,12 +15,7 @@ final class PgPointToArray implements Conversion {
 	public function value(): array {
 		return array_combine(
 			['x', 'y'],
-			array_map(
-				function(string $point): float {
-					return floatval($point);
-				},
-				explode(',', trim($this->original, '()'))
-			)
+			array_map('floatval', explode(',', trim($this->original, '()')))
 		);
 	}
 }
