@@ -27,7 +27,7 @@ final class PgConversions extends TestCase\PostgresDatabase {
 			(new Storage\PgConversions($this->database, '[10,20)', 'int4range'))->value()
 		);
 		Assert::same(
-			(new Storage\PgPointToArray($this->database, '(10.2,10.3)'))->value(),
+			(new Storage\PgPointToArray('(10.2,10.3)'))->value(),
 			(new Storage\PgConversions($this->database, '(10.2,10.3)', 'point'))->value()
 		);
 	}
@@ -54,7 +54,7 @@ final class PgConversions extends TestCase\PostgresDatabase {
 			(new Storage\PgConversions($this->database, '[10,20)', 'INT4RANGE'))->value()
 		);
 		Assert::same(
-			(new Storage\PgPointToArray($this->database, '(10.2,10.3)'))->value(),
+			(new Storage\PgPointToArray('(10.2,10.3)'))->value(),
 			(new Storage\PgConversions($this->database, '(10.2,10.3)', 'POINT'))->value()
 		);
 	}

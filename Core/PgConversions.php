@@ -26,7 +26,7 @@ final class PgConversions implements Conversion {
 		elseif (strcasecmp($this->type, 'tstzrange') === 0)
 			return (new PgTimestamptzRangeToArray($this->database, $this->original))->value();
 		elseif (strcasecmp($this->type, 'point') === 0)
-			return (new PgPointToArray($this->database, $this->original))->value();
+			return (new PgPointToArray($this->original))->value();
 		elseif (preg_match('~^(?P<type>\w+)\[\]$~', $this->type, $match))
 			return (new PgArrayToArray($this->database, $this->original, $match['type']))->value();
 		elseif ($this->compound($this->type)) {

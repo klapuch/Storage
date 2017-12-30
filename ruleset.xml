@@ -21,6 +21,7 @@
 	</rule>
 
 	<rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
+		<exclude-pattern>Tests/Unit</exclude-pattern>
 		<exclude-pattern>Tests/Integration</exclude-pattern>
 		<exclude-pattern>Tests/TestCase</exclude-pattern>
 	</rule>
@@ -48,6 +49,7 @@
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint">
+		<exclude-pattern>Tests/Unit</exclude-pattern>
 		<exclude-pattern>Tests/Integration</exclude-pattern>
 		<exclude-pattern>Tests/TestCase</exclude-pattern>
 	</rule>

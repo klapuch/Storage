@@ -3,25 +3,24 @@ declare(strict_types = 1);
 namespace Klapuch\Storage;
 
 final class PgPointToArray implements Conversion {
-	private $database;
 	private $original;
 
-	public function __construct(\PDO $database, string $original) {
-		$this->database = $database;
+	public function __construct(string $original) {
 		$this->original = $original;
 	}
 
 	/**
-	 * @return mixed
+	 * @return float[]
 	 */
-	public function value() {
-		return array_map(
-			'floatval',
-			(new NativeQuery(
-				$this->database,
-				'SELECT (:point::POINT)[0] AS x, (:point::POINT)[1] AS y',
-				['point' => $this->original]
-			))->row()
+	public function value(): array {
+		return array_combine(
+			['x', 'y'],
+			array_map(
+				function(string $point): float {
+					return floatval($point);
+				},
+				explode(',', trim($this->original, '()'))
+			)
 		);
 	}
 }
