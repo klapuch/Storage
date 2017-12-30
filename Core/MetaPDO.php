@@ -89,6 +89,7 @@ class MetaPDO extends \PDO {
 			);
 			$statement->execute(['type' => $type]);
 			$this->redis->set(self::NAMESPACE . $type, serialize($statement->fetchAll()));
+			$this->redis->persist(self::NAMESPACE . $type);
 		}
 		return static::$redisCalls[$type] = unserialize($this->redis->get(self::NAMESPACE . $type));
 	}
