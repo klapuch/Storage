@@ -19,6 +19,18 @@ class MetaPDO extends \PDO {
 		$this->redis = $redis;
 	}
 
+	public function beginTransaction(): bool {
+		return $this->origin->beginTransaction();
+	}
+
+	public function commit(): bool {
+		return $this->origin->commit();
+	}
+
+	public function rollBack(): bool {
+		return $this->origin->rollBack();
+	}
+
 	public function prepare($statement, $options = []): \PDOStatement {
 		return $this->origin->prepare($statement, $options);
 	}
