@@ -10,7 +10,7 @@ final class TypedQuery implements Query {
 	private $statement;
 	private $parameters;
 
-	public function __construct(\PDO $database, string $statement, array $parameters = []) {
+	public function __construct(MetaPDO $database, string $statement, array $parameters = []) {
 		$this->database = $database;
 		$this->statement = $statement;
 		$this->parameters = $parameters;

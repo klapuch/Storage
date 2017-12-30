@@ -1,0 +1,75 @@
+<?php
+declare(strict_types = 1);
+namespace Klapuch\Storage;
+
+use PDO;
+use Predis;
+
+/**
+ * PDO with meta info
+ */
+final class MetaPDO extends \PDO {
+	private const NAMESPACE = 'postgres:meta:';
+	private static $redisCalls = [];
+	private $origin;
+	private $redis;
+
+	public function __construct(\PDO $origin, Predis\Client $redis) {
+		$this->origin = $origin;
+		$this->redis = $redis;
+	}
+
+	public function prepare($statement, $options = []): \PDOStatement {
+		return $this->origin->prepare($statement, $options);
+	}
+
+	/**
+	 * @param string $statement
+	 * @return int|bool
+	 */
+	public function exec($statement) {
+		return $this->origin->exec($statement);
+	}
+
+	public function query($statement, $mode = PDO::ATTR_DEFAULT_FETCH_MODE, $arg3 = null, array $ctorargs = []): \PDOStatement {
+		return $this->origin->query($statement);
+	}
+
+	public function meta(string $type): array {
+		if (isset(static::$redisCalls[$type]))
+			return static::$redisCalls[$type];
+		if (!$this->redis->exists($type)) {
+			$statement = $this->origin->prepare(
+				"SELECT attribute_name, types.data_type, ordinal_position, native_type
+				FROM (
+					SELECT attribute_name, data_type, ordinal_position
+					FROM information_schema.attributes
+					WHERE udt_name = lower(:type)
+					UNION ALL
+					SELECT column_name AS attribute_name, data_type, ordinal_position
+					FROM information_schema.columns
+					WHERE table_name = lower(:type)
+					ORDER BY ordinal_position
+				) types
+				JOIN (
+					SELECT data_type, native_type
+					FROM (
+						VALUES
+							('integer', 'integer'),
+							('character varying', 'string'),
+							('text', 'string'),
+							('character', 'string'),
+							('numeric', 'double'),
+							('bigint', 'integer'),
+							('smallint', 'integer'),
+							('boolean', 'boolean')
+						) AS t (data_type, native_type)
+				) native_types
+				ON native_types.data_type = types.data_type"
+			);
+			$statement->execute(['type' => $type]);
+			$this->redis->set(self::NAMESPACE . $type, serialize($statement->fetchAll()));
+		}
+		return static::$redisCalls[$type] = unserialize($this->redis->get(self::NAMESPACE . $type));
+	}
+}
