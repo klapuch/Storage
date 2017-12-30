@@ -10,7 +10,7 @@ use Predis;
  */
 class MetaPDO extends \PDO {
 	private const NAMESPACE = 'postgres:type:meta:';
-	private static $redisCalls = [];
+	private static $cache = [];
 	private $origin;
 	private $redis;
 
@@ -32,16 +32,18 @@ class MetaPDO extends \PDO {
 	}
 
 	public function prepare($statement, $options = []): \PDOStatement {
-		return new class($this->origin->prepare($statement, $options), $statement, $this->redis) extends \PDOStatement {
+		return new class($this->origin->prepare($statement, $options), $statement, $this->redis, static::$cache) extends \PDOStatement {
 			private const NAMESPACE = 'postgres:column:meta';
 			private $origin;
 			private $redis;
 			private $statement;
+			private $cache;
 
-			public function __construct(\PDOStatement $origin, string $statement, Predis\ClientInterface $redis) {
+			public function __construct(\PDOStatement $origin, string $statement, Predis\ClientInterface $redis, array &$cache) {
 				$this->origin = $origin;
 				$this->redis = $redis;
 				$this->statement = $statement;
+				$this->cache = &$cache;
 			}
 
 			public function execute($inputParameters = null): bool {
@@ -78,11 +80,13 @@ class MetaPDO extends \PDO {
 
 			public function getColumnMeta($column): array {
 				$key = self::NAMESPACE . md5($this->statement);
+				if (isset($this->cache['column'][$key][$column]))
+					return $this->cache['column'][$key][$column];
 				if (!$this->redis->hexists($key, $column)) {
 					$this->redis->hset($key, $column, serialize($this->origin->getColumnMeta($column)));
 					$this->redis->persist($key);
 				}
-				return unserialize($this->redis->hget($key, $column));
+				return $this->cache['column'][$key][$column] = unserialize($this->redis->hget($key, $column));
 			}
 		};
 	}
@@ -100,8 +104,8 @@ class MetaPDO extends \PDO {
 	}
 
 	public function meta(string $type): array {
-		if (isset(static::$redisCalls[$type]))
-			return static::$redisCalls[$type];
+		if (isset(static::$cache['type'][$type]))
+			return static::$cache['type'][$type];
 		if (!$this->redis->exists(self::NAMESPACE . $type)) {
 			$statement = $this->origin->prepare(
 				"SELECT attribute_name,
@@ -143,6 +147,6 @@ class MetaPDO extends \PDO {
 			$this->redis->set(self::NAMESPACE . $type, serialize($statement->fetchAll()));
 			$this->redis->persist(self::NAMESPACE . $type);
 		}
-		return static::$redisCalls[$type] = unserialize($this->redis->get(self::NAMESPACE . $type));
+		return static::$cache['type'][$type] = unserialize($this->redis->get(self::NAMESPACE . $type));
 	}
 }
