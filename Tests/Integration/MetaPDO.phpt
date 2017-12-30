@@ -52,6 +52,7 @@ final class MetaPDO extends TestCase\PostgresDatabase {
 			$redis->shouldReceive('exists')->once()->with('postgres:meta:test_table2')->andReturn(false);
 			$redis->shouldReceive('get')->once()->with('postgres:meta:test_table2')->andReturn(serialize($meta));
 			$redis->shouldReceive('set')->once()->with('postgres:meta:test_table2', serialize($meta));
+			$redis->shouldReceive('persist')->once()->with('postgres:meta:test_table2');
 			(new Storage\MetaPDO($this->database, $redis))->meta('test_table2');
 		});
 	}
