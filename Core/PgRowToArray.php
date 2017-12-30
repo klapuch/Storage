@@ -7,7 +7,7 @@ final class PgRowToArray implements Conversion {
 	private $original;
 	private $type;
 
-	public function __construct(\PDO $database, string $original, string $type) {
+	public function __construct(MetaPDO $database, string $original, string $type) {
 		$this->database = $database;
 		$this->original = $original;
 		$this->type = $type;
@@ -61,23 +61,6 @@ final class PgRowToArray implements Conversion {
 	}
 
 	private function columns(string $type): string {
-		return implode(
-			', ',
-			array_column(
-				(new NativeQuery(
-					$this->database,
-					'SELECT attribute_name, ordinal_position
-					FROM information_schema.attributes
-					WHERE udt_name = lower(:type)
-					UNION ALL
-					SELECT column_name AS attribute_name, ordinal_position
-					FROM information_schema.columns
-					WHERE table_name = lower(:type)
-					ORDER BY ordinal_position',
-					['type' => $type]
-				))->rows(),
-				'attribute_name'
-			)
-		);
+		return implode(', ', array_column($this->database->meta($type), 'attribute_name'));
 	}
 }

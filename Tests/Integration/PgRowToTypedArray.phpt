@@ -39,19 +39,6 @@ final class PgRowToTypedArray extends TestCase\PostgresDatabase {
 		);
 	}
 
-	public function testPassingWithCaseInsensitiveType() {
-		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person CASCADE'))->execute();
-		(new Storage\NativeQuery($this->database, 'CREATE TYPE person AS (name TEXT, age INTEGER, cool BOOLEAN)'))->execute();
-		Assert::same(
-			['name' => 'Dom', 'age' => 21, 'cool' => true],
-			(new Storage\PgRowToTypedArray(
-				new Storage\FakeConversion(['name' => 'Dom', 'age' => '21', 'cool' => 't']),
-				'PERSON',
-				$this->database
-			))->value()
-		);
-	}
-
 	public function testPassingWithNull() {
 		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person CASCADE'))->execute();
 		(new Storage\NativeQuery($this->database, 'CREATE TYPE person AS (name TEXT)'))->execute();
@@ -60,19 +47,6 @@ final class PgRowToTypedArray extends TestCase\PostgresDatabase {
 			(new Storage\PgRowToTypedArray(
 				new Storage\FakeConversion(['name' => null]),
 				'person',
-				$this->database
-			))->value()
-		);
-	}
-
-	public function testConvertingTableTypeToArray() {
-		(new Storage\NativeQuery($this->database, 'DROP TABLE IF EXISTS person_table CASCADE'))->execute();
-		(new Storage\NativeQuery($this->database, 'CREATE TABLE person_table (name TEXT, age INTEGER, cool BOOLEAN)'))->execute();
-		Assert::same(
-			['name' => 'Dom', 'age' => 21, 'cool' => true],
-			(new Storage\PgRowToTypedArray(
-				new Storage\FakeConversion(['name' => 'Dom', 'age' => '21', 'cool' => 't']),
-				'person_table',
 				$this->database
 			))->value()
 		);

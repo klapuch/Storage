@@ -35,13 +35,13 @@ final class PgConversions extends TestCase\PostgresDatabase {
 	public function testDatabaseStringsWithoutQuerying() {
 		/** @var \PDO $database */
 		$database = $this->mock(\PDO::class);
-		Assert::same('abc', (new Storage\PgConversions($database, 'abc', 'varchar'))->value());
-		Assert::same('abc', (new Storage\PgConversions($database, 'abc', 'VARCHAR'))->value());
-		Assert::same('abc', (new Storage\PgConversions($database, 'abc', 'bpchar'))->value());
-		Assert::same('abc', (new Storage\PgConversions($database, 'abc', 'BPCHAR'))->value());
-		Assert::same('abc', (new Storage\PgConversions($database, 'abc', 'text'))->value());
-		Assert::same('abc', (new Storage\PgConversions($database, 'abc', 'TEXT'))->value());
-		Assert::null((new Storage\PgConversions($database, null, 'foo'))->value());
+		Assert::same('abc', (new Storage\PgConversions($this->database, 'abc', 'varchar'))->value());
+		Assert::same('abc', (new Storage\PgConversions($this->database, 'abc', 'VARCHAR'))->value());
+		Assert::same('abc', (new Storage\PgConversions($this->database, 'abc', 'bpchar'))->value());
+		Assert::same('abc', (new Storage\PgConversions($this->database, 'abc', 'BPCHAR'))->value());
+		Assert::same('abc', (new Storage\PgConversions($this->database, 'abc', 'text'))->value());
+		Assert::same('abc', (new Storage\PgConversions($this->database, 'abc', 'TEXT'))->value());
+		Assert::null((new Storage\PgConversions($this->database, null, 'foo'))->value());
 	}
 
 	public function testCaseInsensitiveCasting() {

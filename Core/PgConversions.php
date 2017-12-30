@@ -7,7 +7,7 @@ final class PgConversions implements Conversion {
 	private $original;
 	private $type;
 
-	public function __construct(\PDO $database, ?string $original, string $type) {
+	public function __construct(MetaPDO $database, ?string $original, string $type) {
 		$this->database = $database;
 		$this->original = $original;
 		$this->type = $type;
@@ -45,16 +45,6 @@ final class PgConversions implements Conversion {
 	 * @return bool
 	 */
 	private function compound(string $type): bool {
-		return (bool) (new NativeQuery(
-			$this->database,
-			'SELECT 1
-			FROM information_schema.user_defined_types
-			WHERE user_defined_type_name = lower(:type)
-			UNION ALL
-			SELECT 1
-			FROM information_schema.columns
-			WHERE table_name = lower(:type)',
-			['type' => $type]
-		))->field();
+		return (bool) $this->database->meta($type);
 	}
 }

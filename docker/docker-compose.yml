@@ -11,11 +11,6 @@ services:
         - 5432:5432
       volumes:
           - ./..:/var/www/Storage
-    adminer:
-      image: adminer:standalone
-      container_name: storage-adminer
-      ports:
-        - 8080:8080
     php-fpm:
       build: ./php-fpm
       working_dir: /var/www/Storage
@@ -24,3 +19,8 @@ services:
           - ./php-fpm/php.ini:/usr/local/etc/php/php.ini
       ports:
         - 80:80
+    redis:
+      image: redis:alpine
+      container_name: storage-redis
+      ports:
+        - 6379:6379
