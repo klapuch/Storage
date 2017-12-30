@@ -5,7 +5,7 @@ namespace Klapuch\Storage;
 /**
  * In-memory PDO
  */
-final class MemoryPDO extends \PDO {
+final class MemoryPDO extends MetaPDO {
 	private $memory;
 	private $origin;
 
