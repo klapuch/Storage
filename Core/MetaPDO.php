@@ -32,14 +32,24 @@ class MetaPDO extends \PDO {
 	}
 
 	public function prepare($statement, $options = []): \PDOStatement {
-		return new class($this->origin->prepare($statement, $options), $statement, $this->redis, static::$cache) extends \PDOStatement {
+		return new class(
+			$this->origin->prepare($statement, $options),
+			$statement,
+			$this->redis,
+			static::$cache
+		) extends \PDOStatement {
 			private const NAMESPACE = 'postgres:column:meta';
 			private $origin;
 			private $redis;
 			private $statement;
 			private $cache;
 
-			public function __construct(\PDOStatement $origin, string $statement, Predis\ClientInterface $redis, array &$cache) {
+			public function __construct(
+				\PDOStatement $origin,
+				string $statement,
+				Predis\ClientInterface $redis,
+				array &$cache
+			) {
 				$this->origin = $origin;
 				$this->redis = $redis;
 				$this->statement = $statement;
@@ -96,17 +106,18 @@ class MetaPDO extends \PDO {
 	 * @return int|bool
 	 */
 	public function exec($statement) {
-		return $this->origin->exec($statement);
+		return $this->origin->exec(...func_get_args());
 	}
 
 	public function query($statement, $mode = PDO::ATTR_DEFAULT_FETCH_MODE, $arg3 = null, array $ctorargs = []): \PDOStatement {
-		return $this->origin->query($statement);
+		return $this->origin->query(...func_get_args());
 	}
 
 	public function meta(string $type): array {
 		if (isset(static::$cache['type'][$type]))
 			return static::$cache['type'][$type];
-		if (!$this->redis->exists(self::NAMESPACE . $type)) {
+		$key = self::NAMESPACE . $type;
+		if (!$this->redis->exists($key)) {
 			$statement = $this->origin->prepare(
 				"SELECT attribute_name,
 				types.data_type,
@@ -144,9 +155,9 @@ class MetaPDO extends \PDO {
 				ON native_types.data_type = types.data_type"
 			);
 			$statement->execute(['type' => $type]);
-			$this->redis->set(self::NAMESPACE . $type, serialize($statement->fetchAll()));
-			$this->redis->persist(self::NAMESPACE . $type);
+			$this->redis->set($key, serialize($statement->fetchAll()));
+			$this->redis->persist($key);
 		}
-		return static::$cache['type'][$type] = unserialize($this->redis->get(self::NAMESPACE . $type));
+		return static::$cache['type'][$type] = unserialize($this->redis->get($key));
 	}
 }
