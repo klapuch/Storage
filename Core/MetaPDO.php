@@ -9,7 +9,7 @@ use Predis;
  * PDO with meta info
  */
 class MetaPDO extends \PDO {
-	private const NAMESPACE = 'postgres:meta:';
+	private const NAMESPACE = 'postgres:type:meta:';
 	private static $redisCalls = [];
 	private $origin;
 	private $redis;
@@ -32,7 +32,59 @@ class MetaPDO extends \PDO {
 	}
 
 	public function prepare($statement, $options = []): \PDOStatement {
-		return $this->origin->prepare($statement, $options);
+		return new class($this->origin->prepare($statement, $options), $statement, $this->redis) extends \PDOStatement {
+			private const NAMESPACE = 'postgres:column:meta';
+			private $origin;
+			private $redis;
+			private $statement;
+
+			public function __construct(\PDOStatement $origin, string $statement, Predis\ClientInterface $redis) {
+				$this->origin = $origin;
+				$this->redis = $redis;
+				$this->statement = $statement;
+			}
+
+			public function execute($inputParameters = null): bool {
+				return $this->origin->execute(...func_get_args());
+			}
+
+			public function fetch(
+				$fetchStyle = null,
+				$cursorOrientation = \PDO::FETCH_ORI_NEXT,
+				$cursorOffset = 0
+			): array {
+				return $this->origin->fetch(...func_get_args()) ?: [];
+			}
+
+			public function fetchAll(
+				$fetchStyle = null,
+				$fetchArgument = null,
+				$ctorArgs = null
+			): array {
+				return $this->origin->fetchAll(...func_get_args());
+			}
+
+			/**
+			 * @param int $columnNumber
+			 * @return mixed
+			 */
+			public function fetchColumn($columnNumber = 0) {
+				return $this->origin->fetchColumn(...func_get_args());
+			}
+
+			public function columnCount(): int {
+				return $this->origin->columnCount();
+			}
+
+			public function getColumnMeta($column): array {
+				$key = self::NAMESPACE . md5($this->statement);
+				if (!$this->redis->hexists($key, $column)) {
+					$this->redis->hset($key, $column, serialize($this->origin->getColumnMeta($column)));
+					$this->redis->persist($key);
+				}
+				return unserialize($this->redis->hget($key, $column));
+			}
+		};
 	}
 
 	/**

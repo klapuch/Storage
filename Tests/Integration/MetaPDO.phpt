@@ -29,7 +29,7 @@ final class MetaPDO extends TestCase\PostgresDatabase {
 			$meta,
 			(new Storage\MetaPDO($this->database, $this->redis))->meta('test_table2')
 		);
-		Assert::same($meta, unserialize($this->redis->get('postgres:meta:test_table2')));
+		Assert::same($meta, unserialize($this->redis->get('postgres:type:meta:test_table2')));
 		Assert::same(
 			$meta,
 			(new Storage\MetaPDO($this->mock(\PDO::class), $this->mock(Predis\Client::class)))->meta('test_table2')
@@ -49,10 +49,10 @@ final class MetaPDO extends TestCase\PostgresDatabase {
 				],
 			];
 			$redis = $this->mock(Predis\Client::class);
-			$redis->shouldReceive('exists')->once()->with('postgres:meta:test_table2')->andReturn(false);
-			$redis->shouldReceive('get')->once()->with('postgres:meta:test_table2')->andReturn(serialize($meta));
-			$redis->shouldReceive('set')->once()->with('postgres:meta:test_table2', serialize($meta));
-			$redis->shouldReceive('persist')->once()->with('postgres:meta:test_table2');
+			$redis->shouldReceive('exists')->once()->with('postgres:type:meta:test_table2')->andReturn(false);
+			$redis->shouldReceive('get')->once()->with('postgres:type:meta:test_table2')->andReturn(serialize($meta));
+			$redis->shouldReceive('set')->once()->with('postgres:type:meta:test_table2', serialize($meta));
+			$redis->shouldReceive('persist')->once()->with('postgres:type:meta:test_table2');
 			(new Storage\MetaPDO($this->database, $redis))->meta('test_table2');
 		});
 	}
@@ -205,6 +205,18 @@ final class MetaPDO extends TestCase\PostgresDatabase {
 		$this->database->exec('CREATE TYPE test_type2 AS (second integer)');
 		Assert::notSame([], (new Storage\MetaPDO($this->database, $this->redis))->meta('TEST_TYPE2'));
 		Assert::notSame([], (new Storage\MetaPDO($this->database, $this->redis))->meta('TEST_TABLE2'));
+	}
+
+	public function testCachingColumnMeta() {
+		$this->database->exec('DROP TABLE IF EXISTS test_table2 CASCADE');
+		$this->database->exec('CREATE TABLE test_table2 (first integer, second text)');
+		$statement = (new Storage\MetaPDO($this->database, $this->redis))->prepare('SELECT * FROM test_table2');
+		$statement->execute();
+		Assert::same('first', $statement->getColumnMeta(0)['name']);
+		Assert::same('second', $statement->getColumnMeta(1)['name']);
+		$statement = (new Storage\MetaPDO($this->database, $this->redis))->prepare('SELECT * FROM test_table2');
+		Assert::same('first', $statement->getColumnMeta(0)['name']);
+		Assert::same('second', $statement->getColumnMeta(1)['name']);
 	}
 }
 

@@ -34,7 +34,6 @@ final class FlatQuery extends TestCase\PostgresDatabase {
 		Assert::same('Dom', $query->field());
 		Assert::same(['name' => 'Dom', 'type' => 'A'], $query->row());
 		Assert::same([['name' => 'Dom', 'type' => 'A']], $query->rows());
-		Assert::same([['name' => 'Dom', 'type' => 'A']], iterator_to_array($query->execute()));
 	}
 
 	public function testSingleDimensionWithoutChange() {
@@ -54,7 +53,6 @@ final class FlatQuery extends TestCase\PostgresDatabase {
 		Assert::same('Dom', $query->field());
 		Assert::same(['name' => 'Dom', 'type' => 'A'], $query->row());
 		Assert::same([['name' => 'Dom', 'type' => 'A']], $query->rows());
-		Assert::same([['name' => 'Dom', 'type' => 'A']], iterator_to_array($query->execute()));
 	}
 }
 
