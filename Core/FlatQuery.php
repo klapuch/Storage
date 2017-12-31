@@ -13,7 +13,7 @@ final class FlatQuery implements Query {
 	private $parameters;
 
 	public function __construct(
-		\PDO $database,
+		MetaPDO $database,
 		string $statement,
 		array $parameters = []
 	) {
@@ -26,7 +26,7 @@ final class FlatQuery implements Query {
 	 * @return mixed
 	 */
 	public function field() {
-		return (new NativeQuery(
+		return (new TypedQuery(
 			$this->database,
 			$this->statement,
 			$this->flatten($this->parameters)
@@ -34,7 +34,7 @@ final class FlatQuery implements Query {
 	}
 
 	public function row(): array {
-		return (new NativeQuery(
+		return (new TypedQuery(
 			$this->database,
 			$this->statement,
 			$this->flatten($this->parameters)
@@ -42,7 +42,7 @@ final class FlatQuery implements Query {
 	}
 
 	public function rows(): array {
-		return (new NativeQuery(
+		return (new TypedQuery(
 			$this->database,
 			$this->statement,
 			$this->flatten($this->parameters)
@@ -50,7 +50,7 @@ final class FlatQuery implements Query {
 	}
 
 	public function execute(): \PDOStatement {
-		return (new NativeQuery(
+		return (new TypedQuery(
 			$this->database,
 			$this->statement,
 			$this->flatten($this->parameters)
