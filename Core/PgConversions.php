@@ -1,5 +1,6 @@
 <?php
 declare(strict_types = 1);
+
 namespace Klapuch\Storage;
 
 final class PgConversions implements Conversion {
