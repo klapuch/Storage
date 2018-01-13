@@ -73,4 +73,8 @@
 		</properties>
 	</rule>
 
+	<rule ref="Generic.NamingConventions.ConstructorName.OldStyle">
+		<exclude-pattern>Core/Clauses/Join.php</exclude-pattern>
+	</rule>
+
 </ruleset>
