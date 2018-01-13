@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Klapuch\Storage\Clauses;
 
-final class AnsiLimit implements Clause, Limit {
+final class AnsiLimit implements Limit {
 	private $clause;
 	private $limit;
 

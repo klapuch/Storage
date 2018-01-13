@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Klapuch\Storage\Clauses;
 
-final class AnsiGroupBy implements Clause, GroupBy {
+final class AnsiGroupBy implements GroupBy {
 	private $clause;
 	private $columns;
 

@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Klapuch\Storage\Clauses;
 
-interface From {
+interface From extends Clause {
 	public function where(string $comparison): Where;
 	public function join(string $type, string $table, string $condition): Join;
 	public function groupBy(array $columns): GroupBy;

@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Klapuch\Storage\Clauses;
 
-final class AnsiHaving implements Clause, Having {
+final class AnsiHaving implements Having {
 	private $clause;
 	private $condition;
 

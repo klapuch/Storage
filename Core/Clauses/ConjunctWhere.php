@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Klapuch\Storage\Clauses;
 
-final class ConjunctWhere implements Clause, ChainedWhere {
+final class ConjunctWhere implements ChainedWhere {
 	private $condition;
 	private $clause;
 	private $conjunct;
