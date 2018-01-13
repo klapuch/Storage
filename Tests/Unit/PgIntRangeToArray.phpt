@@ -8,8 +8,8 @@ declare(strict_types = 1);
 namespace Klapuch\Storage\Unit;
 
 use Klapuch\Storage;
-use Tester\Assert;
 use Tester;
+use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
