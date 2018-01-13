@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Klapuch\Storage\Clauses;
 
-final class AnsiSelect implements Clause, Select {
+final class AnsiSelect implements Select {
 	private $columns;
 
 	public function __construct(array $columns) {

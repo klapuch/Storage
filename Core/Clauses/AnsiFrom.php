@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Klapuch\Storage\Clauses;
 
-final class AnsiFrom implements Clause, From {
+final class AnsiFrom implements From {
 	private $clause;
 	private $tables;
 

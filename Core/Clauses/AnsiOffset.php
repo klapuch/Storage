@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Klapuch\Storage\Clauses;
 
-final class AnsiOffset implements Clause, Offset {
+final class AnsiOffset implements Offset {
 	private $clause;
 	private $offset;
 

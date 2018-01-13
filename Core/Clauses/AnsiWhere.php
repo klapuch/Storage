@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Klapuch\Storage\Clauses;
 
-final class AnsiWhere implements Clause, Where {
+final class AnsiWhere implements Where {
 	private $condition;
 	private $clause;
 

@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Klapuch\Storage\Clauses;
 
-final class AnsiOrderBy implements Clause, OrderBy {
+final class AnsiOrderBy implements OrderBy {
 	private $clause;
 	private $orders;
 
