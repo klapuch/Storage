@@ -16,6 +16,10 @@ final class CustomJoin implements Clause, Join {
 		$this->condition = $condition;
 	}
 
+	public function join(string $type, string $table, string $condition): Join {
+		return new self($this, $type, $table, $condition);
+	}
+
 	public function where(string $comparison): Where {
 		return new AnsiWhere($this, $comparison);
 	}

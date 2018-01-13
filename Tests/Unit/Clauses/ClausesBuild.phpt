@@ -86,6 +86,15 @@ final class ClausesBuild extends Tester\TestCase {
 		Assert::same('SELECT firstname, lastname FROM person INNER JOIN others ON person.firstname = others.firstname', $clauses->sql());
 	}
 
+	public function testMultipleJoins() {
+		$clauses = (new Storage\Clauses\AnsiSelect(['firstname', 'lastname']))
+			->from(['person'])
+			->join('INNER', 'others', 'person.firstname = others.firstname')
+			->join('LEFT', 'others2', 'others.firstname = others2.firstname')
+			->where('age > 20');
+		Assert::same('SELECT firstname, lastname FROM person INNER JOIN others ON person.firstname = others.firstname LEFT JOIN others2 ON others.firstname = others2.firstname WHERE age > 20', $clauses->sql());
+	}
+
 	public function testMultipleAndWhere() {
 		$clauses = (new Storage\Clauses\AnsiSelect(['firstname', 'lastname']))
 			->from(['person'])
