@@ -17,5 +17,4 @@ final class AnsiUpdate implements Update {
 	public function sql(): string {
 		return sprintf('UPDATE %s', $this->table);
 	}
-
 }
