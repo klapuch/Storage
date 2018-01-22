@@ -3,7 +3,9 @@ declare(strict_types = 1);
 
 namespace Klapuch\Storage\Clauses;
 
-final class AnsiSet implements Set {
+use Klapuch\Storage;
+
+final class PgSet implements Set {
 	private $clause;
 	private $values;
 
@@ -27,9 +29,19 @@ final class AnsiSet implements Set {
 						return sprintf('%s = %s', $column, $order);
 					},
 					array_keys($this->values),
-					$this->values
+					array_map([$this, 'cast'], $this->values)
 				)
 			)
 		);
 	}
+
+	// @codingStandardsIgnoreStart Used by callback
+	/**
+	 * @param mixed $value
+	 * @return string
+	 */
+	private function cast($value): string {
+		return (new Storage\PgLiteral($value))->value();
+	}
+	// @codingStandardsIgnoreEnd
 }

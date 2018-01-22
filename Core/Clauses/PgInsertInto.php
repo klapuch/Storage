@@ -3,6 +3,8 @@ declare(strict_types = 1);
 
 namespace Klapuch\Storage\Clauses;
 
+use Klapuch\Storage;
+
 final class PgInsertInto implements InsertInto {
 	private $table;
 	private $values;
@@ -28,14 +30,10 @@ final class PgInsertInto implements InsertInto {
 	// @codingStandardsIgnoreStart Used by callback
 	/**
 	 * @param mixed $value
-	 * @return mixed
+	 * @return string
 	 */
-	private function cast($value) {
-		if (is_bool($value))
-			return $value ? 'true' : 'false';
-		elseif (is_string($value))
-			return sprintf('\'%s\'', $value);
-		return $value;
+	private function cast($value): string {
+		return (new Storage\PgLiteral($value))->value();
 	}
 	// @codingStandardsIgnoreEnd
 }

@@ -11,7 +11,7 @@ final class AnsiUpdate implements Update {
 	}
 
 	public function set(array $values): Set {
-		return new AnsiSet($this, $values);
+		return new PgSet($this, $values);
 	}
 
 	public function sql(): string {

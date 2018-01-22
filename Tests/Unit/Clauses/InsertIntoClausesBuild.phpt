@@ -14,18 +14,16 @@ use Tester\Assert;
 require __DIR__ . '/../../bootstrap.php';
 
 final class InsertIntoClausesBuild extends Tester\TestCase {
-	public function testInsertingByTypes() {
+	public function testInsertingMultipleValues() {
 		$clauses = new Storage\Clauses\PgInsertInto(
 			'world',
 			[
 				'name' => 'Dom',
 				'age' => 25,
-				'cool' => true,
-				'not_cool' => false,
 			]
 		);
 		Assert::same(
-			"INSERT INTO world (name, age, cool, not_cool) VALUES ('Dom', 25, true, false)",
+			"INSERT INTO world (name, age) VALUES ('Dom', '25')",
 			$clauses->sql()
 		);
 	}
