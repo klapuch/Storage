@@ -13,7 +13,7 @@ use Tester\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 
-final class ClausesBuild extends Tester\TestCase {
+final class SelectClausesBuild extends Tester\TestCase {
 	public function testBuildFromThenWhere() {
 		$clauses = (new Storage\Clauses\AnsiSelect(['firstname', 'lastname']))
 			->from(['person'])
@@ -134,4 +134,4 @@ final class ClausesBuild extends Tester\TestCase {
 	}
 }
 
-(new ClausesBuild())->run();
+(new SelectClausesBuild())->run();
