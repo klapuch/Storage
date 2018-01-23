@@ -23,17 +23,15 @@ final class PgInsertInto implements InsertInto {
 			'INSERT INTO %s (%s) VALUES (%s)',
 			$this->table,
 			implode(', ', array_keys($this->values)),
-			implode(', ', array_map([$this, 'cast'], $this->values))
+			implode(
+				', ',
+				array_map(
+					function($value): string {
+						return (new Storage\PgLiteral($value))->value();
+					},
+					$this->values
+				)
+			)
 		);
 	}
-
-	// @codingStandardsIgnoreStart Used by callback
-	/**
-	 * @param mixed $value
-	 * @return string
-	 */
-	private function cast($value): string {
-		return (new Storage\PgLiteral($value))->value();
-	}
-	// @codingStandardsIgnoreEnd
 }

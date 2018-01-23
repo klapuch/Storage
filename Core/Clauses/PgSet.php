@@ -19,29 +19,14 @@ final class PgSet implements Set {
 	}
 
 	public function sql(): string {
-		return sprintf(
-			'%s SET %s',
-			$this->clause->sql(),
-			implode(
-				', ',
-				array_map(
-					function(string $column, string $order): string {
-						return sprintf('%s = %s', $column, $order);
-					},
-					array_keys($this->values),
-					array_map([$this, 'cast'], $this->values)
-				)
+		return (new AnsiSet(
+			$this->clause,
+			array_map(
+				function($value): string {
+					return (new Storage\PgLiteral($value))->value();
+				},
+				$this->values
 			)
-		);
+		))->sql();
 	}
-
-	// @codingStandardsIgnoreStart Used by callback
-	/**
-	 * @param mixed $value
-	 * @return string
-	 */
-	private function cast($value): string {
-		return (new Storage\PgLiteral($value))->value();
-	}
-	// @codingStandardsIgnoreEnd
 }

@@ -16,15 +16,23 @@ require __DIR__ . '/../../bootstrap.php';
 final class UpdateClausesBuild extends Tester\TestCase {
 	public function testMultipleSet() {
 		$clauses = (new Storage\Clauses\AnsiUpdate('world'))
-			->set(['mood' => 'good', 'age' => 25]);
-		Assert::same("UPDATE world SET mood = 'good', age = '25'", $clauses->sql());
+			->set(['mood' => '?', 'age' => '?']);
+		Assert::same('UPDATE world SET mood = ?, age = ?', $clauses->sql());
 	}
 
 	public function testMultipleWhere() {
 		$clauses = (new Storage\Clauses\AnsiUpdate('world'))
-			->set(['mood' => 'good'])
+			->set(['mood' => '?'])
 			->where('age > 20');
-		Assert::same("UPDATE world SET mood = 'good' WHERE age > 20", $clauses->sql());
+		Assert::same('UPDATE world SET mood = ? WHERE age > 20', $clauses->sql());
+	}
+
+	public function testAppendingDifferentSet() {
+		$clauses = (new Storage\Clauses\PgSet(
+			(new Storage\Clauses\AnsiUpdate('world'))->set(['mood' => '?', 'age' => '?']),
+			['name' => 'Dom']
+		))->where('age > 20');
+		Assert::same("UPDATE world SET mood = ?, age = ?, name = 'Dom' WHERE age > 20", $clauses->sql());
 	}
 }
 
