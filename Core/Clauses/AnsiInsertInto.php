@@ -3,9 +3,7 @@ declare(strict_types = 1);
 
 namespace Klapuch\Storage\Clauses;
 
-use Klapuch\Storage;
-
-final class PgInsertInto implements InsertInto {
+final class AnsiInsertInto implements InsertInto {
 	private $table;
 	private $values;
 
@@ -23,15 +21,7 @@ final class PgInsertInto implements InsertInto {
 			'INSERT INTO %s (%s) VALUES (%s)',
 			$this->table,
 			implode(', ', array_keys($this->values)),
-			implode(
-				', ',
-				array_map(
-					function($value): string {
-						return (new Storage\PgLiteral($value))->value();
-					},
-					$this->values
-				)
-			)
+			implode(', ', $this->values)
 		);
 	}
 }

@@ -15,24 +15,21 @@ require __DIR__ . '/../../bootstrap.php';
 
 final class InsertIntoClausesBuild extends Tester\TestCase {
 	public function testInsertingMultipleValues() {
-		$clauses = new Storage\Clauses\PgInsertInto(
+		$clauses = new Storage\Clauses\AnsiInsertInto(
 			'world',
-			[
-				'name' => 'Dom',
-				'age' => 25,
-			]
+			['name' => '?', 'age' => ':age']
 		);
 		Assert::same(
-			"INSERT INTO world (name, age) VALUES ('Dom', '25')",
+			'INSERT INTO world (name, age) VALUES (?, :age)',
 			$clauses->sql()
 		);
 	}
 
 	public function testInsertingWithReturning() {
-		$clauses = (new Storage\Clauses\PgInsertInto('world', ['name' => 'Dom']))
+		$clauses = (new Storage\Clauses\AnsiInsertInto('world', ['name' => '?']))
 			->returning(['name', '*']);
 		Assert::same(
-			"INSERT INTO world (name) VALUES ('Dom') RETURNING name, *",
+			'INSERT INTO world (name) VALUES (?) RETURNING name, *',
 			$clauses->sql()
 		);
 	}
