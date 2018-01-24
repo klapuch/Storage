@@ -18,8 +18,8 @@ final class AnsiSet implements Set {
 
 	public function sql(): string {
 		return sprintf(
-			'%s %s',
-			$this->withKeyword($this->clause->sql()),
+			'%s SET %s',
+			$this->clause->sql(),
 			implode(
 				', ',
 				array_map(
@@ -31,24 +31,5 @@ final class AnsiSet implements Set {
 				)
 			)
 		);
-	}
-
-	/**
-	 * SQL with "SET" or "," based on previous SQL
-	 * @return string
-	 */
-	private function withKeyword(string $sql): string
-	{
-		return $sql . ($this->continuing($sql) ? ',' : ' SET');
-	}
-
-	/**
-	 * Was the previous SQL UPDATE?
-	 * @param string $sql
-	 * @return bool
-	 */
-	private function continuing(string $sql): bool
-	{
-		return (bool) preg_match('~UPDATE\s.+\sSET~', $sql);
 	}
 }

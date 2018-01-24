@@ -26,14 +26,6 @@ final class UpdateClausesBuild extends Tester\TestCase {
 			->where('age > 20');
 		Assert::same('UPDATE world SET mood = ? WHERE age > 20', $clauses->sql());
 	}
-
-	public function testAppendingDifferentSet() {
-		$clauses = (new Storage\Clauses\PgSet(
-			(new Storage\Clauses\AnsiUpdate('world'))->set(['mood' => '?', 'age' => '?']),
-			['name' => 'Dom']
-		))->where('age > 20');
-		Assert::same("UPDATE world SET mood = ?, age = ?, name = 'Dom' WHERE age > 20", $clauses->sql());
-	}
 }
 
 (new UpdateClausesBuild())->run();
