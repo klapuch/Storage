@@ -24,12 +24,12 @@ final class NativeQuery implements Query {
 		return $this->execute()->fetchColumn();
 	}
 
-	public function row(): array {
-		return $this->execute()->fetch() ?: [];
+	public function row(int $style = \PDO::FETCH_ASSOC): array {
+		return $this->execute()->fetch($style) ?: [];
 	}
 
-	public function rows(): array {
-		return $this->execute()->fetchAll();
+	public function rows(int $style = \PDO::FETCH_ASSOC): array {
+		return $this->execute()->fetchAll($style);
 	}
 
 	public function execute(): \PDOStatement {

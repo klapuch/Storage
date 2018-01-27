@@ -34,20 +34,20 @@ final class FlatQuery implements Query {
 		))->field();
 	}
 
-	public function row(): array {
+	public function row(int $style = \PDO::FETCH_ASSOC): array {
 		return (new TypedQuery(
 			$this->database,
 			$this->statement,
 			$this->flatten($this->parameters)
-		))->row();
+		))->row($style);
 	}
 
-	public function rows(): array {
+	public function rows(int $style = \PDO::FETCH_ASSOC): array {
 		return (new TypedQuery(
 			$this->database,
 			$this->statement,
 			$this->flatten($this->parameters)
-		))->rows();
+		))->rows($style);
 	}
 
 	public function execute(): \PDOStatement {

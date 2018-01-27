@@ -31,15 +31,15 @@ final class TypedQuery implements Query {
 		);
 	}
 
-	public function row(): array {
+	public function row(int $style = \PDO::FETCH_ASSOC): array {
 		$statement = $this->execute();
-		return $this->conversions($statement->fetch() ?: [], $statement);
+		return $this->conversions($statement->fetch($style) ?: [], $statement);
 	}
 
-	public function rows(): array {
+	public function rows(int $style = \PDO::FETCH_ASSOC): array {
 		$statement = $this->execute();
 		return array_reduce(
-			$statement->fetchAll(),
+			$statement->fetchAll($style),
 			function(array $rows, array $row) use ($statement): array {
 				$rows[] = $this->conversions($row, $statement);
 				return $rows;

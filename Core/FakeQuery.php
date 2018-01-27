@@ -19,11 +19,11 @@ final class FakeQuery implements Query {
 		return current($this->set);
 	}
 
-	public function row(): array {
+	public function row(int $style = \PDO::FETCH_ASSOC): array {
 		return current($this->set);
 	}
 
-	public function rows(): array {
+	public function rows(int $style = \PDO::FETCH_ASSOC): array {
 		return $this->set;
 	}
 

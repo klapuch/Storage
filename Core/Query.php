@@ -12,15 +12,17 @@ interface Query {
 
 	/**
 	 * Single row
+	 * @param int|null $style
 	 * @return array
 	 */
-	public function row(): array;
+	public function row(int $style = \PDO::FETCH_ASSOC): array;
 
 	/**
 	 * Multiple rows
+	 * @param int|null $style
 	 * @return array
 	 */
-	public function rows(): array;
+	public function rows(int $style = \PDO::FETCH_ASSOC): array;
 
 	/**
 	 * Execute the query

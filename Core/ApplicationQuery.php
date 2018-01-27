@@ -24,17 +24,17 @@ final class ApplicationQuery implements Query {
 		}
 	}
 
-	public function row(): array {
+	public function row(int $style = \PDO::FETCH_ASSOC): array {
 		try {
-			return $this->origin->row();
+			return $this->origin->row($style);
 		} catch (\PDOException $ex) {
 			throw $this->amend($ex);
 		}
 	}
 
-	public function rows(): array {
+	public function rows(int $style = \PDO::FETCH_ASSOC): array {
 		try {
-			return $this->origin->rows();
+			return $this->origin->rows($style);
 		} catch (\PDOException $ex) {
 			throw $this->amend($ex);
 		}
