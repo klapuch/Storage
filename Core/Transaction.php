@@ -22,18 +22,13 @@ final class Transaction {
 	 * @throws \Throwable
 	 */
 	public function start(\Closure $callback) {
-		$this->database->prepare(
-			sprintf(
-				'START TRANSACTION ISOLATION LEVEL %s',
-				$this->isolation
-			)
-		)->execute();
+		$this->database->exec(sprintf('START TRANSACTION ISOLATION LEVEL %s', $this->isolation));
 		try {
 			$result = $callback();
-			$this->database->prepare('COMMIT TRANSACTION')->execute();
+			$this->database->exec('COMMIT TRANSACTION');
 			return $result;
 		} catch (\Throwable $ex) {
-			$this->database->prepare('ROLLBACK TRANSACTION')->execute();
+			$this->database->exec('ROLLBACK TRANSACTION');
 			throw $ex;
 		}
 	}
