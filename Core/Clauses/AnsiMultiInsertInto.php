@@ -20,14 +20,14 @@ final class AnsiMultiInsertInto implements InsertInto {
 		return sprintf(
 			'INSERT INTO %s (%s) VALUES %s',
 			$this->table,
-			implode(', ', array_keys(current($this->values))),
+			implode(', ', array_keys($this->values)),
 			implode(
 				', ',
 				array_map(
 					function(array $row): string {
 						return sprintf('(%s)', implode(', ', $row));
 					},
-					$this->values
+					array_map(null, ...array_values($this->values))
 				)
 			)
 		);

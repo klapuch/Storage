@@ -17,7 +17,7 @@ final class AnsiMultiInsertInto extends Tester\TestCase {
 	public function testInsertingMultipleValues() {
 		$clauses = new Storage\Clauses\AnsiMultiInsertInto(
 			'world',
-			[['name' => '?', 'age' => ':age'], ['name' => '?', 'age' => ':age2']]
+			['name' => ['?', '?'], 'age' => [':age', ':age2']]
 		);
 		Assert::same(
 			'INSERT INTO world (name, age) VALUES (?, :age), (?, :age2)',
