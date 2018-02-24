@@ -13,7 +13,7 @@ use Tester\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 
-final class InsertIntoClausesBuild extends Tester\TestCase {
+final class AnsiInsertInto extends Tester\TestCase {
 	public function testInsertingMultipleValues() {
 		$clauses = new Storage\Clauses\AnsiInsertInto(
 			'world',
@@ -35,4 +35,4 @@ final class InsertIntoClausesBuild extends Tester\TestCase {
 	}
 }
 
-(new InsertIntoClausesBuild())->run();
+(new AnsiInsertInto())->run();

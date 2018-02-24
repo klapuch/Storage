@@ -13,7 +13,7 @@ use Tester\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 
-final class UpdateClausesBuild extends Tester\TestCase {
+final class AnsiUpdate extends Tester\TestCase {
 	public function testMultipleSet() {
 		$clauses = (new Storage\Clauses\AnsiUpdate('world'))
 			->set(['mood' => '?', 'age' => '?']);
@@ -28,4 +28,4 @@ final class UpdateClausesBuild extends Tester\TestCase {
 	}
 }
 
-(new UpdateClausesBuild())->run();
+(new AnsiUpdate())->run();
