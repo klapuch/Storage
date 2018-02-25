@@ -74,6 +74,17 @@ final class PgConversions extends TestCase\PostgresDatabase {
 		);
 	}
 
+	public function testCastingToArrayViaUnderscorePrefix() {
+		Assert::same(
+			[1, 2, 3],
+			(new Storage\PgConversions($this->database, '{1, 2, 3}', '_int4'))->value()
+		);
+		Assert::same(
+			['a', 'b', 'c'],
+			(new Storage\PgConversions($this->database, '{a, b, c}', '_text'))->value()
+		);
+	}
+
 	public function testCastingCompoundType() {
 		(new Storage\NativeQuery($this->database, 'DROP TYPE IF EXISTS person CASCADE'))->execute();
 		(new Storage\NativeQuery($this->database, 'CREATE TYPE person AS (name TEXT, race TEXT)'))->execute();
