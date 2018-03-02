@@ -16,6 +16,10 @@ final class AnsiInsertInto implements InsertInto {
 		return new Returning($this, $columns);
 	}
 
+	public function onConflict(array $target = []): Conflict {
+		return new AnsiConflict($this, $target);
+	}
+
 	public function sql(): string {
 		return sprintf(
 			'INSERT INTO %s (%s) VALUES (%s)',

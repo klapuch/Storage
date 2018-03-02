@@ -5,4 +5,5 @@ namespace Klapuch\Storage\Clauses;
 
 interface InsertInto extends Clause {
 	public function returning(array $columns): Returning;
+	public function onConflict(array $target = []): Conflict;
 }
