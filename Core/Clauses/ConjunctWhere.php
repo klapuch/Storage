@@ -14,7 +14,7 @@ final class ConjunctWhere implements ChainedWhere {
 		$this->conjunct = $conjunct;
 	}
 
-	public function andWhere(string $condition): ChainedWhere {
+	public function where(string $condition): ChainedWhere {
 		return new self($this, 'AND', $condition);
 	}
 

@@ -99,8 +99,8 @@ final class SelectClausesBuild extends Tester\TestCase {
 		$clauses = (new Storage\Clauses\AnsiSelect(['firstname', 'lastname']))
 			->from(['person'])
 			->where('age > 20')
-			->andWhere('age > 30')
-			->andWhere('age > 40')
+			->where('age > 30')
+			->where('age > 40')
 			->limit(10);
 		Assert::same('SELECT firstname, lastname FROM person WHERE age > 20 AND age > 30 AND age > 40 LIMIT 10', $clauses->sql());
 	}
@@ -120,7 +120,7 @@ final class SelectClausesBuild extends Tester\TestCase {
 			->from(['person'])
 			->where('age > 20')
 			->orWhere('age > 30')
-			->andWhere('age > 35')
+			->where('age > 35')
 			->orWhere('age > 40')
 			->limit(10);
 		Assert::same('SELECT firstname, lastname FROM person WHERE age > 20 OR age > 30 AND age > 35 OR age > 40 LIMIT 10', $clauses->sql());

@@ -12,7 +12,7 @@ final class AnsiWhere implements Where {
 		$this->clause = $clause;
 	}
 
-	public function andWhere(string $condition): ChainedWhere {
+	public function where(string $condition): ChainedWhere {
 		return new ConjunctWhere($this, 'AND', $condition);
 	}
 

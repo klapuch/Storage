@@ -4,7 +4,7 @@ declare(strict_types = 1);
 namespace Klapuch\Storage\Clauses;
 
 interface ChainedWhere extends Clause {
-	public function andWhere(string $condition): self;
+	public function where(string $condition): self;
 	public function orWhere(string $condition): self;
 	public function groupBy(array $columns): GroupBy;
 	public function having(string $condition): Having;
