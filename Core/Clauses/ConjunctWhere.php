@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Klapuch\Storage\Clauses;
 
-final class ConjunctWhere implements ChainedWhere {
+final class ConjunctWhere implements Where {
 	private $condition;
 	private $clause;
 	private $conjunct;
@@ -14,11 +14,11 @@ final class ConjunctWhere implements ChainedWhere {
 		$this->conjunct = $conjunct;
 	}
 
-	public function where(string $condition): ChainedWhere {
+	public function where(string $condition): Where {
 		return new self($this, 'AND', $condition);
 	}
 
-	public function orWhere(string $condition): ChainedWhere {
+	public function orWhere(string $condition): Where {
 		return new self($this, 'OR', $condition);
 	}
 
