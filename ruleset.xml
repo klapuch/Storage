@@ -54,10 +54,6 @@
 		<exclude-pattern>Tests/TestCase</exclude-pattern>
 	</rule>
 
-	<rule ref="Generic.NamingConventions.ConstructorName.OldStyle">
-		<exclude-pattern>Core/Clauses/Where.php</exclude-pattern>
-	</rule>
-
 	<rule ref="SlevomatCodingStandard.TypeHints.TypeHintDeclaration">
 		<properties>
 			<property name="usefulAnnotations" type="array" value="@dataProvider,@throws"/>
@@ -75,10 +71,6 @@
 		<properties>
 			<property name="namespacesRequiredToUse" type="array" value="Klapuch"/>
 		</properties>
-	</rule>
-
-	<rule ref="Generic.NamingConventions.ConstructorName.OldStyle">
-		<exclude-pattern>Core/Clauses/Join.php</exclude-pattern>
 	</rule>
 
 </ruleset>
