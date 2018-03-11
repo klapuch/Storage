@@ -17,9 +17,10 @@
     }
   ],
   "require": {
-    "php": ">=7.1",
+    "php": ">=7.2",
     "ext-pdo": "*",
-    "predis/predis": "^1.1"
+    "predis/predis": "^1.1",
+    "klapuch/sql": "dev-master"
   },
   "require-dev": {
     "nette/tester": "^2.0",
