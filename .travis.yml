@@ -10,7 +10,6 @@ addons:
 language: php
 
 php:
-  - 7.1
   - 7.2
   - nightly
 
@@ -26,11 +25,11 @@ before_script:
   - psql -U postgres storage < ./Tests/fixtures/schema.sql
 
 script:
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.1" ]]; then vendor/bin/phing ci; else vendor/bin/phing; fi
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ]]; then vendor/bin/phing ci; else vendor/bin/phing; fi
 
 after_script:
-    - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.1" ]]; then wget https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar && php coveralls.phar --verbose --config Tests/.coveralls.yml; fi
-    - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.1" ]]; then php coveralls.phar --verbose --config Tests/.coveralls.yml; fi
+    - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ]]; then wget https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar && php coveralls.phar --verbose --config Tests/.coveralls.yml; fi
+    - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ]]; then php coveralls.phar --verbose --config Tests/.coveralls.yml; fi
 
 after_failure:
   - for i in $(find Tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done
