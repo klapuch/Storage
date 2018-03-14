@@ -17,7 +17,22 @@ final class PgIntRangeToArray extends Tester\TestCase {
 	public function testConvertingToArray() {
 		Assert::same(
 			[10, 20, '[', ')'],
-			(new Storage\PgIntRangeToArray('[10,20)'))->value()
+			(new Storage\PgIntRangeToArray(
+				'[10,20)',
+				'INT4range',
+				new Storage\FakeConversion()
+			))->value()
+		);
+	}
+
+	public function testDelegatingNotInt4Range() {
+		Assert::same(
+			'foo',
+			(new Storage\PgIntRangeToArray(
+				'[10,20)',
+				'bar',
+				new Storage\FakeConversion('foo')
+			))->value()
 		);
 	}
 }

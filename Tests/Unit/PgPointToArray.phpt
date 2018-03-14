@@ -17,7 +17,22 @@ final class PgPointToArray extends Tester\TestCase {
 	public function testConvertingToXAndY() {
 		Assert::same(
 			['x' => 50.556785, 'y' => 70.0],
-			(new Storage\PgPointToArray('(50.556785,70)'))->value()
+			(new Storage\PgPointToArray(
+				'(50.556785,70)',
+				'pOINt',
+				new Storage\FakeConversion()
+			))->value()
+		);
+	}
+
+	public function testDelegatingNotPoint() {
+		Assert::same(
+			'foo',
+			(new Storage\PgPointToArray(
+				'xxx',
+				'(50.556785,70)',
+				new Storage\FakeConversion('foo')
+			))->value()
 		);
 	}
 }

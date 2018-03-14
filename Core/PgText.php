@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Klapuch\Storage;
 
-final class PgIntRangeToArray implements Conversion {
+final class PgText implements Conversion {
 	private $original;
 	private $type;
 	private $delegation;
@@ -18,13 +18,8 @@ final class PgIntRangeToArray implements Conversion {
 	 * @return mixed
 	 */
 	public function value() {
-		if (strcasecmp($this->type, 'int4range') === 0) {
-			[$left, $right] = [substr($this->original, 0, 1), substr($this->original, -1)];
-			return array_merge(
-				array_map('intval', explode(',', trim($this->original, $left . $right))),
-				[$left, $right]
-			);
-		}
+		if (strcasecmp('text', $this->type) === 0)
+			return $this->original;
 		return $this->delegation->value();
 	}
 }
