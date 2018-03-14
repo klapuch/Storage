@@ -18,34 +18,41 @@ final class PgConversions implements Conversion {
 	 * @return mixed
 	 */
 	public function value() {
-		if ($this->original === null || strcasecmp('text', $this->type) === 0)
-			return $this->original;
-		elseif (strcasecmp($this->type, 'hstore') === 0)
-			return (new PgHStoreToArray($this->database, $this->original))->value();
-		elseif (strcasecmp($this->type, 'int4range') === 0)
-			return (new PgIntRangeToArray($this->original))->value();
-		elseif (strcasecmp($this->type, 'tstzrange') === 0)
-			return (new PgTimestamptzRangeToArray($this->database, $this->original))->value();
-		elseif (strcasecmp($this->type, 'point') === 0)
-			return (new PgPointToArray($this->original))->value();
-		elseif (preg_match('~(?J)(^(?P<type>\w+)\[\])|(^_(?P<type>\w+))$~', $this->type, $match))
-			return (new PgArrayToArray($this->database, $this->original, $match['type']))->value();
-		elseif ($this->compound($this->type)) {
-			return (new PgRowToTypedArray(
-				new PgRowToArray($this->database, $this->original, $this->type),
+		return (new PgNullable(
+			$this->original,
+			new PgText(
+				$this->original,
 				$this->type,
-				$this->database
-			))->value();
-		}
-		return $this->original;
-	}
-
-	/**
-	 * Is the given type compound?
-	 * @param string $type
-	 * @return bool
-	 */
-	private function compound(string $type): bool {
-		return (bool) $this->database->meta($type);
+				new PgHStoreToArray(
+					$this->database,
+					$this->original,
+					$this->type,
+					new PgIntRangeToArray(
+						$this->original,
+						$this->type,
+						new PgTimestamptzRangeToArray(
+							$this->database,
+							$this->original,
+							$this->type,
+							new PgPointToArray(
+								$this->original,
+								$this->type,
+								new PgArrayToArray(
+									$this->database,
+									$this->original,
+									$this->type,
+									new PgRowToTypedArray(
+										$this->original,
+										$this->type,
+										$this->database,
+										new PgNative($this->original)
+									)
+								)
+							)
+						)
+					)
+				)
+			)
+		))->value();
 	}
 }

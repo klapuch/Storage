@@ -17,18 +17,45 @@ final class PgArrayToArray extends TestCase\PostgresDatabase {
 	public function testConvertingToArray() {
 		Assert::same(
 			[1, 2, 3],
-			(new Storage\PgArrayToArray($this->database, '{1,2,3}', 'INTEGER'))->value()
+			(new Storage\PgArrayToArray(
+				$this->database,
+				'{1,2,3}',
+				'INTEGER[]',
+				new Storage\FakeConversion()
+			))->value()
 		);
 	}
 
-	public function testConvertingToViaNativeType() {
+	public function testConvertingViaNativeType() {
 		Assert::same(
 			[1, 2, 3],
-			(new Storage\PgArrayToArray($this->database, '{1,2,3}', 'int4'))->value()
+			(new Storage\PgArrayToArray(
+				$this->database,
+				'{1,2,3}',
+				'_int',
+				new Storage\FakeConversion()
+			))->value()
 		);
 		Assert::same(
-			[1, 2, 3],
-			(new Storage\PgArrayToArray($this->database, '{1,2,3}', 'int2'))->value()
+			['1', '2', '3'],
+			(new Storage\PgArrayToArray(
+				$this->database,
+				'{1,2,3}',
+				'_text',
+				new Storage\FakeConversion()
+			))->value()
+		);
+	}
+
+	public function testDelegatingNotArray() {
+		Assert::same(
+			'foo',
+			(new Storage\PgArrayToArray(
+				$this->database,
+				'{1,2,3}',
+				'text',
+				new Storage\FakeConversion('foo')
+			))->value()
 		);
 	}
 }

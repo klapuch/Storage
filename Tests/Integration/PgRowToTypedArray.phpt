@@ -20,9 +20,10 @@ final class PgRowToTypedArray extends TestCase\PostgresDatabase {
 		Assert::same(
 			['name' => 'Dom', 'age' => 21, 'cool' => true],
 			(new Storage\PgRowToTypedArray(
-				new Storage\FakeConversion(['name' => 'Dom', 'age' => '21', 'cool' => 't']),
+				'(Dom,21,t)',
 				'person',
-				$this->database
+				$this->database,
+				new Storage\FakeConversion()
 			))->value()
 		);
 	}
@@ -33,9 +34,10 @@ final class PgRowToTypedArray extends TestCase\PostgresDatabase {
 		Assert::same(
 			['name' => '123'],
 			(new Storage\PgRowToTypedArray(
-				new Storage\FakeConversion(['name' => '123']),
+				'(123)',
 				'person',
-				$this->database
+				$this->database,
+				new Storage\FakeConversion()
 			))->value()
 		);
 	}
@@ -46,9 +48,10 @@ final class PgRowToTypedArray extends TestCase\PostgresDatabase {
 		Assert::same(
 			['name' => null],
 			(new Storage\PgRowToTypedArray(
-				new Storage\FakeConversion(['name' => null]),
+				'()',
 				'person',
-				$this->database
+				$this->database,
+				new Storage\FakeConversion()
 			))->value()
 		);
 	}
@@ -66,16 +69,22 @@ final class PgRowToTypedArray extends TestCase\PostgresDatabase {
 				'length' => ['value' => 10, 'unit' => 'mm'],
 			],
 			(new Storage\PgRowToTypedArray(
-				new Storage\FakeConversion(
-					[
-						'name' => 'Dom',
-						'age' => '21',
-						'cool' => true,
-						'length' => ['value' => 10, 'unit' => 'mm'],
-					]
-				),
+				'(Dom,21,t,"(10,mm)")',
 				'person_table',
-				$this->database
+				$this->database,
+				new Storage\FakeConversion()
+			))->value()
+		);
+	}
+
+	public function testDelegatingWithUnknownType() {
+		Assert::same(
+			'foo',
+			(new Storage\PgRowToTypedArray(
+				'(bar)',
+				'unknown_type',
+				$this->database,
+				new Storage\FakeConversion('foo')
 			))->value()
 		);
 	}

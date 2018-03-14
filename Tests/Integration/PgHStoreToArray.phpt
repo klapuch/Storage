@@ -17,7 +17,24 @@ final class PgHStoreToArray extends TestCase\PostgresDatabase {
 	public function testConvertingToArray() {
 		Assert::same(
 			['name' => 'Dom', 'race' => 'human'],
-			(new Storage\PgHStoreToArray($this->database, 'name=>Dom,race=>human'))->value()
+			(new Storage\PgHStoreToArray(
+				$this->database,
+				'name=>Dom,race=>human',
+				'hSTORE',
+				new Storage\FakeConversion()
+			))->value()
+		);
+	}
+
+	public function testDelegationForNotHstore() {
+		Assert::same(
+			'foo',
+			(new Storage\PgHStoreToArray(
+				$this->database,
+				'name=>Dom',
+				'text',
+				new Storage\FakeConversion('foo')
+			))->value()
 		);
 	}
 }

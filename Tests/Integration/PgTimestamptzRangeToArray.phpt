@@ -17,7 +17,9 @@ final class PgTimestamptzRangeToArray extends TestCase\PostgresDatabase {
 	public function testConvertingToArray() {
 		$ranges = (new Storage\PgTimestamptzRangeToArray(
 			$this->database,
-			'[2004-10-19 10:23:54.20+02,2005-10-19 10:23:54.20+02)'
+			'[2004-10-19 10:23:54.20+02,2005-10-19 10:23:54.20+02)',
+			'TSTZrange',
+			new Storage\FakeConversion()
 		))->value();
 		[$from, $to, $left, $right] = $ranges;
 		Assert::same('2004-10-19 08:23:54.200000+0000', (string) $from);
@@ -26,8 +28,16 @@ final class PgTimestamptzRangeToArray extends TestCase\PostgresDatabase {
 		Assert::same(')', $right);
 	}
 
-	public function testAllowingNull() {
-		Assert::null((new Storage\PgTimestamptzRangeToArray($this->database, null))->value());
+	public function testDelegatingNotTsTzRange() {
+		Assert::same(
+			'bar',
+			(new Storage\PgTimestamptzRangeToArray(
+				$this->database,
+				'foo',
+				'foo',
+				new Storage\FakeConversion('bar')
+			))->value()
+		);
 	}
 }
 
