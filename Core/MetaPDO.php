@@ -94,10 +94,10 @@ class MetaPDO extends \PDO {
 				if (isset($this->cache['column'][$key][$column]))
 					return $this->cache['column'][$key][$column];
 				if (!$this->redis->hexists($key, $column)) {
-					$this->redis->hset($key, $column, json_encode($this->origin->getColumnMeta($column)));
+					$this->redis->hset($key, $column, (new StringData())->serialize($this->origin->getColumnMeta($column)));
 					$this->redis->persist($key);
 				}
-				return $this->cache['column'][$key][$column] = json_decode($this->redis->hget($key, $column), true);
+				return $this->cache['column'][$key][$column] = (new StringData())->unserialize($this->redis->hget($key, $column));
 			}
 		};
 	}
@@ -156,9 +156,9 @@ class MetaPDO extends \PDO {
 				ON native_types.data_type = types.data_type"
 			);
 			$statement->execute(['type' => $type]);
-			$this->redis->set($key, json_encode($statement->fetchAll()));
+			$this->redis->set($key, (new StringData())->serialize($statement->fetchAll()));
 			$this->redis->persist($key);
 		}
-		return static::$cache['type'][$type] = json_decode($this->redis->get($key), true);
+		return static::$cache['type'][$type] = (new StringData())->unserialize($this->redis->get($key));
 	}
 }

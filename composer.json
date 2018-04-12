@@ -39,6 +39,9 @@
       ]
     }
   },
+  "suggest": {
+    "ext-igbinary": "For better serialization"
+  },
   "autoload-dev": {
     "psr-4": {
       "Klapuch\\Storage\\": [
