@@ -16,7 +16,7 @@ final class MemoryPDO extends MetaPDO {
 	}
 
 	public function prepare($statement, $options = []): \PDOStatement {
-		if ($this->direct($statement)) {
+		if ($this->memory) {
 			return new class($this->memory, $statement) extends \PDOStatement {
 				private $memory;
 				private $statement;
@@ -53,23 +53,5 @@ final class MemoryPDO extends MetaPDO {
 			};
 		}
 		return $this->origin->prepare($statement, $options);
-	}
-
-	private function identifier(string $statement): bool {
-		return (bool) preg_match('~^SELECT\s+[a-z_*]~i', $statement);
-	}
-
-	private function function(string $statement): bool {
-		return (bool) preg_match('~^SELECT\s+[\w\d_]+\(~i', $statement);
-	}
-
-	/**
-	 * Will be the statement called directly?
-	 * @param string $statement
-	 * @return bool
-	 */
-	private function direct(string $statement): bool {
-		return $this->identifier($statement)
-			&& !$this->function($statement);
 	}
 }
