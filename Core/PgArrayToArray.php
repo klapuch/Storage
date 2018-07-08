@@ -21,15 +21,17 @@ final class PgArrayToArray implements Conversion {
 	 */
 	public function value() {
 		if (preg_match('~(?J)(^(?P<type>\w+)\[\])|(^_(?P<type>\w+))$~', $this->type, $match)) {
-			$x = json_decode(
-				(new NativeQuery(
-					$this->database,
-					sprintf('SELECT array_to_json(?::%s[])', $match['type']),
-					[$this->original]
-				))->field(),
-				true
+			return $this->withComplexTypes(
+				json_decode(
+					(new NativeQuery(
+						$this->database,
+						sprintf('SELECT array_to_json(?::%s[])', $match['type']),
+						[$this->original]
+					))->field(),
+					true
+				),
+				$this->type
 			);
-			return $this->withComplexTypes($x, $this->type);
 		}
 		return $this->delegation->value();
 	}
