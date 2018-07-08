@@ -47,7 +47,7 @@ final class MemoryPDO extends MetaPDO {
 				 * @return mixed
 				 */
 				public function fetchColumn($columnNumber = 0) {
-					preg_match('~^SELECT\s+([\w\d_]+)~', $this->statement, $column);
+					preg_match('~^SELECT\s+(\w+)~', $this->statement, $column);
 					return $columnNumber === 0 ? $this->memory[$column[1]] : false;
 				}
 			};
@@ -60,7 +60,7 @@ final class MemoryPDO extends MetaPDO {
 	}
 
 	private function function(string $statement): bool {
-		return (bool) preg_match('~^SELECT\s+[\w\d_]+\(~i', $statement);
+		return (bool) preg_match('~^SELECT\s+\w+\(~i', $statement);
 	}
 
 	/**

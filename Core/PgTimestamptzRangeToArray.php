@@ -9,7 +9,7 @@ final class PgTimestamptzRangeToArray implements Conversion {
 	private $type;
 	private $delegation;
 
-	public function __construct(\PDO $database, string $original, string $type, Conversion $delegation) {
+	public function __construct(MetaPDO $database, string $original, string $type, Conversion $delegation) {
 		$this->database = $database;
 		$this->original = $original;
 		$this->type = $type;
@@ -34,7 +34,7 @@ final class PgTimestamptzRangeToArray implements Conversion {
 					]",
 					['range' => $this->original]
 				))->field(),
-				'TEXT[]',
+				'text[]',
 				new NoConversion()
 			))->value();
 			return array_map(

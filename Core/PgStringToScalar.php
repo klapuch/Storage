@@ -31,7 +31,7 @@ final class PgStringToScalar implements Conversion {
 
 	// @codingStandardsIgnoreStart Used by call_user_func_array
 	private function toInt(string $original): int {
-		return intval($original);
+		return (int) $original;
 	}
 
 	private function toBool(string $original): bool {

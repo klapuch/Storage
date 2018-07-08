@@ -24,7 +24,7 @@ final class PgHStoreToArray implements Conversion {
 			return array_reduce(
 				(new NativeQuery(
 					$this->database,
-					'SELECT key, value FROM EACH(?::hstore)',
+					'SELECT key, value FROM each(?::hstore)',
 					[$this->original]
 				))->rows(),
 				function (array $array, array $hstore): array {

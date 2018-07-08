@@ -53,7 +53,7 @@ final class PgRowToArray implements Conversion {
 			array_column(
 				(new NativeQuery(
 					$this->database,
-					sprintf('SELECT row_to_json(UNNEST(?::%s))', $this->type),
+					sprintf('SELECT row_to_json(unnest(?::%s))', $this->type),
 					[$this->original]
 				))->rows(),
 				'row_to_json'
