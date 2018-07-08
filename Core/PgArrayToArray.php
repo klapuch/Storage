@@ -9,7 +9,7 @@ final class PgArrayToArray implements Conversion {
 	private $type;
 	private $delegation;
 
-	public function __construct(\PDO $database, string $original, string $type, Conversion $delegation) {
+	public function __construct(MetaPDO $database, string $original, string $type, Conversion $delegation) {
 		$this->database = $database;
 		$this->original = $original;
 		$this->type = $type;
@@ -21,7 +21,7 @@ final class PgArrayToArray implements Conversion {
 	 */
 	public function value() {
 		if (preg_match('~(?J)(^(?P<type>\w+)\[\])|(^_(?P<type>\w+))$~', $this->type, $match)) {
-			return json_decode(
+			$x = json_decode(
 				(new NativeQuery(
 					$this->database,
 					sprintf('SELECT array_to_json(?::%s[])', $match['type']),
@@ -29,7 +29,41 @@ final class PgArrayToArray implements Conversion {
 				))->field(),
 				true
 			);
+			return $this->withComplexTypes($x, $this->type);
 		}
 		return $this->delegation->value();
+	}
+
+	private function withComplexTypes(array $conversions, string $type): array {
+		return array_reduce(
+			array_filter($conversions, 'is_array'),
+			function(array $complete, $conversion) use ($type): array {
+				$types = array_column($this->meta($type), 'data_type', 'attribute_name');
+				$missing = array_filter($conversion, 'is_string');
+				$complete[] = array_combine(
+					array_keys($missing),
+					array_map(
+						function(string $value, string $type) {
+							return (new PgConversions(
+								$this->database,
+								$value,
+								$type
+							))->value();
+						},
+						array_intersect_key($missing, $types),
+						array_intersect_key($types, $missing)
+					)
+				) + $conversion;
+				return $complete;
+			},
+			[]
+		) + $conversions;
+	}
+
+	private function meta(string $type): array {
+		$types = $this->database->meta($type);
+		if ($types === [] && substr($type, 0, 1) === '_')
+			return $this->database->meta(substr($type, 1));
+		return $types;
 	}
 }
