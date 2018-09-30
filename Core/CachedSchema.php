@@ -24,8 +24,9 @@ class CachedSchema implements Schema {
 	}
 
 	public function columns(string $table): array {
-		if (isset(static::$cache[$table]))
+		if (isset(static::$cache[$table])) {
 			return static::$cache[$table];
+		}
 		$key = self::NAMESPACE . $table;
 		if (!$this->redis->exists($key)) {
 			$statement = $this->connection->prepare(

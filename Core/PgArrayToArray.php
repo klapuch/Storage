@@ -69,8 +69,9 @@ final class PgArrayToArray implements Conversion {
 
 	private function meta(string $type): array {
 		$columns = $this->connection->schema()->columns($type);
-		if ($columns === [] && substr($type, 0, 1) === '_')
+		if ($columns === [] && substr($type, 0, 1) === '_') {
 			return $this->connection->schema()->columns(substr($type, 1));
+		}
 		return $columns;
 	}
 }

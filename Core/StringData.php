@@ -18,8 +18,9 @@ class StringData {
 	 * @return string
 	 */
 	public function serialize($data): string {
-		if (static::$loaded)
+		if (static::$loaded) {
 			return igbinary_serialize($data);
+		}
 		return serialize($data);
 	}
 
@@ -28,8 +29,9 @@ class StringData {
 	 * @return mixed
 	 */
 	public function unserialize(string $data) {
-		if (static::$loaded)
+		if (static::$loaded) {
 			return igbinary_unserialize($data);
+		}
 		return unserialize($data);
 	}
 }

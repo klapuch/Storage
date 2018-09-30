@@ -24,8 +24,9 @@ final class PgStringToScalar implements Conversion {
 	 * @return mixed
 	 */
 	public function value() {
-		if ($this->original !== null && array_key_exists(strtolower($this->type), self::TYPES))
+		if ($this->original !== null && array_key_exists(strtolower($this->type), self::TYPES)) {
 			return call_user_func_array([$this, self::TYPES[strtolower($this->type)]], [$this->original]);
+		}
 		return $this->original;
 	}
 

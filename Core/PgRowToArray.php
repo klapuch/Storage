@@ -23,8 +23,9 @@ final class PgRowToArray implements Conversion {
 	 */
 	public function value() {
 		try {
-			if (strpos($this->type, '[]') === false)
+			if (strpos($this->type, '[]') === false) {
 				return $this->row();
+			}
 			return $this->rows();
 		} catch (\PDOException $ex) {
 			$columns = $this->columns($this->type);

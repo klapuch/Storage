@@ -53,8 +53,9 @@ final class TypedQuery implements Query {
 		$statement->execute(
 			array_map(
 				function($value) {
-					if (is_bool($value))
+					if (is_bool($value)) {
 						return $value ? 't' : 'f';
+					}
 					return $value;
 				},
 				$this->parameters
