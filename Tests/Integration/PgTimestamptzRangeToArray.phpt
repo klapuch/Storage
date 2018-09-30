@@ -16,7 +16,7 @@ require __DIR__ . '/../bootstrap.php';
 final class PgTimestamptzRangeToArray extends TestCase\PostgresDatabase {
 	public function testConvertingToArray() {
 		$ranges = (new Storage\PgTimestamptzRangeToArray(
-			$this->database,
+			$this->connection,
 			'[2004-10-19 10:23:54.20+02,2005-10-19 10:23:54.20+02)',
 			'TSTZrange',
 			new Storage\FakeConversion()
@@ -32,7 +32,7 @@ final class PgTimestamptzRangeToArray extends TestCase\PostgresDatabase {
 		Assert::same(
 			'bar',
 			(new Storage\PgTimestamptzRangeToArray(
-				$this->database,
+				$this->connection,
 				'foo',
 				'foo',
 				new Storage\FakeConversion('bar')

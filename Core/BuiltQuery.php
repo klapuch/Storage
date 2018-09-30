@@ -9,11 +9,11 @@ use Klapuch\Sql;
  * Query built from SQL statement with parameters
  */
 final class BuiltQuery implements Query {
-	private $database;
+	private $connection;
 	private $statement;
 
-	public function __construct(MetaPDO $database, Sql\Statement $statement) {
-		$this->database = $database;
+	public function __construct(Connection $connection, Sql\Statement $statement) {
+		$this->connection = $connection;
 		$this->statement = $statement;
 	}
 
@@ -22,7 +22,7 @@ final class BuiltQuery implements Query {
 	 */
 	public function field() {
 		return (new TypedQuery(
-			$this->database,
+			$this->connection,
 			$this->statement->sql(),
 			$this->statement->parameters()->binds()
 		))->field();
@@ -30,7 +30,7 @@ final class BuiltQuery implements Query {
 
 	public function row(int $style = \PDO::FETCH_ASSOC): array {
 		return (new TypedQuery(
-			$this->database,
+			$this->connection,
 			$this->statement->sql(),
 			$this->statement->parameters()->binds()
 		))->row($style);
@@ -38,7 +38,7 @@ final class BuiltQuery implements Query {
 
 	public function rows(int $style = \PDO::FETCH_ASSOC): array {
 		return (new TypedQuery(
-			$this->database,
+			$this->connection,
 			$this->statement->sql(),
 			$this->statement->parameters()->binds()
 		))->rows($style);
@@ -46,7 +46,7 @@ final class BuiltQuery implements Query {
 
 	public function execute(): \PDOStatement {
 		return (new TypedQuery(
-			$this->database,
+			$this->connection,
 			$this->statement->sql(),
 			$this->statement->parameters()->binds()
 		))->execute();

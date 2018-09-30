@@ -7,12 +7,12 @@ namespace Klapuch\Storage;
  * Simple native query without changes
  */
 final class NativeQuery implements Query {
-	private $database;
+	private $connection;
 	private $statement;
 	private $parameters;
 
-	public function __construct(\PDO $database, string $statement, array $parameters = []) {
-		$this->database = $database;
+	public function __construct(Connection $connection, string $statement, array $parameters = []) {
+		$this->connection = $connection;
 		$this->statement = $statement;
 		$this->parameters = $parameters;
 	}
@@ -33,7 +33,7 @@ final class NativeQuery implements Query {
 	}
 
 	public function execute(): \PDOStatement {
-		$statement = $this->database->prepare($this->statement);
+		$statement = $this->connection->prepare($this->statement);
 		$statement->execute($this->parameters);
 		return $statement;
 	}

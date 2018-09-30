@@ -18,7 +18,7 @@ final class PgHStoreToArray extends TestCase\PostgresDatabase {
 		Assert::same(
 			['name' => 'Dom', 'race' => 'human'],
 			(new Storage\PgHStoreToArray(
-				$this->database,
+				$this->connection,
 				'name=>Dom,race=>human',
 				'hSTORE',
 				new Storage\FakeConversion()
@@ -30,7 +30,7 @@ final class PgHStoreToArray extends TestCase\PostgresDatabase {
 		Assert::same(
 			'foo',
 			(new Storage\PgHStoreToArray(
-				$this->database,
+				$this->connection,
 				'name=>Dom',
 				'text',
 				new Storage\FakeConversion('foo')

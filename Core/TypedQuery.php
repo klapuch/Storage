@@ -7,12 +7,12 @@ namespace Klapuch\Storage;
  * Automatically typed query
  */
 final class TypedQuery implements Query {
-	private $database;
+	private $connection;
 	private $statement;
 	private $parameters;
 
-	public function __construct(MetaPDO $database, string $statement, array $parameters = []) {
-		$this->database = $database;
+	public function __construct(Connection $connection, string $statement, array $parameters = []) {
+		$this->connection = $connection;
 		$this->statement = $statement;
 		$this->parameters = $parameters;
 	}
@@ -49,7 +49,7 @@ final class TypedQuery implements Query {
 	}
 
 	public function execute(): \PDOStatement {
-		$statement = $this->database->prepare($this->statement);
+		$statement = $this->connection->prepare($this->statement);
 		$statement->execute(
 			array_map(
 				function($value) {
@@ -76,7 +76,7 @@ final class TypedQuery implements Query {
 			$conversions,
 			function($type, string $column) use (&$raw): void {
 				$raw[$column] = (new PgConversions(
-					$this->database,
+					$this->connection,
 					$raw[$column],
 					$type
 				))->value();

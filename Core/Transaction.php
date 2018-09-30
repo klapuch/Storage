@@ -7,12 +7,10 @@ namespace Klapuch\Storage;
  * Transaction for PDO (in this moment for postgres)
  */
 final class Transaction {
-	private $database;
-	private $isolation;
+	private $connection;
 
-	public function __construct(\PDO $database, string $isolation = 'read committed') {
-		$this->database = $database;
-		$this->isolation = $isolation;
+	public function __construct(Connection $connection) {
+		$this->connection = $connection;
 	}
 
 	/**
@@ -22,13 +20,13 @@ final class Transaction {
 	 * @throws \Throwable
 	 */
 	public function start(\Closure $callback) {
-		$this->database->exec(sprintf('START TRANSACTION ISOLATION LEVEL %s', $this->isolation));
+		$this->connection->exec('START TRANSACTION');
 		try {
 			$result = $callback();
-			$this->database->exec('COMMIT TRANSACTION');
+			$this->connection->exec('COMMIT TRANSACTION');
 			return $result;
 		} catch (\Throwable $ex) {
-			$this->database->exec('ROLLBACK TRANSACTION');
+			$this->connection->exec('ROLLBACK TRANSACTION');
 			throw $ex;
 		}
 	}

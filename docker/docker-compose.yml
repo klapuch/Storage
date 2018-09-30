@@ -16,7 +16,6 @@ services:
       working_dir: /var/www/Storage
       volumes:
           - ./..:/var/www/Storage
-          - ./php-fpm/php.ini:/usr/local/etc/php/php.ini
       ports:
         - 80:80
     redis:

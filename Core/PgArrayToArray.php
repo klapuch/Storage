@@ -4,13 +4,18 @@ declare(strict_types = 1);
 namespace Klapuch\Storage;
 
 final class PgArrayToArray implements Conversion {
-	private $database;
+	private $connection;
 	private $original;
 	private $type;
 	private $delegation;
 
-	public function __construct(MetaPDO $database, string $original, string $type, Conversion $delegation) {
-		$this->database = $database;
+	public function __construct(
+		Connection $connection,
+		string $original,
+		string $type,
+		Conversion $delegation
+	) {
+		$this->connection = $connection;
 		$this->original = $original;
 		$this->type = $type;
 		$this->delegation = $delegation;
@@ -24,7 +29,7 @@ final class PgArrayToArray implements Conversion {
 			return $this->withComplexTypes(
 				json_decode(
 					(new NativeQuery(
-						$this->database,
+						$this->connection,
 						sprintf('SELECT array_to_json(?::%s[])', $match['type']),
 						[$this->original]
 					))->field(),
@@ -47,7 +52,7 @@ final class PgArrayToArray implements Conversion {
 					array_map(
 						function(string $value, string $type) {
 							return (new PgConversions(
-								$this->database,
+								$this->connection,
 								$value,
 								$type
 							))->value();
@@ -63,9 +68,9 @@ final class PgArrayToArray implements Conversion {
 	}
 
 	private function meta(string $type): array {
-		$types = $this->database->meta($type);
-		if ($types === [] && substr($type, 0, 1) === '_')
-			return $this->database->meta(substr($type, 1));
-		return $types;
+		$columns = $this->connection->schema()->columns($type);
+		if ($columns === [] && substr($type, 0, 1) === '_')
+			return $this->connection->schema()->columns(substr($type, 1));
+		return $columns;
 	}
 }

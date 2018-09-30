@@ -4,15 +4,20 @@ declare(strict_types = 1);
 namespace Klapuch\Storage;
 
 final class PgRowToTypedArray implements Conversion {
+	private $connection;
 	private $original;
 	private $type;
-	private $database;
 	private $delegation;
 
-	public function __construct(string $original, string $type, MetaPDO $database, Conversion $delegation) {
+	public function __construct(
+		Connection $connection,
+		string $original,
+		string $type,
+		Conversion $delegation
+	) {
+		$this->connection = $connection;
 		$this->original = $original;
 		$this->type = $type;
-		$this->database = $database;
 		$this->delegation = $delegation;
 	}
 
@@ -20,15 +25,15 @@ final class PgRowToTypedArray implements Conversion {
 	 * @return mixed
 	 */
 	public function value() {
-		$meta = $this->database->meta($this->type);
-		if ($meta) {
+		$columns = $this->connection->schema()->columns($this->type);
+		if ($columns) {
 			$converted = (new PgRowToArray(
-				$this->database,
+				$this->connection,
 				$this->original,
 				$this->type
 			))->value();
 			$raw = array_filter($converted, 'is_string');
-			$types = array_column($meta, 'data_type', 'attribute_name');
+			$types = array_column($columns, 'data_type', 'attribute_name');
 			return array_combine(
 				array_keys($raw),
 				array_map(
