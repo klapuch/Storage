@@ -39,7 +39,7 @@ final class TypedQuery implements Query {
 	public function rows(int $style = \PDO::FETCH_ASSOC): array {
 		$statement = $this->execute();
 		return array_reduce(
-			$statement->fetchAll($style),
+			(array) $statement->fetchAll($style),
 			function(array $rows, array $row) use ($statement): array {
 				$rows[] = $this->conversions($row, $statement);
 				return $rows;

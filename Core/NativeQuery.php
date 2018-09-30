@@ -29,7 +29,7 @@ final class NativeQuery implements Query {
 	}
 
 	public function rows(int $style = \PDO::FETCH_ASSOC): array {
-		return $this->execute()->fetchAll($style);
+		return (array) $this->execute()->fetchAll($style);
 	}
 
 	public function execute(): \PDOStatement {

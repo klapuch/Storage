@@ -8,9 +8,7 @@ use Predis;
 use Tester;
 
 abstract class PostgresDatabase extends Mockery {
-	/**
-	 * @var \Klapuch\Storage\Connection
-	 */
+	/** @var \Klapuch\Storage\Connection */
 	protected $connection;
 
 	/** @var \PDO */
@@ -22,7 +20,7 @@ abstract class PostgresDatabase extends Mockery {
 	protected function setUp() {
 		parent::setUp();
 		Tester\Environment::lock('postgres', __DIR__ . '/../Temporary');
-		$credentials = parse_ini_file(__DIR__ . '/../Configuration/.config.local.ini', true);
+		$credentials = (array) parse_ini_file(__DIR__ . '/../Configuration/.config.local.ini', true);
 		$this->redis = new Predis\Client($credentials['REDIS']['uri']);
 		$this->redis->flushall();
 		$this->connection = $this->connection($credentials);
