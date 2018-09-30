@@ -1,6 +1,4 @@
 parameters:
 	ignoreErrors:
-		- '#Klapuch\\Storage\\SideCachedPDO::__construct\(\) does not call parent constructor from PDO#'
-		- '#Klapuch\\Storage\\MetaPDO::__construct\(\) does not call parent constructor from PDO#'
-		- '#Klapuch\\Storage\\MemoryPDO::__construct\(\) does not call parent constructor from Klapuch\\Storage\\MetaPDO#'
 		- '#Function igbinary_[a-z]+ not found.#'
+		- '#.+call_user_func_array expects callable.+#'

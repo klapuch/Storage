@@ -7,12 +7,12 @@ namespace Klapuch\Storage;
  * Automatically typed query
  */
 final class TypedQuery implements Query {
-	private $database;
+	private $connection;
 	private $statement;
 	private $parameters;
 
-	public function __construct(MetaPDO $database, string $statement, array $parameters = []) {
-		$this->database = $database;
+	public function __construct(Connection $connection, string $statement, array $parameters = []) {
+		$this->connection = $connection;
 		$this->statement = $statement;
 		$this->parameters = $parameters;
 	}
@@ -39,7 +39,7 @@ final class TypedQuery implements Query {
 	public function rows(int $style = \PDO::FETCH_ASSOC): array {
 		$statement = $this->execute();
 		return array_reduce(
-			$statement->fetchAll($style),
+			(array) $statement->fetchAll($style),
 			function(array $rows, array $row) use ($statement): array {
 				$rows[] = $this->conversions($row, $statement);
 				return $rows;
@@ -49,12 +49,13 @@ final class TypedQuery implements Query {
 	}
 
 	public function execute(): \PDOStatement {
-		$statement = $this->database->prepare($this->statement);
+		$statement = $this->connection->prepare($this->statement);
 		$statement->execute(
 			array_map(
-				function($value) {
-					if (is_bool($value))
+				static function($value) {
+					if (is_bool($value)) {
 						return $value ? 't' : 'f';
+					}
 					return $value;
 				},
 				$this->parameters
@@ -65,6 +66,7 @@ final class TypedQuery implements Query {
 
 	/**
 	 * Rows converted by conversion lookup table
+	 *
 	 * @param array $rows
 	 * @param \PDOStatement $statement
 	 * @return array
@@ -76,7 +78,7 @@ final class TypedQuery implements Query {
 			$conversions,
 			function($type, string $column) use (&$raw): void {
 				$raw[$column] = (new PgConversions(
-					$this->database,
+					$this->connection,
 					$raw[$column],
 					$type
 				))->value();
@@ -87,6 +89,7 @@ final class TypedQuery implements Query {
 
 	/**
 	 * Meta types extracted from the statement
+	 *
 	 * @param \PDOStatement $statement
 	 * @return array
 	 */
@@ -94,7 +97,7 @@ final class TypedQuery implements Query {
 		return array_column(
 			array_reduce(
 				range(0, $statement->columnCount() - 1),
-				function(array $meta, int $column) use ($statement): array {
+				static function(array $meta, int $column) use ($statement): array {
 					$meta[] = $statement->getColumnMeta($column);
 					return $meta;
 				},

@@ -5,6 +5,7 @@ declare(strict_types = 1);
  * @testCase
  * @phpVersion > 7.1.0
  */
+
 namespace Klapuch\Storage\Integration;
 
 use Klapuch\Storage;
@@ -13,10 +14,10 @@ use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
-final class MemoryPDO extends TestCase\PostgresDatabase {
+final class MemoryConnection extends TestCase\PostgresDatabase {
 	public function testFetchingRowOrRowsFromArray() {
-		$statement = (new Storage\MemoryPDO(
-			$this->database,
+		$statement = (new Storage\MemoryConnection(
+			$this->connection,
 			['name' => 'Dominik', 'title' => 'Developer']
 		))->prepare('SELECT name, title FROM table');
 		Assert::same(['name' => 'Dominik', 'title' => 'Developer'], $statement->fetch());
@@ -24,8 +25,8 @@ final class MemoryPDO extends TestCase\PostgresDatabase {
 	}
 
 	public function testFetchingRowOrRowsFromMultipleArray() {
-		$statement = (new Storage\MemoryPDO(
-			$this->database,
+		$statement = (new Storage\MemoryConnection(
+			$this->connection,
 			[
 				['name' => 'Dominik', 'title' => 'Developer'],
 				['name' => 'Jacob', 'title' => 'Developer'],
@@ -49,35 +50,35 @@ final class MemoryPDO extends TestCase\PostgresDatabase {
 	}
 
 	public function testFetchingFirstColumnFromArrayByQuery() {
-		$statement = (new Storage\MemoryPDO(
-			$this->database,
+		$statement = (new Storage\MemoryConnection(
+			$this->connection,
 			['name' => 'Dominik', 'title' => 'Developer']
 		))->prepare('SELECT name, title FROM table');
 		Assert::same('Dominik', $statement->fetchColumn());
 	}
 
 	public function testFetchingUnknownColumnFromArrayLeadingToFalse() {
-		$statement = (new Storage\MemoryPDO(
-			$this->database,
+		$statement = (new Storage\MemoryConnection(
+			$this->connection,
 			['name' => 'Dominik', 'title' => 'Developer']
 		))->prepare('SELECT name, title FROM table');
 		Assert::false($statement->fetchColumn(3));
 	}
 
 	public function testExecutingOriginQuery() {
-		$statement = (new Storage\MemoryPDO(
-			$this->database,
+		$statement = (new Storage\MemoryConnection(
+			$this->connection,
 			['name' => 'Dominik', 'title' => 'Developer']
 		))->prepare("INSERT INTO test (name) VALUES ('foo')");
 		$statement->execute();
-		$p = $this->database->prepare('SELECT name FROM test');
+		$p = $this->connection->prepare('SELECT name FROM test');
 		$p->execute();
 		Assert::same('foo', $p->fetchColumn());
 	}
 
 	public function testFetchingColumnAsNumericLiteralUsingOriginal() {
-		$statement = (new Storage\MemoryPDO(
-			$this->database,
+		$statement = (new Storage\MemoryConnection(
+			$this->connection,
 			['foo' => 'bar', 'name' => 'Dominik']
 		))->prepare('SELECT 1');
 		$statement->execute([]);
@@ -85,8 +86,8 @@ final class MemoryPDO extends TestCase\PostgresDatabase {
 	}
 
 	public function testFetchingColumnAsStringLiteralUsingOriginal() {
-		$statement = (new Storage\MemoryPDO(
-			$this->database,
+		$statement = (new Storage\MemoryConnection(
+			$this->connection,
 			['foo' => 'bar', 'name' => 'Dominik']
 		))->prepare("SELECT 'abc'");
 		$statement->execute([]);
@@ -94,8 +95,8 @@ final class MemoryPDO extends TestCase\PostgresDatabase {
 	}
 
 	public function testExecutingFunctionOnOriginal() {
-		$statement = (new Storage\MemoryPDO(
-			$this->database,
+		$statement = (new Storage\MemoryConnection(
+			$this->connection,
 			['foo' => 'bar', 'name' => 'Dominik']
 		))->prepare("SELECT hstore('a=>b'::hstore)");
 		$statement->execute([]);
@@ -103,4 +104,4 @@ final class MemoryPDO extends TestCase\PostgresDatabase {
 	}
 }
 
-(new MemoryPDO())->run();
+(new MemoryConnection())->run();

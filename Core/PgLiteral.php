@@ -11,12 +11,13 @@ final class PgLiteral implements Conversion {
 	}
 
 	public function value(): string {
-		if (is_string($this->original))
+		if (is_string($this->original)) {
 			return sprintf('\'%s\'', $this->original);
-		elseif (is_bool($this->original))
+		} elseif (is_bool($this->original)) {
 			return (new self($this->original ? 'true' : 'false'))->value();
-		elseif ($this->original === null)
+		} elseif ($this->original === null) {
 			return (new self('null'))->value();
+		}
 		return (new self(strval($this->original)))->value();
 	}
 }

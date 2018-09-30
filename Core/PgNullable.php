@@ -16,8 +16,9 @@ final class PgNullable implements Conversion {
 	 * @return mixed|null
 	 */
 	public function value() {
-		if ($this->original === null)
+		if ($this->original === null) {
 			return $this->original;
+		}
 		return $this->delegation->value();
 	}
 }

@@ -4,13 +4,18 @@ declare(strict_types = 1);
 namespace Klapuch\Storage;
 
 final class PgTimestamptzRangeToArray implements Conversion {
-	private $database;
+	private $connection;
 	private $original;
 	private $type;
 	private $delegation;
 
-	public function __construct(MetaPDO $database, string $original, string $type, Conversion $delegation) {
-		$this->database = $database;
+	public function __construct(
+		Connection $connection,
+		string $original,
+		string $type,
+		Conversion $delegation
+	) {
+		$this->connection = $connection;
 		$this->original = $original;
 		$this->type = $type;
 		$this->delegation = $delegation;
@@ -22,9 +27,9 @@ final class PgTimestamptzRangeToArray implements Conversion {
 	public function value() {
 		if (strcasecmp($this->type, 'tstzrange') === 0) {
 			$ranges = (new PgArrayToArray(
-				$this->database,
+				$this->connection,
 				(new NativeQuery(
-					$this->database,
+					$this->connection,
 					"SELECT
 					ARRAY[
 						(SELECT lower(:range::tstzrange)::text),

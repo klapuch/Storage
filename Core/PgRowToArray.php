@@ -4,12 +4,16 @@ declare(strict_types = 1);
 namespace Klapuch\Storage;
 
 final class PgRowToArray implements Conversion {
-	private $database;
+	private $connection;
 	private $original;
 	private $type;
 
-	public function __construct(MetaPDO $database, string $original, string $type) {
-		$this->database = $database;
+	public function __construct(
+		Connection $connection,
+		string $original,
+		string $type
+	) {
+		$this->connection = $connection;
 		$this->original = $original;
 		$this->type = $type;
 	}
@@ -19,8 +23,9 @@ final class PgRowToArray implements Conversion {
 	 */
 	public function value() {
 		try {
-			if (strpos($this->type, '[]') === false)
+			if (strpos($this->type, '[]') === false) {
 				return $this->row();
+			}
 			return $this->rows();
 		} catch (\PDOException $ex) {
 			$columns = $this->columns($this->type);
@@ -37,7 +42,7 @@ final class PgRowToArray implements Conversion {
 	private function row(): array {
 		return json_decode(
 			(new NativeQuery(
-				$this->database,
+				$this->connection,
 				sprintf('SELECT row_to_json(?::%s)', $this->type),
 				[$this->original]
 			))->field(),
@@ -47,12 +52,12 @@ final class PgRowToArray implements Conversion {
 
 	private function rows(): array {
 		return array_map(
-			function(string $row): array {
+			static function(string $row): array {
 				return json_decode($row, true);
 			},
 			array_column(
 				(new NativeQuery(
-					$this->database,
+					$this->connection,
 					sprintf('SELECT row_to_json(unnest(?::%s))', $this->type),
 					[$this->original]
 				))->rows(),
@@ -62,6 +67,6 @@ final class PgRowToArray implements Conversion {
 	}
 
 	private function columns(string $type): string {
-		return implode(', ', array_column($this->database->meta($type), 'attribute_name'));
+		return implode(', ', array_column($this->connection->schema()->columns($type), 'attribute_name'));
 	}
 }

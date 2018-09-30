@@ -5,6 +5,7 @@ declare(strict_types = 1);
  * @testCase
  * @phpVersion > 7.1
  */
+
 namespace Klapuch\Storage\Integration;
 
 use Klapuch\Storage;
@@ -18,7 +19,7 @@ final class PgHStoreToArray extends TestCase\PostgresDatabase {
 		Assert::same(
 			['name' => 'Dom', 'race' => 'human'],
 			(new Storage\PgHStoreToArray(
-				$this->database,
+				$this->connection,
 				'name=>Dom,race=>human',
 				'hSTORE',
 				new Storage\FakeConversion()
@@ -30,7 +31,7 @@ final class PgHStoreToArray extends TestCase\PostgresDatabase {
 		Assert::same(
 			'foo',
 			(new Storage\PgHStoreToArray(
-				$this->database,
+				$this->connection,
 				'name=>Dom',
 				'text',
 				new Storage\FakeConversion('foo')

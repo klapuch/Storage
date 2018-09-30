@@ -18,8 +18,9 @@ final class PgText implements Conversion {
 	 * @return mixed
 	 */
 	public function value() {
-		if (strcasecmp('text', $this->type) === 0)
+		if (strcasecmp('text', $this->type) === 0) {
 			return $this->original;
+		}
 		return $this->delegation->value();
 	}
 }
