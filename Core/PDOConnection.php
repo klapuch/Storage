@@ -18,7 +18,7 @@ final class PDOConnection implements Connection {
 	}
 
 	public function exec(string $statement): void {
-		$this->database->query($statement);
+		$this->database->exec($statement);
 	}
 
 	public function schema(): Schema {
