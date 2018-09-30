@@ -5,7 +5,6 @@ namespace Klapuch\Storage;
 
 /**
  * PDO with safe setting
- * PDO with caching ability of prepared statements
  */
 final class SafePDO extends \PDO {
 	private const OPTIONS = [
@@ -14,17 +13,7 @@ final class SafePDO extends \PDO {
 		\PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
 	];
 
-	private static $statements = [];
-
 	public function __construct(string $dsn, string $user, string $password) {
 		parent::__construct($dsn, $user, $password, self::OPTIONS);
-	}
-
-	public function prepare($statement, $options = []): \PDOStatement {
-		$key = md5($statement);
-		if (!isset(self::$statements[$key])) {
-			self::$statements[$key] = parent::prepare($statement, $options);
-		}
-		return self::$statements[$key];
 	}
 }

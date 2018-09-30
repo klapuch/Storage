@@ -40,14 +40,6 @@ final class SafePDO extends TestCase\PostgresDatabase {
 			$statement->fetch()
 		);
 	}
-
-	public function testCachingForStatement() {
-		Assert::same($this->pdo->prepare('SELECT 1'), $this->pdo->prepare('SELECT 1'));
-	}
-
-	public function testNoCacheForDifferentStatements() {
-		Assert::notSame($this->pdo->prepare('SELECT 1'), $this->pdo->prepare('SELECT 2'));
-	}
 }
 
 (new SafePDO())->run();
