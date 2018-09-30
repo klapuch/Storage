@@ -52,7 +52,7 @@ final class PgRowToArray implements Conversion {
 
 	private function rows(): array {
 		return array_map(
-			function(string $row): array {
+			static function(string $row): array {
 				return json_decode($row, true);
 			},
 			array_column(

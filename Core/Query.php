@@ -6,12 +6,14 @@ namespace Klapuch\Storage;
 interface Query {
 	/**
 	 * Single field
+	 *
 	 * @return mixed
 	 */
 	public function field();
 
 	/**
 	 * Single row
+	 *
 	 * @param int $style
 	 * @return array
 	 */
@@ -19,6 +21,7 @@ interface Query {
 
 	/**
 	 * Multiple rows
+	 *
 	 * @param int $style
 	 * @return array
 	 */
@@ -26,6 +29,7 @@ interface Query {
 
 	/**
 	 * Execute the query
+	 *
 	 * @return \PDOStatement
 	 */
 	public function execute(): \PDOStatement;

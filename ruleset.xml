@@ -48,6 +48,8 @@
 		<exclude name="SlevomatCodingStandard.Namespaces.UnusedUses.MismatchingCaseSensitivity"/>
 		<exclude name="SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter"/>
 		<exclude name="SlevomatCodingStandard.ControlStructures.ControlStructureSpacing.IncorrectLinesCountAfterControlStructure"/>
+		<exclude name="SlevomatCodingStandard.ControlStructures.RequireMultiLineTernaryOperator.MultiLineTernaryOperatorNotUsed"/>
+		<exclude name="SlevomatCodingStandard.ControlStructures.DisallowShortTernaryOperator.DisallowedShortTernaryOperator"/>
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">

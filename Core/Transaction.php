@@ -15,6 +15,7 @@ final class Transaction {
 
 	/**
 	 * Start the transaction with proper begin-commit-rollback flow
+	 *
 	 * @param \Closure $callback
 	 * @return mixed
 	 * @throws \Throwable

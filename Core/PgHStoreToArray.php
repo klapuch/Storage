@@ -27,7 +27,7 @@ final class PgHStoreToArray implements Conversion {
 					'SELECT key, value FROM each(?::hstore)',
 					[$this->original]
 				))->rows(),
-				function (array $array, array $hstore): array {
+				static function (array $array, array $hstore): array {
 					$array[$hstore['key']] = $hstore['value'];
 					return $array;
 				},

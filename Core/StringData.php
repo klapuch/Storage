@@ -7,7 +7,7 @@ namespace Klapuch\Storage;
  * String data representing serialized/unserialized structure
  */
 class StringData {
-	private static $loaded = FALSE;
+	private static $loaded = false;
 
 	public function __construct() {
 		static::$loaded = extension_loaded('igbinary');

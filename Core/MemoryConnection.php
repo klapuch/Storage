@@ -20,8 +20,9 @@ final class MemoryConnection implements Connection {
 	}
 
 	public function prepare($statement): \PDOStatement {
-		if ($this->direct($statement))
+		if ($this->direct($statement)) {
 			return new MemoryStatement($this->memory, $statement);
+		}
 		return $this->origin->prepare($statement);
 	}
 
@@ -39,6 +40,7 @@ final class MemoryConnection implements Connection {
 
 	/**
 	 * Will be the statement called directly?
+	 *
 	 * @param string $statement
 	 * @return bool
 	 */

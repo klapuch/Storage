@@ -56,13 +56,13 @@ final class CachedPDOStatement extends \PDOStatement {
 
 	public function getColumnMeta($column): array {
 		$key = self::NAMESPACE . md5($this->statement);
-		if (isset(static::$cache[$key][$column])) {
-			return static::$cache[$key][$column];
+		if (isset(self::$cache[$key][$column])) {
+			return self::$cache[$key][$column];
 		}
 		if (!$this->redis->hexists($key, $column)) {
 			$this->redis->hset($key, $column, (new StringData())->serialize($this->origin->getColumnMeta($column)));
 			$this->redis->persist($key);
 		}
-		return static::$cache[$key][$column] = (new StringData())->unserialize($this->redis->hget($key, $column));
+		return self::$cache[$key][$column] = (new StringData())->unserialize($this->redis->hget($key, $column));
 	}
 }

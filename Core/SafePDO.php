@@ -22,9 +22,9 @@ final class SafePDO extends \PDO {
 
 	public function prepare($statement, $options = []): \PDOStatement {
 		$key = md5($statement);
-		if (!isset(static::$statements[$key])) {
-			static::$statements[$key] = parent::prepare($statement, $options);
+		if (!isset(self::$statements[$key])) {
+			self::$statements[$key] = parent::prepare($statement, $options);
 		}
-		return static::$statements[$key];
+		return self::$statements[$key];
 	}
 }

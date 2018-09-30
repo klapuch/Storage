@@ -37,6 +37,8 @@ final class MemoryStatement extends \PDOStatement {
 	 */
 	public function fetchColumn($columnNumber = 0) {
 		preg_match('~^SELECT\s+(\w+)~', $this->statement, $column);
-		return $columnNumber === 0 ? $this->memory[$column[1]] : false;
+		return $columnNumber === 0
+			? $this->memory[$column[1]]
+			: false;
 	}
 }

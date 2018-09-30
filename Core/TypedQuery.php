@@ -52,7 +52,7 @@ final class TypedQuery implements Query {
 		$statement = $this->connection->prepare($this->statement);
 		$statement->execute(
 			array_map(
-				function($value) {
+				static function($value) {
 					if (is_bool($value)) {
 						return $value ? 't' : 'f';
 					}
@@ -66,6 +66,7 @@ final class TypedQuery implements Query {
 
 	/**
 	 * Rows converted by conversion lookup table
+	 *
 	 * @param array $rows
 	 * @param \PDOStatement $statement
 	 * @return array
@@ -88,6 +89,7 @@ final class TypedQuery implements Query {
 
 	/**
 	 * Meta types extracted from the statement
+	 *
 	 * @param \PDOStatement $statement
 	 * @return array
 	 */
@@ -95,7 +97,7 @@ final class TypedQuery implements Query {
 		return array_column(
 			array_reduce(
 				range(0, $statement->columnCount() - 1),
-				function(array $meta, int $column) use ($statement): array {
+				static function(array $meta, int $column) use ($statement): array {
 					$meta[] = $statement->getColumnMeta($column);
 					return $meta;
 				},

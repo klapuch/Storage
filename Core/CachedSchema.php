@@ -12,10 +12,10 @@ class CachedSchema implements Schema {
 	private const NAMESPACE = 'postgres:type:meta:';
 	private static $cache = [];
 
-	/** @var Connection */
+	/** @var \Klapuch\Storage\Connection */
 	private $connection;
 
-	/** @var Predis\ClientInterface */
+	/** @var \Predis\ClientInterface */
 	private $redis;
 
 	public function __construct(Connection $connection, Predis\ClientInterface $redis) {

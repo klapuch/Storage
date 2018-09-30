@@ -37,7 +37,7 @@ final class PgRowToTypedArray implements Conversion {
 			return array_combine(
 				array_keys($raw),
 				array_map(
-					function(?string $value, string $column) use ($types) {
+					static function(?string $value, string $column) use ($types) {
 						return (new PgStringToScalar($value, $types[$column]))->value();
 					},
 					$raw,

@@ -6,6 +6,7 @@ namespace Klapuch\Storage;
 interface Conversion {
 	/**
 	 * Converted value
+	 *
 	 * @return mixed
 	 */
 	public function value();

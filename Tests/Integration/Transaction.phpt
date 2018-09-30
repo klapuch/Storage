@@ -5,6 +5,7 @@ declare(strict_types = 1);
  * @testCase
  * @phpVersion > 7.1.0
  */
+
 namespace Klapuch\Storage\Integration;
 
 use Klapuch\Storage;
@@ -74,7 +75,7 @@ final class Transaction extends TestCase\PostgresDatabase {
 		$database->shouldReceive('exec')
 			->once()
 			->andThrowExceptions([$ex]);
-		(new Storage\Transaction($database))->start(function() {
+		(new Storage\Transaction($database))->start(static function() {
 		});
 	}
 }
