@@ -24,6 +24,14 @@ final class PgJsonToArray extends Tester\TestCase {
 				new Storage\FakeConversion()
 			))->value()
 		);
+		Assert::same(
+			[1, 'abc'],
+			(new Storage\PgJsonToArray(
+				'[1, "abc"]',
+				'jSONb',
+				new Storage\FakeConversion()
+			))->value()
+		);
 	}
 
 	public function testConvertingObjectToArray() {
