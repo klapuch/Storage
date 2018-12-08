@@ -27,29 +27,33 @@ final class PgConversions implements Conversion {
 			new PgText(
 				$this->original,
 				$this->type,
-				new PgHStoreToArray(
-					$this->connection,
+				new PgJsonToArray(
 					$this->original,
 					$this->type,
-					new PgIntRangeToArray(
+					new PgHStoreToArray(
+						$this->connection,
 						$this->original,
 						$this->type,
-						new PgTimestamptzRangeToArray(
-							$this->connection,
+						new PgIntRangeToArray(
 							$this->original,
 							$this->type,
-							new PgPointToArray(
+							new PgTimestamptzRangeToArray(
+								$this->connection,
 								$this->original,
 								$this->type,
-								new PgArrayToArray(
-									$this->connection,
+								new PgPointToArray(
 									$this->original,
 									$this->type,
-									new PgRowToTypedArray(
+									new PgArrayToArray(
 										$this->connection,
 										$this->original,
 										$this->type,
-										new PgNative($this->original)
+										new PgRowToTypedArray(
+											$this->connection,
+											$this->original,
+											$this->type,
+											new PgNative($this->original)
+										)
 									)
 								)
 							)
