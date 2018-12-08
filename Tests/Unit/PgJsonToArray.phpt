@@ -6,7 +6,7 @@ declare(strict_types = 1);
  * @phpVersion > 7.1
  */
 
-namespace Klapuch\Storage\Integration;
+namespace Klapuch\Storage\Unit;
 
 use Klapuch\Storage;
 use Tester;

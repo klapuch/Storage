@@ -19,7 +19,7 @@ class StringData {
 	 */
 	public function serialize($data): string {
 		if (static::$loaded) {
-			return igbinary_serialize($data);
+			return (string) igbinary_serialize($data);
 		}
 		return serialize($data);
 	}

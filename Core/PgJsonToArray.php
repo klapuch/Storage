@@ -14,9 +14,13 @@ final class PgJsonToArray implements Conversion {
 		$this->delegation = $delegation;
 	}
 
-	public function value(): array {
-		if (strcasecmp($this->type, 'json') === 0)
+	/**
+	 * @return mixed
+	 */
+	public function value() {
+		if (strcasecmp($this->type, 'json') === 0) {
 			return json_decode($this->original, true);
+		}
 		return $this->delegation->value();
 	}
 }
