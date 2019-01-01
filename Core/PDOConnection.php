@@ -7,6 +7,7 @@ namespace Klapuch\Storage;
  * Simple native query without changes
  */
 final class PDOConnection implements Connection {
+	/** @var \PDO */
 	private $database;
 
 	public function __construct(\PDO $database) {

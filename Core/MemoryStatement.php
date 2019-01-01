@@ -7,7 +7,10 @@ namespace Klapuch\Storage;
  * in-memory statement
  */
 final class MemoryStatement extends \PDOStatement {
+	/** @var mixed[] */
 	private $memory;
+
+	/** @var string */
 	private $statement;
 
 	public function __construct(array $memory, string $statement) {

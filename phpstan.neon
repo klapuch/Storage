@@ -2,3 +2,4 @@ parameters:
 	ignoreErrors:
 		- '#Function igbinary_[a-z]+ not found.#'
 		- '#.+call_user_func_array expects callable.+#'
+		- '#Parameter \#\d \$original of class Klapuch\\Storage\\(PgText|PgJsonToArray|PgHStoreToArray|PgIntRangeToArray|PgTimestamptzRangeToArray|PgPointToArray|PgArrayToArray|PgRowToTypedArray|PgNative) constructor expects string, string\|null given\.#'

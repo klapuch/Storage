@@ -11,6 +11,8 @@ language: php
 
 php:
   - 7.2
+  - 7.3
+  - nightly
 
 before_install:
   - composer self-update
@@ -32,7 +34,3 @@ after_script:
 
 after_failure:
   - for i in $(find Tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done
-
-cache:
-    directories:
-      - $HOME/.composer/cache

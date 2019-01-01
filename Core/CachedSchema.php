@@ -10,6 +10,8 @@ use Predis;
  */
 class CachedSchema implements Schema {
 	private const NAMESPACE = 'postgres:type:meta:';
+
+	/** @var mixed[] */
 	private static $cache = [];
 
 	/** @var \Klapuch\Storage\Connection */

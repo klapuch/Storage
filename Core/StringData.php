@@ -7,6 +7,7 @@ namespace Klapuch\Storage;
  * String data representing serialized/unserialized structure
  */
 class StringData {
+	/** @var bool */
 	private static $loaded = false;
 
 	public function __construct() {

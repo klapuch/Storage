@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace Klapuch\Storage;
 
 final class FakeConversion implements Conversion {
+	/** @var null */
 	private $value;
 
 	public function __construct($value = null) {

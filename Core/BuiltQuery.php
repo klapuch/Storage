@@ -9,7 +9,10 @@ use Klapuch\Sql;
  * Query built from SQL statement with parameters
  */
 final class BuiltQuery implements Query {
+	/** @var \Klapuch\Storage\Connection */
 	private $connection;
+
+	/** @var \Klapuch\Sql\Statement */
 	private $statement;
 
 	public function __construct(Connection $connection, Sql\Statement $statement) {

@@ -4,9 +4,16 @@ declare(strict_types = 1);
 namespace Klapuch\Storage;
 
 final class PgHStoreToArray implements Conversion {
+	/** @var \Klapuch\Storage\Connection */
 	private $connection;
+
+	/** @var string */
 	private $original;
+
+	/** @var string */
 	private $type;
+
+	/** @var \Klapuch\Storage\Conversion */
 	private $delegation;
 
 	public function __construct(Connection $connection, string $original, string $type, Conversion $delegation) {

@@ -7,6 +7,7 @@ namespace Klapuch\Storage;
  * Query used as application layer
  */
 final class ApplicationQuery implements Query {
+	/** @var \Klapuch\Storage\Query */
 	private $origin;
 
 	public function __construct(Query $origin) {

@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace Klapuch\Storage;
 
 final class PgNative implements Conversion {
+	/** @var string */
 	private $original;
 
 	public function __construct(string $original) {

@@ -4,7 +4,10 @@ declare(strict_types = 1);
 namespace Klapuch\Storage;
 
 final class PgNullable implements Conversion {
+	/** @var string|null */
 	private $original;
+
+	/** @var \Klapuch\Storage\Conversion */
 	private $delegation;
 
 	public function __construct(?string $original, Conversion $delegation) {

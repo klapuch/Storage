@@ -9,7 +9,10 @@ use Predis;
  * Cached database connection
  */
 class CachedConnection implements Connection {
+	/** @var \Klapuch\Storage\Connection */
 	private $origin;
+
+	/** @var \Predis\ClientInterface */
 	private $redis;
 
 	public function __construct(Connection $origin, Predis\ClientInterface $redis) {

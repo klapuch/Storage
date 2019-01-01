@@ -7,8 +7,13 @@ namespace Klapuch\Storage;
  * Simple native query without changes
  */
 final class NativeQuery implements Query {
+	/** @var \Klapuch\Storage\Connection */
 	private $connection;
+
+	/** @var string */
 	private $statement;
+
+	/** @var mixed[] */
 	private $parameters;
 
 	public function __construct(Connection $connection, string $statement, array $parameters = []) {

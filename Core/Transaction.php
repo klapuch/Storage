@@ -7,6 +7,7 @@ namespace Klapuch\Storage;
  * Transaction for PDO (in this moment for postgres)
  */
 final class Transaction {
+	/** @var \Klapuch\Storage\Connection */
 	private $connection;
 
 	public function __construct(Connection $connection) {

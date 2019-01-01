@@ -7,7 +7,10 @@ namespace Klapuch\Storage;
  * In-memory connection
  */
 final class MemoryConnection implements Connection {
+	/** @var mixed[] */
 	private $memory;
+
+	/** @var \Klapuch\Storage\Connection */
 	private $origin;
 
 	public function __construct(Connection $origin, array $memory) {

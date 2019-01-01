@@ -7,9 +7,17 @@ use Predis;
 
 final class CachedPDOStatement extends \PDOStatement {
 	private const NAMESPACE = 'postgres:column:meta:';
+
+	/** @var \PDOStatement */
 	private $origin;
+
+	/** @var string */
 	private $statement;
+
+	/** @var \Predis\ClientInterface */
 	private $redis;
+
+	/** @var mixed[] */
 	private static $cache = [];
 
 	public function __construct(
@@ -39,7 +47,7 @@ final class CachedPDOStatement extends \PDOStatement {
 		$fetchArgument = null,
 		$ctorArgs = null
 	): array {
-		return $this->origin->fetchAll(...func_get_args());
+		return (array) $this->origin->fetchAll(...func_get_args());
 	}
 
 	/**

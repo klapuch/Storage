@@ -12,7 +12,11 @@ final class PgStringToScalar implements Conversion {
 		'boolean' => 'toBool',
 		'bool' => 'toBool',
 	];
+
+	/** @var string|null */
 	private $original;
+
+	/** @var string */
 	private $type;
 
 	public function __construct(?string $original, string $type) {

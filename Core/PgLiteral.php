@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace Klapuch\Storage;
 
 final class PgLiteral implements Conversion {
+	/** @var string|bool|null */
 	private $original;
 
 	public function __construct($original) {

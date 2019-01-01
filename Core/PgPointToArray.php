@@ -4,8 +4,13 @@ declare(strict_types = 1);
 namespace Klapuch\Storage;
 
 final class PgPointToArray implements Conversion {
+	/** @var string */
 	private $original;
+
+	/** @var string */
 	private $type;
+
+	/** @var \Klapuch\Storage\Conversion */
 	private $delegation;
 
 	public function __construct(string $original, string $type, Conversion $delegation) {

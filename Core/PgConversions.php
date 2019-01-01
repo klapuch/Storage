@@ -4,8 +4,13 @@ declare(strict_types = 1);
 namespace Klapuch\Storage;
 
 final class PgConversions implements Conversion {
+	/** @var \Klapuch\Storage\Connection */
 	private $connection;
+
+	/** @var string|null */
 	private $original;
+
+	/** @var string */
 	private $type;
 
 	public function __construct(
