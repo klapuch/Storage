@@ -4,15 +4,6 @@ declare(strict_types = 1);
 namespace Klapuch\Storage;
 
 final class PgStringToScalar implements Conversion {
-	private const TYPES = [
-		'integer' => 'toInt',
-		'int' => 'toInt',
-		'smallint' => 'toInt',
-		'bigint' => 'toInt',
-		'boolean' => 'toBool',
-		'bool' => 'toBool',
-	];
-
 	/** @var string|null */
 	private $original;
 
@@ -28,19 +19,28 @@ final class PgStringToScalar implements Conversion {
 	 * @return mixed
 	 */
 	public function value() {
-		if ($this->original !== null && array_key_exists(strtolower($this->type), self::TYPES)) {
-			return call_user_func_array([$this, self::TYPES[strtolower($this->type)]], [$this->original]);
+		if ($this->original === null) {
+			return $this->original;
 		}
-		return $this->original;
+		switch (strtolower($this->type)) {
+			case 'integer':
+			case 'int':
+			case 'smallint':
+			case 'bigint':
+				return self::toInt($this->original);
+			case 'bool':
+			case 'boolean':
+				return self::toBool($this->original);
+			default:
+				return $this->original;
+		}
 	}
 
-	// @codingStandardsIgnoreStart Used by call_user_func_array
-	private function toInt(string $original): int {
+	private static function toInt(string $original): int {
 		return (int) $original;
 	}
 
-	private function toBool(string $original): bool {
-		return $original === 't' ? true : false;
+	private static function toBool(string $original): bool {
+		return $original === 't';
 	}
-	// @codingStandardsIgnoreEnd
 }
