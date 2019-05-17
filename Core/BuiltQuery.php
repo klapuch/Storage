@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Klapuch\Storage;
 
-use Klapuch\Sql;
+use Characterice\Sql\Statement\Statement;
 
 /**
  * Query built from SQL statement with parameters
@@ -12,10 +12,10 @@ final class BuiltQuery implements Query {
 	/** @var \Klapuch\Storage\Connection */
 	private $connection;
 
-	/** @var \Klapuch\Sql\Statement */
+	/** @var \Characterice\Sql\Statement\Statement */
 	private $statement;
 
-	public function __construct(Connection $connection, Sql\Statement $statement) {
+	public function __construct(Connection $connection, Statement $statement) {
 		$this->connection = $connection;
 		$this->statement = $statement;
 	}
@@ -27,7 +27,7 @@ final class BuiltQuery implements Query {
 		return (new TypedQuery(
 			$this->connection,
 			$this->statement->sql(),
-			$this->statement->parameters()->binds()
+			$this->statement->parameters()
 		))->field();
 	}
 
@@ -35,7 +35,7 @@ final class BuiltQuery implements Query {
 		return (new TypedQuery(
 			$this->connection,
 			$this->statement->sql(),
-			$this->statement->parameters()->binds()
+			$this->statement->parameters()
 		))->row($style);
 	}
 
@@ -43,7 +43,7 @@ final class BuiltQuery implements Query {
 		return (new TypedQuery(
 			$this->connection,
 			$this->statement->sql(),
-			$this->statement->parameters()->binds()
+			$this->statement->parameters()
 		))->rows($style);
 	}
 
@@ -51,7 +51,7 @@ final class BuiltQuery implements Query {
 		return (new TypedQuery(
 			$this->connection,
 			$this->statement->sql(),
-			$this->statement->parameters()->binds()
+			$this->statement->parameters()
 		))->execute();
 	}
 }
