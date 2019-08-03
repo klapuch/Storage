@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Klapuch\Storage;
 
-use Characterice\Sql\Statement\Statement;
+use Klapuch\Sql\Statement\Statement;
 
 /**
  * Query built from SQL statement with parameters
@@ -12,7 +12,7 @@ final class BuiltQuery implements Query {
 	/** @var \Klapuch\Storage\Connection */
 	private $connection;
 
-	/** @var \Characterice\Sql\Statement\Statement */
+	/** @var \Klapuch\Sql\Statement\Statement */
 	private $statement;
 
 	public function __construct(Connection $connection, Statement $statement) {
