@@ -6,7 +6,8 @@ namespace Klapuch\Storage;
 use Predis;
 
 final class CachedPDOStatement extends \PDOStatement {
-	private const NAMESPACE = 'postgres:column:meta:';
+	/** @var mixed[] */
+	private static $cache = [];
 
 	/** @var \PDOStatement */
 	private $origin;
@@ -14,20 +15,17 @@ final class CachedPDOStatement extends \PDOStatement {
 	/** @var string */
 	private $statement;
 
-	/** @var \Predis\ClientInterface */
-	private $redis;
-
-	/** @var mixed[] */
-	private static $cache = [];
+	/** @var \SplFileInfo */
+	private $file;
 
 	public function __construct(
 		\PDOStatement $origin,
 		string $statement,
-		Predis\ClientInterface $redis
+		\SplFileInfo $file
 	) {
 		$this->origin = $origin;
-		$this->redis = $redis;
 		$this->statement = $statement;
+		$this->file = $file;
 	}
 
 	public function execute($inputParameters = null): bool {
@@ -63,14 +61,12 @@ final class CachedPDOStatement extends \PDOStatement {
 	}
 
 	public function getColumnMeta($column): array {
-		$key = self::NAMESPACE . md5($this->statement);
-		if (isset(self::$cache[$key][$column])) {
-			return self::$cache[$key][$column];
+		$key = md5($this->statement);
+		if (isset(static::$cache[$key][$column])) {
+			return static::$cache[$key][$column];
 		}
-		if (!$this->redis->hexists($key, $column)) {
-			$this->redis->hset($key, $column, (new StringData())->serialize($this->origin->getColumnMeta($column)));
-			$this->redis->persist($key);
-		}
-		return self::$cache[$key][$column] = (new StringData())->unserialize($this->redis->hget($key, $column));
+		['table' => $table] = $this->origin->getColumnMeta($column);
+		$schema = require $this->file->getpathname();
+		return static::$cache[$key][$column] = $schema[$table][$column];
 	}
 }

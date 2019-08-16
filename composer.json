@@ -20,7 +20,6 @@
     "php": ">=7.3",
     "ext-pdo": "*",
     "ext-json": "*",
-    "predis/predis": "^1.1",
     "klapuch/sql": "*"
   },
   "require-dev": {
@@ -39,9 +38,6 @@
         "Core/"
       ]
     }
-  },
-  "suggest": {
-    "ext-igbinary": "For better serialization"
   },
   "autoload-dev": {
     "psr-4": {

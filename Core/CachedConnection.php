@@ -3,8 +3,6 @@ declare(strict_types = 1);
 
 namespace Klapuch\Storage;
 
-use Predis;
-
 /**
  * Cached database connection
  */
@@ -12,19 +10,19 @@ class CachedConnection implements Connection {
 	/** @var \Klapuch\Storage\Connection */
 	private $origin;
 
-	/** @var \Predis\ClientInterface */
-	private $redis;
+	/** @var \SplFileInfo */
+	private $file;
 
-	public function __construct(Connection $origin, Predis\ClientInterface $redis) {
+	public function __construct(Connection $origin, \SplFileInfo $file) {
 		$this->origin = $origin;
-		$this->redis = $redis;
+		$this->file = $file;
 	}
 
 	public function prepare($statement): \PDOStatement {
 		return new CachedPDOStatement(
 			$this->origin->prepare($statement),
 			$statement,
-			$this->redis
+			$this->file
 		);
 	}
 
@@ -33,6 +31,6 @@ class CachedConnection implements Connection {
 	}
 
 	public function schema(): Schema {
-		return new CachedSchema($this, $this->redis);
+		return new CachedSchema($this, $this->file);
 	}
 }

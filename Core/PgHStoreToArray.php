@@ -28,18 +28,12 @@ final class PgHStoreToArray implements Conversion {
 	 */
 	public function value() {
 		if (strcasecmp($this->type, 'hstore') === 0) {
-			return array_reduce(
-				(new NativeQuery(
-					$this->connection,
-					'SELECT key, value FROM each(?::hstore)',
-					[$this->original]
-				))->rows(),
-				static function (array $array, array $hstore): array {
-					$array[$hstore['key']] = $hstore['value'];
-					return $array;
-				},
-				[]
-			);
+			$keysValues = (new NativeQuery(
+				$this->connection,
+				'SELECT key, value FROM each(?::hstore)',
+				[$this->original]
+			))->rows();
+			return array_combine(array_column($keysValues, 'key'), array_column($keysValues,  'value'));
 		}
 		return $this->delegation->value();
 	}
