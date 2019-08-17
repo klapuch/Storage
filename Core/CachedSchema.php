@@ -43,8 +43,7 @@ class CachedSchema implements Schema {
 		 			FROM information_schema.attributes
 					WHERE udt_name = lower(:type)
 					UNION ALL
-					SELECT
-					column_name AS attribute_name,
+					SELECT column_name,
 					CASE WHEN data_type = 'USER-DEFINED' THEN udt_name ELSE data_type END,
 					ordinal_position
 					FROM information_schema.columns

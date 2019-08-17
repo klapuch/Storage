@@ -33,7 +33,7 @@ final class PgRowToTypedArray implements Conversion {
 	 */
 	public function value() {
 		$columns = $this->connection->schema()->columns($this->type);
-		if ($columns) {
+		if ($columns !== []) {
 			$converted = (new PgRowToArray(
 				$this->connection,
 				$this->original,

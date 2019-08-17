@@ -27,6 +27,18 @@ final class PgHStoreToArray extends TestCase\PostgresDatabase {
 		);
 	}
 
+	public function testEmptyHstoreAsEmptyArray() {
+		Assert::same(
+			[],
+			(new Storage\PgHStoreToArray(
+				$this->connection,
+				'',
+				'hstore',
+				new Storage\FakeConversion()
+			))->value()
+		);
+	}
+
 	public function testDelegationForNotHstore() {
 		Assert::same(
 			'foo',
