@@ -35,25 +35,25 @@ final class PgRowToTypedArray implements Conversion {
 	 */
 	public function value() {
 		$columns = $this->connection->schema()->columns($this->type);
-		if ($columns !== []) {
-			$converted = (new PgRowToArray(
-				$this->connection,
-				$this->original,
-				$this->type
-			))->value();
-			$raw = array_filter($converted, 'is_string');
-			$types = array_column($columns, 'data_type', 'attribute_name');
-			return array_combine(
-				array_keys($raw),
-				array_map(
-					static function(?string $value, string $column) use ($types) {
-						return (new PgStringToScalar($value, $types[$column]))->value();
-					},
-					$raw,
-					array_keys($raw)
-				)
-			) + $converted;
+		if ($columns === []) {
+			return $this->delegation->value();
 		}
-		return $this->delegation->value();
+		$converted = (new PgRowToArray(
+			$this->connection,
+			$this->original,
+			$this->type
+		))->value();
+		$raw = array_filter($converted, 'is_string');
+		$types = array_column($columns, 'data_type', 'attribute_name');
+		return array_combine(
+			array_keys($raw),
+			array_map(
+				static function(?string $value, string $column) use ($types) {
+					return (new PgStringToScalar($value, $types[$column]))->value();
+				},
+				$raw,
+				array_keys($raw)
+			)
+		) + $converted;
 	}
 }

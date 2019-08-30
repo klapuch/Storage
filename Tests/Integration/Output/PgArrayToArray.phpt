@@ -59,40 +59,6 @@ final class PgArrayToArray extends TestCase\PostgresDatabase {
 			))->value()
 		);
 	}
-
-	public function testConversionOfArrayOfTableTypes() {
-		$this->connection->exec('DROP TABLE IF EXISTS foo');
-		$this->connection->exec('CREATE TABLE foo (id integer, name text)');
-		Assert::same(
-			[
-				['name' => 'first', 'id' => 1],
-				['name' => 'second', 'id' => 2],
-			],
-			(new Output\PgArrayToArray(
-				$this->connection,
-				'{"(1,first)","(2,second)"}',
-				'_foo',
-				new Output\FakeConversion('foo')
-			))->value()
-		);
-	}
-
-	public function testConversionOfArrayOfTableTypesWithComplexColumn() {
-		$this->connection->exec('DROP TABLE IF EXISTS foo');
-		$this->connection->exec('CREATE TABLE foo (id integer, coordinates point)');
-		Assert::same(
-			[
-				['coordinates' => ['x' => 50.5, 'y' => 60.5], 'id' => 1],
-				['coordinates' => ['x' => 50.6, 'y' => 60.6], 'id' => 2],
-			],
-			(new Output\PgArrayToArray(
-				$this->connection,
-				'{"(1,\"(50.5,60.5)\")","(2,\"(50.6,60.6)\")"}',
-				'_foo',
-				new Output\FakeConversion('foo')
-			))->value()
-		);
-	}
 }
 
 (new PgArrayToArray())->run();
