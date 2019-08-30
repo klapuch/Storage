@@ -14,18 +14,16 @@ interface Query {
 	/**
 	 * Single row
 	 *
-	 * @param int $style
 	 * @return array
 	 */
-	public function row(int $style = \PDO::FETCH_ASSOC): array;
+	public function row(): array;
 
 	/**
 	 * Multiple rows
 	 *
-	 * @param int $style
 	 * @return array
 	 */
-	public function rows(int $style = \PDO::FETCH_ASSOC): array;
+	public function rows(): array;
 
 	/**
 	 * Execute the query

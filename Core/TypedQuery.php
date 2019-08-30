@@ -27,24 +27,24 @@ final class TypedQuery implements Query {
 	 */
 	public function field() {
 		$statement = $this->execute();
-		$meta = $statement->getColumnMeta(0);
+		['name' => $name] = $statement->getColumnMeta(0);
 		return current(
 			$this->conversions(
-				[$meta['name'] => $statement->fetchColumn()],
+				[$name => $statement->fetchColumn()],
 				$statement
 			)
 		);
 	}
 
-	public function row(int $style = \PDO::FETCH_ASSOC): array {
+	public function row(): array {
 		$statement = $this->execute();
-		return $this->conversions($statement->fetch($style) ?: [], $statement);
+		return $this->conversions($statement->fetch(\PDO::FETCH_ASSOC) ?: [], $statement);
 	}
 
-	public function rows(int $style = \PDO::FETCH_ASSOC): array {
+	public function rows(): array {
 		$statement = $this->execute();
 		return array_reduce(
-			(array) $statement->fetchAll($style),
+			(array) $statement->fetchAll(\PDO::FETCH_ASSOC),
 			function(array $rows, array $row) use ($statement): array {
 				$rows[] = $this->conversions($row, $statement);
 				return $rows;

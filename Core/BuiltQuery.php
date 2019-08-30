@@ -31,20 +31,20 @@ final class BuiltQuery implements Query {
 		))->field();
 	}
 
-	public function row(int $style = \PDO::FETCH_ASSOC): array {
+	public function row(): array {
 		return (new TypedQuery(
 			$this->connection,
 			$this->statement->sql(),
 			$this->statement->parameters()
-		))->row($style);
+		))->row();
 	}
 
-	public function rows(int $style = \PDO::FETCH_ASSOC): array {
+	public function rows(): array {
 		return (new TypedQuery(
 			$this->connection,
 			$this->statement->sql(),
 			$this->statement->parameters()
-		))->rows($style);
+		))->rows();
 	}
 
 	public function execute(): \PDOStatement {
