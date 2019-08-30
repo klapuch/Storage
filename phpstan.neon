@@ -1,4 +1,4 @@
 parameters:
 	ignoreErrors:
 		- '#Function igbinary_[a-z]+ not found.#'
-		- '#Parameter \#\d \$original of class Klapuch\\Storage\\(PgText|PgJsonToArray|PgHStoreToArray|PgIntRangeToArray|PgTimestamptzRangeToArray|PgPointToArray|PgArrayToArray|PgRowToTypedArray|PgNative) constructor expects string, string\|null given\.#'
+		- '#Parameter \#\d \$original of class Klapuch\\Storage\\Output\\(PgText|PgJsonToArray|PgHStoreToArray|PgIntRangeToArray|PgTimestamptzRangeToArray|PgPointToArray|PgArrayToArray|PgRowToTypedArray|PgNative) constructor expects string, string\|null given\.#'

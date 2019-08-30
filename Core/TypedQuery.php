@@ -57,11 +57,8 @@ final class TypedQuery implements Query {
 		$statement = $this->connection->prepare($this->statement);
 		$statement->execute(
 			array_map(
-				static function($value) {
-					if (is_bool($value)) {
-						return $value ? 't' : 'f';
-					}
-					return $value;
+				static function($value): string {
+					return (new Input\NativeConversion($value))->value();
 				},
 				$this->parameters
 			)
@@ -82,7 +79,7 @@ final class TypedQuery implements Query {
 		array_walk(
 			$conversions,
 			function($type, string $column) use (&$raw): void {
-				$raw[$column] = (new PgConversions(
+				$raw[$column] = (new Output\PgConversions(
 					$this->connection,
 					$raw[$column],
 					$type
