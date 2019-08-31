@@ -57,8 +57,11 @@ final class TypedQuery implements Query {
 		$statement = $this->connection->prepare($this->statement);
 		$statement->execute(
 			array_map(
-				static function($value): string {
-					return (new Input\NativeConversion($value))->value();
+				static function($value) {
+					if (is_bool($value)) {
+						return $value ? 't' : 'f';
+					}
+					return $value;
 				},
 				$this->parameters
 			)
