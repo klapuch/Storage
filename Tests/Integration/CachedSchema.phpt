@@ -10,12 +10,20 @@ namespace Klapuch\Storage\Integration;
 
 use Klapuch\Storage;
 use Klapuch\Storage\TestCase;
-use Predis;
 use Tester\Assert;
+use Tester\FileMock;
 
 require __DIR__ . '/../bootstrap.php';
 
 final class CachedSchema extends TestCase\PostgresDatabase {
+	/** @var \SplFileInfo */
+	private $temp;
+
+	protected function setUp() {
+		parent::setUp();
+		$this->temp = new \SplFileInfo(FileMock::create());
+	}
+
 	public function testCachingOnSecondRun() {
 		$this->connection->exec('DROP TABLE IF EXISTS test_table2 CASCADE');
 		$this->connection->exec('CREATE TABLE test_table2 (first integer)');
@@ -27,30 +35,9 @@ final class CachedSchema extends TestCase\PostgresDatabase {
 				'native_type' => 'integer',
 			],
 		];
-		Assert::same($meta, (new Storage\CachedSchema($this->connection, $this->redis))->columns('test_table2'));
-		Assert::same($meta, (new Storage\StringData())->unserialize($this->redis->get('postgres:type:meta:test_table2')));
-		Assert::same($meta, (new Storage\CachedSchema($this->mock(Storage\Connection::class), $this->mock(Predis\ClientInterface::class)))->columns('test_table2'));
-	}
-
-	public function testUsingNamespaceForRedis() {
-		$this->connection->exec('DROP TABLE IF EXISTS test_table2 CASCADE');
-		$this->connection->exec('CREATE TABLE test_table2 (first integer)');
-		Assert::noError(function() {
-			$meta = [
-				[
-					'attribute_name' => 'first',
-					'data_type' => 'integer',
-					'ordinal_position' => 1,
-					'native_type' => 'integer',
-				],
-			];
-			$redis = $this->mock(Predis\ClientInterface::class);
-			$redis->shouldReceive('exists')->once()->with('postgres:type:meta:test_table2')->andReturn(false);
-			$redis->shouldReceive('get')->once()->with('postgres:type:meta:test_table2')->andReturn((new Storage\StringData())->serialize($meta));
-			$redis->shouldReceive('set')->once()->with('postgres:type:meta:test_table2', (new Storage\StringData())->serialize($meta));
-			$redis->shouldReceive('persist')->once()->with('postgres:type:meta:test_table2');
-			(new Storage\CachedSchema($this->connection, $redis))->columns('test_table2');
-		});
+		Assert::same($meta, (new Storage\CachedSchema($this->connection, $this->temp))->columns('test_table2'));
+		Assert::same($meta, require sprintf('%s/postgres_type_meta/test_table2.php', $this->temp->getPathname()));
+		Assert::same($meta, (new Storage\CachedSchema($this->mock(Storage\Connection::class), $this->temp))->columns('test_table2'));
 	}
 
 	public function testMetaForTypeAndTable() {
@@ -67,7 +54,7 @@ final class CachedSchema extends TestCase\PostgresDatabase {
 					'native_type' => 'integer',
 				],
 			],
-			(new Storage\CachedSchema($this->connection, $this->redis))->columns('test_type2')
+			(new Storage\CachedSchema($this->connection, $this->temp))->columns('test_type2')
 		);
 		Assert::same(
 			[
@@ -78,7 +65,7 @@ final class CachedSchema extends TestCase\PostgresDatabase {
 					'native_type' => 'integer',
 				],
 			],
-			(new Storage\CachedSchema($this->connection, $this->redis))->columns('test_table2')
+			(new Storage\CachedSchema($this->connection, $this->temp))->columns('test_table2')
 		);
 	}
 
@@ -154,7 +141,7 @@ final class CachedSchema extends TestCase\PostgresDatabase {
 					'native_type' => 'string',
 				],
 			],
-			(new Storage\CachedSchema($this->connection, $this->redis))->columns('test_full')
+			(new Storage\CachedSchema($this->connection, $this->temp))->columns('test_full')
 		);
 	}
 
@@ -172,7 +159,7 @@ final class CachedSchema extends TestCase\PostgresDatabase {
 					'native_type' => 'test_type1',
 				],
 			],
-			(new Storage\CachedSchema($this->connection, $this->redis))->columns('test_type2')
+			(new Storage\CachedSchema($this->connection, $this->temp))->columns('test_type2')
 		);
 	}
 
@@ -190,7 +177,7 @@ final class CachedSchema extends TestCase\PostgresDatabase {
 					'native_type' => 'test_type3',
 				],
 			],
-			(new Storage\CachedSchema($this->connection, $this->redis))->columns('test_table4')
+			(new Storage\CachedSchema($this->connection, $this->temp))->columns('test_table4')
 		);
 	}
 
@@ -199,8 +186,8 @@ final class CachedSchema extends TestCase\PostgresDatabase {
 		$this->connection->exec('DROP TYPE IF EXISTS test_type2 CASCADE');
 		$this->connection->exec('CREATE TABLE test_table2 (first integer)');
 		$this->connection->exec('CREATE TYPE test_type2 AS (second integer)');
-		Assert::notSame([], (new Storage\CachedSchema($this->connection, $this->redis))->columns('TEST_TYPE2'));
-		Assert::notSame([], (new Storage\CachedSchema($this->connection, $this->redis))->columns('TEST_TABLE2'));
+		Assert::notSame([], (new Storage\CachedSchema($this->connection, $this->temp))->columns('TEST_TYPE2'));
+		Assert::notSame([], (new Storage\CachedSchema($this->connection, $this->temp))->columns('TEST_TABLE2'));
 	}
 }
 

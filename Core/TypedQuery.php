@@ -28,12 +28,8 @@ final class TypedQuery implements Query {
 	public function field() {
 		$statement = $this->execute();
 		['name' => $name] = $statement->getColumnMeta(0);
-		return current(
-			$this->conversions(
-				[$name => $statement->fetchColumn()],
-				$statement
-			)
-		);
+		[$name => $value] = $this->conversions([$name => $statement->fetchColumn()], $statement);
+		return $value;
 	}
 
 	public function row(): array {
