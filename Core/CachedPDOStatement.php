@@ -71,7 +71,7 @@ final class CachedPDOStatement extends \PDOStatement {
 		if (!is_file($filename)) {
 			(new Lock\Semaphore($filename))->synchronized(function () use ($dir, $column, $filename): void {
 				if (!is_file($filename)) {
-					@mkdir($dir, 0666); // @ directory may exists
+					@mkdir($dir, 0777, true); // @ directory may exists
 					if (@file_put_contents($filename, sprintf('<?php return %s;', var_export($this->origin->getColumnMeta($column), true))) === false) {
 						throw new \RuntimeException(sprintf('File is "%s" is not writable', $filename));
 					}

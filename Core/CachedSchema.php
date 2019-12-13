@@ -25,25 +25,25 @@ class CachedSchema implements Schema {
 		$this->temp = $temp;
 	}
 
-	public function columns(string $table): array {
-		if (isset(static::$cache[$table])) {
-			return static::$cache[$table];
+	public function columns(string $type): array {
+		if (isset(static::$cache[$type])) {
+			return static::$cache[$type];
 		}
 		$dir = $this->temp->getPathname() . DIRECTORY_SEPARATOR . self::NAMESPACE;
-		$filename = sprintf('%s/%s/%s.php', $this->temp->getPathname(), self::NAMESPACE, $table);
+		$filename = sprintf('%s/%s/%s.php', $this->temp->getPathname(), self::NAMESPACE, $type);
 		if (!is_file($filename)) {
-			(new Lock\Semaphore($filename))->synchronized(function () use ($filename, $table, $dir): void {
+			(new Lock\Semaphore($filename))->synchronized(function () use ($filename, $type, $dir): void {
 				if (!is_file($filename)) {
-					@mkdir($dir, 0666); // @ directory may exists
-					if (@file_put_contents($filename, sprintf('<?php return %s;', var_export($this->structure($table), true))) === false) {
+					@mkdir($dir, 0777); // @ directory may exists
+					if (@file_put_contents($filename, sprintf('<?php return %s;', var_export($this->structure($type), true))) === false) {
 						throw new \RuntimeException(sprintf('File is "%s" is not writable', $filename));
 					}
 				}
 			});
 
 		}
-		self::$cache[$table] = require $filename;
-		return self::$cache[$table];
+		self::$cache[$type] = require $filename;
+		return self::$cache[$type];
 	}
 
 	/**
