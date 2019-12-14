@@ -3,10 +3,13 @@ declare(strict_types = 1);
 
 namespace Klapuch\Storage;
 
-use Predis;
+use Klapuch\Lock;
 
 final class CachedPDOStatement extends \PDOStatement {
-	private const NAMESPACE = 'postgres:column:meta:';
+	private const NAMESPACE = 'postgres_column_meta';
+
+	/** @var mixed[] */
+	private static $cache = [];
 
 	/** @var \PDOStatement */
 	private $origin;
@@ -14,20 +17,17 @@ final class CachedPDOStatement extends \PDOStatement {
 	/** @var string */
 	private $statement;
 
-	/** @var \Predis\ClientInterface */
-	private $redis;
-
-	/** @var mixed[] */
-	private static $cache = [];
+	/** @var \SplFileInfo */
+	private $temp;
 
 	public function __construct(
 		\PDOStatement $origin,
 		string $statement,
-		Predis\ClientInterface $redis
+		\SplFileInfo $temp
 	) {
 		$this->origin = $origin;
-		$this->redis = $redis;
 		$this->statement = $statement;
+		$this->temp = $temp;
 	}
 
 	public function execute($inputParameters = null): bool {
@@ -63,14 +63,22 @@ final class CachedPDOStatement extends \PDOStatement {
 	}
 
 	public function getColumnMeta($column): array {
-		$key = self::NAMESPACE . md5($this->statement);
-		if (isset(self::$cache[$key][$column])) {
-			return self::$cache[$key][$column];
+		$dir = implode(DIRECTORY_SEPARATOR, [$this->temp->getPathname(), self::NAMESPACE, md5($this->statement)]);
+		$filename = sprintf('%s/%d.php', $dir, $column);
+		if (isset(self::$cache[$filename][$column])) {
+			return self::$cache[$filename][$column];
 		}
-		if (!$this->redis->hexists($key, $column)) {
-			$this->redis->hset($key, $column, (new StringData())->serialize($this->origin->getColumnMeta($column)));
-			$this->redis->persist($key);
+		if (!is_file($filename)) {
+			(new Lock\Semaphore($filename))->synchronized(function () use ($dir, $column, $filename): void {
+				if (!is_file($filename)) {
+					@mkdir($dir, 0777, true); // @ directory may exists
+					if (@file_put_contents($filename, sprintf('<?php return %s;', var_export($this->origin->getColumnMeta($column), true))) === false) {
+						throw new \RuntimeException(sprintf('File is "%s" is not writable', $filename));
+					}
+				}
+			});
 		}
-		return self::$cache[$key][$column] = (new StringData())->unserialize($this->redis->hget($key, $column));
+		self::$cache[$filename][$column] = require $filename;
+		return self::$cache[$filename][$column];
 	}
 }

@@ -18,11 +18,12 @@ final class Transaction {
 	 * Start the transaction with proper begin-commit-rollback flow
 	 *
 	 * @param \Closure $callback
+	 * @param string $mode
 	 * @return mixed
 	 * @throws \Throwable
 	 */
-	public function start(\Closure $callback) {
-		$this->connection->exec('START TRANSACTION');
+	public function start(\Closure $callback, string $mode = '') {
+		$this->connection->exec(sprintf('START TRANSACTION %s', $mode));
 		try {
 			$result = $callback();
 			$this->connection->exec('COMMIT TRANSACTION');
