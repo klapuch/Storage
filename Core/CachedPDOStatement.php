@@ -77,7 +77,6 @@ final class CachedPDOStatement extends \PDOStatement {
 					}
 				}
 			});
-
 		}
 		self::$cache[$filename][$column] = require $filename;
 		return self::$cache[$filename][$column];

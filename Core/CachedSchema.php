@@ -40,7 +40,6 @@ class CachedSchema implements Schema {
 					}
 				}
 			});
-
 		}
 		self::$cache[$type] = require $filename;
 		return self::$cache[$type];
