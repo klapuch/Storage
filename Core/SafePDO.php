@@ -13,7 +13,10 @@ final class SafePDO extends \PDO {
 		\PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
 	];
 
-	public function __construct(string $dsn, string $user, string $password) {
-		parent::__construct($dsn, $user, $password, self::OPTIONS);
+	/**
+	 * @param array<int, mixed> $options
+	 */
+	public function __construct(string $dsn, string $user, string $password, array $options = []) {
+		parent::__construct($dsn, $user, $password, $options + self::OPTIONS);
 	}
 }
