@@ -7,18 +7,13 @@ namespace Klapuch\Storage;
  * Transaction for PDO (in this moment for postgres)
  */
 final class Transaction {
-	/** @var \Klapuch\Storage\Connection */
-	private $connection;
+	private Connection $connection;
 
 	public function __construct(Connection $connection) {
 		$this->connection = $connection;
 	}
 
 	/**
-	 * Start the transaction with proper begin-commit-rollback flow
-	 *
-	 * @param \Closure $callback
-	 * @param string $mode
 	 * @return mixed
 	 * @throws \Throwable
 	 */

@@ -7,7 +7,7 @@ use Mockery\LegacyMockInterface;
 use Tester;
 
 abstract class Mockery extends Tester\TestCase {
-	protected function mock($class): LegacyMockInterface {
+	protected function mock(string $class): LegacyMockInterface {
 		return \Mockery::mock($class);
 	}
 

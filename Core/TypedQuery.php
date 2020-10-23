@@ -7,15 +7,16 @@ namespace Klapuch\Storage;
  * Automatically typed query
  */
 final class TypedQuery implements Query {
-	/** @var \Klapuch\Storage\Connection */
-	private $connection;
+	private Connection $connection;
 
-	/** @var string */
-	private $statement;
+	private string $statement;
 
 	/** @var mixed[] */
-	private $parameters;
+	private array $parameters;
 
+	/**
+	 * @param mixed[] $parameters
+	 */
 	public function __construct(Connection $connection, string $statement, array $parameters = []) {
 		$this->connection = $connection;
 		$this->statement = $statement;
@@ -28,24 +29,31 @@ final class TypedQuery implements Query {
 	public function field() {
 		$statement = $this->execute();
 		['name' => $name] = $statement->getColumnMeta(0);
+		assert(is_string($name));
 		[$name => $value] = $this->conversions([$name => $statement->fetchColumn()], $statement);
 		return $value;
 	}
 
+	/**
+	 * @return mixed[]
+	 */
 	public function row(): array {
 		$statement = $this->execute();
-		return $this->conversions($statement->fetch(\PDO::FETCH_ASSOC) ?: [], $statement);
+		$row = $statement->fetch(\PDO::FETCH_ASSOC);
+		return $this->conversions($row === false ? [] : $row, $statement);
 	}
 
+	/**
+	 * @return mixed[]
+	 */
 	public function rows(): array {
 		$statement = $this->execute();
-		return array_reduce(
-			(array) $statement->fetchAll(\PDO::FETCH_ASSOC),
-			function(array $rows, array $row) use ($statement): array {
-				$rows[] = $this->conversions($row, $statement);
-				return $rows;
-			},
-			[]
+		return array_merge(
+			[],
+			...array_map(
+				fn (array $row): array => $this->conversions($row, $statement),
+				(array) $statement->fetchAll(\PDO::FETCH_ASSOC),
+			),
 		);
 	}
 
@@ -59,40 +67,34 @@ final class TypedQuery implements Query {
 					}
 					return $value;
 				},
-				$this->parameters
-			)
+				$this->parameters,
+			),
 		);
 		return $statement;
 	}
 
 	/**
-	 * Rows converted by conversion lookup table
-	 *
-	 * @param array $rows
+	 * @param array<string, mixed> $rows
 	 * @param \PDOStatement $statement
-	 * @return array
+	 * @return array<string, mixed>
 	 */
 	private function conversions(array $rows, \PDOStatement $statement): array {
 		$raw = array_filter($rows, 'is_string');
 		$conversions = array_intersect_key($this->types($statement), $raw);
 		array_walk(
 			$conversions,
-			function($type, string $column) use (&$raw): void {
+			static function($type, string $column) use (&$raw): void {
 				$raw[$column] = (new Output\PgConversions(
-					$this->connection,
 					$raw[$column],
-					$type
+					$type,
 				))->value();
-			}
+			},
 		);
 		return $raw + $rows;
 	}
 
 	/**
-	 * Meta types extracted from the statement
-	 *
-	 * @param \PDOStatement $statement
-	 * @return array
+	 * @return array<string, string>
 	 */
 	private function types(\PDOStatement $statement): array {
 		return array_column(
@@ -102,10 +104,10 @@ final class TypedQuery implements Query {
 					$meta[] = $statement->getColumnMeta($column);
 					return $meta;
 				},
-				[]
+				[],
 			),
 			'native_type',
-			'name'
+			'name',
 		);
 	}
 }

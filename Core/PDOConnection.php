@@ -7,8 +7,7 @@ namespace Klapuch\Storage;
  * Simple native query without changes
  */
 final class PDOConnection implements Connection {
-	/** @var \PDO */
-	private $database;
+	private \PDO $database;
 
 	public function __construct(\PDO $database) {
 		$this->database = $database;
@@ -20,9 +19,5 @@ final class PDOConnection implements Connection {
 
 	public function exec(string $statement): void {
 		$this->database->exec($statement);
-	}
-
-	public function schema(): Schema {
-		throw new \RuntimeException('No schema');
 	}
 }

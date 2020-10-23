@@ -7,15 +7,16 @@ namespace Klapuch\Storage;
  * Simple native query without changes
  */
 final class NativeQuery implements Query {
-	/** @var \Klapuch\Storage\Connection */
-	private $connection;
+	private Connection $connection;
 
-	/** @var string */
-	private $statement;
+	private string $statement;
 
 	/** @var mixed[] */
-	private $parameters;
+	private array $parameters;
 
+	/**
+	 * @param mixed[] $parameters
+	 */
 	public function __construct(Connection $connection, string $statement, array $parameters = []) {
 		$this->connection = $connection;
 		$this->statement = $statement;
@@ -29,10 +30,17 @@ final class NativeQuery implements Query {
 		return $this->execute()->fetchColumn();
 	}
 
+	/**
+	 * @return mixed[]
+	 */
 	public function row(): array {
-		return $this->execute()->fetch(\PDO::FETCH_ASSOC) ?: [];
+		$row = $this->execute()->fetch(\PDO::FETCH_ASSOC);
+		return $row === false ? [] : $row;
 	}
 
+	/**
+	 * @return mixed[]
+	 */
 	public function rows(): array {
 		return (array) $this->execute()->fetchAll(\PDO::FETCH_ASSOC);
 	}

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="Library" default="check">
 
-	<target name="check" depends="lint, phpcpd, phpstan, phpcs, tests, cgi-tests"/>
+	<target name="check" depends="lint, phpstan, phpcs, tests"/>
 	<target name="ci" depends="check, coverage"/>
 
 	<target name="lint">
@@ -13,19 +13,9 @@
 		</exec>
 	</target>
 
-	<target name="phpcpd">
-		<exec executable="vendor/bin/phpcpd" logoutput="true" passthru="true" checkreturn="true">
-            <arg value="--exclude"/>
-            <arg value="Form"/>
-			<arg path="Core"/>
-		</exec>
-	</target>
-
 	<target name="phpstan">
 		<exec executable="vendor/bin/phpstan" logoutput="true" passthru="true" checkreturn="true">
 			<arg value="analyse"/>
-			<arg value="-l"/>
-			<arg value="max"/>
 			<arg value="-c"/>
 			<arg path="phpstan.neon"/>
 			<arg path="Core"/>
@@ -36,9 +26,10 @@
 	<target name="phpcs">
 		<exec executable="vendor/bin/phpcs" logoutput="true" passthru="true" checkreturn="true">
 			<arg value="--standard=ruleset.xml"/>
-			<arg value="--extensions=php,phpt"/>
+			<arg value="--extensions=php"/>
 			<arg value="--encoding=utf-8"/>
 			<arg value="--tab-width=4"/>
+			<arg value="--ignore=Tests/Temporary"/>
 			<arg value="-sp"/>
 			<arg path="Core"/>
 			<arg path="Tests"/>
@@ -48,7 +39,7 @@
 	<target name="phpcbf">
 		<exec executable="vendor/bin/phpcbf" logoutput="true" passthru="true" checkreturn="true">
 			<arg value="--standard=ruleset.xml"/>
-			<arg value="--extensions=php,phpt"/>
+			<arg value="--extensions=php"/>
 			<arg value="--encoding=utf-8"/>
 			<arg value="--tab-width=4"/>
 			<arg value="-sp"/>
@@ -64,19 +55,6 @@
 			<arg value="-s"/>
 			<arg value="-p"/>
 			<arg value="php"/>
-			<arg value="-c"/>
-			<arg path="Tests/php.ini"/>
-			<arg path="Tests/"/>
-		</exec>
-	</target>
-
-	<target name="cgi-tests">
-		<exec executable="vendor/bin/tester" logoutput="true" passthru="true" checkreturn="true">
-			<arg value="-o"/>
-			<arg value="console"/>
-			<arg value="-s"/>
-			<arg value="-p"/>
-			<arg value="php-cgi"/>
 			<arg value="-c"/>
 			<arg path="Tests/php.ini"/>
 			<arg path="Tests/"/>
