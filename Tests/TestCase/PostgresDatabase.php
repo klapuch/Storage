@@ -7,29 +7,23 @@ use Klapuch\Storage;
 use Tester;
 
 abstract class PostgresDatabase extends Mockery {
-	/** @var \Klapuch\Storage\Connection */
-	protected $connection;
+	protected Storage\Connection $connection;
 
-	/** @var \PDO */
-	protected $pdo;
+	/** @var array<string, string> */
+	protected array $credentials;
 
-	protected function setUp() {
+	protected function setUp(): void {
 		parent::setUp();
 		Tester\Environment::lock('postgres', __DIR__ . '/../Temporary');
 		$credentials = (array) parse_ini_file(__DIR__ . '/../Configuration/.config.local.ini', true);
-		$this->connection = $this->connection($credentials);
+		$this->credentials = $credentials['POSTGRES'];
+		$this->connection = new Storage\PDOConnection(
+			new Storage\SafePDO(
+				$this->credentials['dsn'],
+				$this->credentials['user'],
+				$this->credentials['password'],
+			),
+		);
 		$this->connection->exec('TRUNCATE test');
-	}
-
-	private function connection(array $credentials): Storage\Connection {
-		$this->pdo = new Storage\SafePDO(
-			$credentials['POSTGRES']['dsn'],
-			$credentials['POSTGRES']['user'],
-			$credentials['POSTGRES']['password']
-		);
-		return new Storage\CachedConnection(
-			new Storage\PDOConnection($this->pdo),
-			new \SplFileInfo(Tester\FileMock::create())
-		);
 	}
 }

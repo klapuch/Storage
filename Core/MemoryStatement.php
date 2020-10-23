@@ -7,36 +7,35 @@ namespace Klapuch\Storage;
  * in-memory statement
  */
 final class MemoryStatement extends \PDOStatement {
-	/** @var mixed[] */
-	private $memory;
+	/** @var array<string, mixed> */
+	private array $memory;
 
-	/** @var string */
-	private $statement;
+	private string $statement;
 
+	/**
+	 * @param array<string, mixed> $memory
+	 */
 	public function __construct(array $memory, string $statement) {
 		$this->memory = $memory;
 		$this->statement = $statement;
 	}
 
-	public function fetch(
-		$fetchStyle = null,
-		$cursorOrientation = \PDO::FETCH_ORI_NEXT,
-		$cursorOffset = 0
-	): array {
-		return $this->memory;
-	}
-
-	public function fetchAll(
-		$fetchStyle = null,
-		$fetchArgument = null,
-		$ctorArgs = null
-	): array {
+	/**
+	 * @return mixed[]
+	 */
+	public function fetch($fetchStyle = null, $cursorOrientation = \PDO::FETCH_ORI_NEXT, $cursorOffset = 0): array {
 		return $this->memory;
 	}
 
 	/**
-	 * @param int $columnNumber
-	 * @return mixed
+	 * @return mixed[]
+	 */
+	public function fetchAll($fetchStyle = null, $fetchArgument = null, $ctorArgs = null): array {
+		return $this->memory;
+	}
+
+	/**
+	 * @return int|string|false|null
 	 */
 	public function fetchColumn($columnNumber = 0) {
 		preg_match('~^SELECT\s+(\w+)~', $this->statement, $column);

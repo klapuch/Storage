@@ -7,30 +7,24 @@ namespace Klapuch\Storage;
  * Cached database connection
  */
 class CachedConnection implements Connection {
-	/** @var \Klapuch\Storage\Connection */
-	private $origin;
+	private Connection $origin;
 
-	/** @var \SplFileInfo */
-	private $temp;
+	private \SplFileInfo $temp;
 
 	public function __construct(Connection $origin, \SplFileInfo $temp) {
 		$this->origin = $origin;
 		$this->temp = $temp;
 	}
 
-	public function prepare($statement): \PDOStatement {
+	public function prepare(string $statement): \PDOStatement {
 		return new CachedPDOStatement(
 			$this->origin->prepare($statement),
 			$statement,
-			$this->temp
+			$this->temp,
 		);
 	}
 
 	public function exec(string $statement): void {
 		$this->origin->exec($statement);
-	}
-
-	public function schema(): Schema {
-		return new CachedSchema($this, $this->temp);
 	}
 }

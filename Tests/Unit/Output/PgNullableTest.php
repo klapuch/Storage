@@ -1,11 +1,6 @@
 <?php
 declare(strict_types = 1);
 
-/**
- * @testCase
- * @phpVersion > 7.1
- */
-
 namespace Klapuch\Storage\Unit\Output;
 
 use Klapuch\Storage\Output;
@@ -14,14 +9,17 @@ use Tester\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 
-final class PgNullable extends Tester\TestCase {
-	public function testDelegatingForNotNull() {
+/**
+ * @testCase
+ */
+final class PgNullableTest extends Tester\TestCase {
+	public function testDelegatingForNotNull(): void {
 		Assert::same('foo', (new Output\PgNullable('bar', new Output\FakeConversion('foo')))->value());
 	}
 
-	public function testNullForNull() {
+	public function testNullForNull(): void {
 		Assert::null((new Output\PgNullable(null, new Output\FakeConversion('foo')))->value());
 	}
 }
 
-(new PgNullable())->run();
+(new PgNullableTest())->run();

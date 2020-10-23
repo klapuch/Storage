@@ -1,3 +1,83 @@
+includes:
+	- vendor/phpstan/phpstan-mockery/extension.neon
+	- vendor/phpstan/phpstan-strict-rules/rules.neon
+	- vendor/phpstan/phpstan/conf/bleedingEdge.neon
+
 parameters:
+	level: max
 	ignoreErrors:
 		- '#Parameter \#\d \$original of class Klapuch\\Storage\\Output\\(PgText|PgJsonToArray|PgHStoreToArray|PgIntRangeToArray|PgTimestamptzRangeToArray|PgPointToArray|PgArrayToArray|PgRowToTypedArray|PgNative) constructor expects string, string\|null given\.#'
+		-
+			message: "#^Method Klapuch\\\\Storage\\\\CachedPDOStatement\\:\\:execute\\(\\) has parameter \\$inputParameters with no typehint specified\\.$#"
+			count: 1
+			path: Core/CachedPDOStatement.php
+
+		-
+			message: "#^Method Klapuch\\\\Storage\\\\CachedPDOStatement\\:\\:fetch\\(\\) has parameter \\$cursorOffset with no typehint specified\\.$#"
+			count: 1
+			path: Core/CachedPDOStatement.php
+
+		-
+			message: "#^Method Klapuch\\\\Storage\\\\CachedPDOStatement\\:\\:fetch\\(\\) has parameter \\$cursorOrientation with no typehint specified\\.$#"
+			count: 1
+			path: Core/CachedPDOStatement.php
+
+		-
+			message: "#^Method Klapuch\\\\Storage\\\\CachedPDOStatement\\:\\:fetch\\(\\) has parameter \\$fetchStyle with no typehint specified\\.$#"
+			count: 1
+			path: Core/CachedPDOStatement.php
+
+		-
+			message: "#^Method Klapuch\\\\Storage\\\\CachedPDOStatement\\:\\:fetchAll\\(\\) has parameter \\$ctorArgs with no typehint specified\\.$#"
+			count: 1
+			path: Core/CachedPDOStatement.php
+
+		-
+			message: "#^Method Klapuch\\\\Storage\\\\CachedPDOStatement\\:\\:fetchAll\\(\\) has parameter \\$fetchArgument with no typehint specified\\.$#"
+			count: 1
+			path: Core/CachedPDOStatement.php
+
+		-
+			message: "#^Method Klapuch\\\\Storage\\\\CachedPDOStatement\\:\\:fetchAll\\(\\) has parameter \\$fetchStyle with no typehint specified\\.$#"
+			count: 1
+			path: Core/CachedPDOStatement.php
+
+		-
+			message: "#^Method Klapuch\\\\Storage\\\\CachedPDOStatement\\:\\:fetchColumn\\(\\) has parameter \\$columnNumber with no typehint specified\\.$#"
+			count: 1
+			path: Core/CachedPDOStatement.php
+
+		-
+			message: "#^Method Klapuch\\\\Storage\\\\MemoryStatement\\:\\:fetch\\(\\) has parameter \\$cursorOffset with no typehint specified\\.$#"
+			count: 1
+			path: Core/MemoryStatement.php
+
+		-
+			message: "#^Method Klapuch\\\\Storage\\\\MemoryStatement\\:\\:fetch\\(\\) has parameter \\$cursorOrientation with no typehint specified\\.$#"
+			count: 1
+			path: Core/MemoryStatement.php
+
+		-
+			message: "#^Method Klapuch\\\\Storage\\\\MemoryStatement\\:\\:fetch\\(\\) has parameter \\$fetchStyle with no typehint specified\\.$#"
+			count: 1
+			path: Core/MemoryStatement.php
+
+		-
+			message: "#^Method Klapuch\\\\Storage\\\\MemoryStatement\\:\\:fetchAll\\(\\) has parameter \\$ctorArgs with no typehint specified\\.$#"
+			count: 1
+			path: Core/MemoryStatement.php
+
+		-
+			message: "#^Method Klapuch\\\\Storage\\\\MemoryStatement\\:\\:fetchAll\\(\\) has parameter \\$fetchArgument with no typehint specified\\.$#"
+			count: 1
+			path: Core/MemoryStatement.php
+
+		-
+			message: "#^Method Klapuch\\\\Storage\\\\MemoryStatement\\:\\:fetchAll\\(\\) has parameter \\$fetchStyle with no typehint specified\\.$#"
+			count: 1
+			path: Core/MemoryStatement.php
+
+		-
+			message: "#^Method Klapuch\\\\Storage\\\\MemoryStatement\\:\\:fetchColumn\\(\\) has parameter \\$columnNumber with no typehint specified\\.$#"
+			count: 1
+			path: Core/MemoryStatement.php

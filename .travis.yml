@@ -2,15 +2,14 @@ sudo: required
 
 services:
   - postgresql
-  - redis-server
 
 addons:
-  postgresql: 9.5
+  postgresql: 10
 
 language: php
 
 php:
-  - 7.3
+  - 7.4
 
 before_install:
   - composer self-update
@@ -24,11 +23,11 @@ before_script:
   - psql -U postgres storage < ./Tests/fixtures/schema.sql
 
 script:
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ]]; then vendor/bin/phing ci; else vendor/bin/phing; fi
+  - vendor/bin/phing ci
 
 after_script:
-    - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ]]; then wget https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar && php coveralls.phar --verbose --config Tests/.coveralls.yml; fi
-    - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ]]; then php coveralls.phar --verbose --config Tests/.coveralls.yml; fi
+    - wget https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar && php coveralls.phar --verbose --config Tests/.coveralls.yml
+    - php coveralls.phar --verbose --config Tests/.coveralls.yml
 
 after_failure:
   - for i in $(find Tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done

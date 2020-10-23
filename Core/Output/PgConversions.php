@@ -3,24 +3,12 @@ declare(strict_types = 1);
 
 namespace Klapuch\Storage\Output;
 
-use Klapuch\Storage;
-
 final class PgConversions implements Conversion {
-	/** @var \Klapuch\Storage\Connection */
-	private $connection;
+	private ?string $original;
 
-	/** @var string|null */
-	private $original;
+	private string $type;
 
-	/** @var string */
-	private $type;
-
-	public function __construct(
-		Storage\Connection $connection,
-		?string $original,
-		string $type
-	) {
-		$this->connection = $connection;
+	public function __construct(?string $original, string $type) {
 		$this->original = $original;
 		$this->type = $type;
 	}
@@ -37,37 +25,9 @@ final class PgConversions implements Conversion {
 				new PgJsonToArray(
 					$this->original,
 					$this->type,
-					new PgHStoreToArray(
-						$this->connection,
-						$this->original,
-						$this->type,
-						new PgIntRangeToArray(
-							$this->original,
-							$this->type,
-							new PgTimestamptzRangeToArray(
-								$this->connection,
-								$this->original,
-								$this->type,
-								new PgPointToArray(
-									$this->original,
-									$this->type,
-									new PgArrayToArray(
-										$this->connection,
-										$this->original,
-										$this->type,
-										new PgRowToTypedArray(
-											$this->connection,
-											$this->original,
-											$this->type,
-											new PgNative($this->original)
-										)
-									)
-								)
-							)
-						)
-					)
-				)
-			)
+					new PgNative($this->original),
+				),
+			),
 		))->value();
 	}
 }

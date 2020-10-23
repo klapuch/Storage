@@ -18,8 +18,3 @@ services:
           - ./..:/var/www/Storage
       ports:
         - 80:80
-    redis:
-      image: redis:alpine
-      container_name: storage-redis
-      ports:
-        - 6379:6379
