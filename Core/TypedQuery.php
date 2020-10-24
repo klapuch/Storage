@@ -48,12 +48,9 @@ final class TypedQuery implements Query {
 	 */
 	public function rows(): array {
 		$statement = $this->execute();
-		return array_merge(
-			[],
-			...array_map(
-				fn (array $row): array => $this->conversions($row, $statement),
-				(array) $statement->fetchAll(\PDO::FETCH_ASSOC),
-			),
+		return array_map(
+			fn (array $row): array => $this->conversions($row, $statement),
+			(array) $statement->fetchAll(\PDO::FETCH_ASSOC),
 		);
 	}
 
